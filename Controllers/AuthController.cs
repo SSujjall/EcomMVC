@@ -26,10 +26,12 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.Register(model);
                 if (user != null)
                 {
+                    TempData["ToastMessage"] = "Register successful!";
+                    TempData["ToastType"] = "success";
                     return RedirectToAction("LoginView");
                 }
             }
-            return View(model);
+            return RedirectToAction("RegisterView");
         }
 
         public IActionResult LoginView()
@@ -45,9 +47,13 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.Login(model);
                 if (user != null)
                 {
+                    TempData["ToastMessage"] = "Login successful!";
+                    TempData["ToastType"] = "success";
                     return RedirectToAction("Index", "Home");
                 }
             }
+            TempData["ToastMessage"] = "Invalid username or password.";
+            TempData["ToastType"] = "error";
             return RedirectToAction("LoginView");
         }
     }
