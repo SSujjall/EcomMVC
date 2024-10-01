@@ -1,5 +1,52 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model EcomSiteMVC.Models.DTOs.RegisterDTO
+
 @{
+    ViewData["Title"] = "Register";
 }
+
+<style>
+    .form-container {
+        max-width: 25rem;
+        min-width: 20rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+        .form-group input {
+            text-align: center;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+
+    .register-button {
+        height: 3rem;
+    }
+</style>
+
+<div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow-sm">
+    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+    <form asp-action="Register" method="post">
+        <div class="form-group">
+            <input placeholder="Username" asp-for="Username" class="form-control" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input placeholder="Email" asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <input placeholder="Password" asp-for="PasswordHash" type="password" class="form-control" />
+            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="register-button btn btn-primary w-100 mt-3">Register</button>
+    </form>
+
+    <div class="mt-2">
+        <a asp-controller="Auth" asp-action="LoginView">Already have an account? Login here.</a>
+    </div>
+</div>

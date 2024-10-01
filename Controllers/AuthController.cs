@@ -47,9 +47,8 @@ namespace EcomSiteMVC.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
-            return View(model);
+            return RedirectToAction("LoginView");
         }
     }
 }

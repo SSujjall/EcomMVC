@@ -1,6 +1,8 @@
 using EcomSiteMVC.Data;
 using EcomSiteMVC.Data.Repositories;
+using EcomSiteMVC.Data.Services;
 using EcomSiteMVC.Interfaces.IRepositories;
+using EcomSiteMVC.Interfaces.IServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 var app = builder.Build();
 

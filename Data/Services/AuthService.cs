@@ -42,12 +42,12 @@ namespace EcomSiteMVC.Data.Services
 
         private string HashPassword(string password)
         {
-            return password;
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         private bool VerifyPassword(string enteredPassword, string storedPasswordHash)
         {
-            return enteredPassword == storedPasswordHash;
+            return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPasswordHash);
         }
     }
 }
