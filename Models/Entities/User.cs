@@ -13,7 +13,7 @@ namespace EcomSiteMVC.Models.Entities
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public bool IsActive { get; set; }
 
         //Navigation Property

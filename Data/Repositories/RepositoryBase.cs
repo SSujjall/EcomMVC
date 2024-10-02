@@ -30,7 +30,8 @@ namespace EcomSiteMVC.Data.Repositories
 
         public async Task<T>? GetById(object id)
         {
-            return await _dbContext.FindAsync<T>(id);
+            var result = await _dbContext.FindAsync<T>(id);
+            return result;
         }
 
         public async Task<T> Update(T entity)
@@ -40,14 +41,15 @@ namespace EcomSiteMVC.Data.Repositories
             return result.Entity;
         }
 
-        public async Task SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbContext.Set<T>().FirstOrDefaultAsync(expression);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            var result = await _dbContext.Set<T>().ToListAsync();
+            return result;
         }
     }
 }

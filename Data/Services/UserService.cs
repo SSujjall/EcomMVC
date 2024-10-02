@@ -32,6 +32,31 @@ namespace EcomSiteMVC.Data.Services
             return null; // or return a new UserProfileUpdateDTO if you prefer empty fields
         }
 
+        public async Task<bool> CreateUserProfileAsync(UserProfileUpdateDTO model, int userId)
+        {
+            var existingUserProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
+
+            if (existingUserProfile != null)
+            {
+                var result = await UpdateUserProfileAsync(model, userId);
+                return result;
+            }
+
+            var userProfile = new UserProfile
+            {
+                UserId = userId,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                Address = model.Address,
+                DateOfBirth = model.DateOfBirth,
+                Gender = model.Gender
+            };
+
+            await _userRepository.Add(userProfile);
+            return true;
+        }
+
         public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateDTO model, int userId)
         {
             var userProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
@@ -48,23 +73,6 @@ namespace EcomSiteMVC.Data.Services
                 return true;
             }
             return false;
-        }
-
-        public async Task<bool> CreateUserProfileAsync(UserProfileUpdateDTO model, int userId)
-        {
-            var userProfile = new UserProfile
-            {
-                UserId = userId,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                DateOfBirth = model.DateOfBirth,
-                Gender = model.Gender
-            };
-
-            await _userRepository.Add(userProfile);
-            return true;
         }
     }
 }

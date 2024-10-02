@@ -204,8 +204,8 @@ namespace EcomSiteMVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("CreatedDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -233,10 +233,10 @@ namespace EcomSiteMVC.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedDate = new DateTime(2024, 10, 2, 12, 24, 18, 843, DateTimeKind.Local).AddTicks(7100),
+                            CreatedDate = new DateOnly(2024, 10, 2),
                             Email = "admin@example.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$drNdyq6JQt88hX17T2t4FOmjD4aY.w1chtY5EqE6D/lwx4iYw37ue",
+                            PasswordHash = "$2a$11$n.i9TPpXWP4wBgklo1L8/O.YzMiFGqKda..q3cKf4nX0Wk4CMNfSa",
                             Role = 0,
                             Username = "admin"
                         });
@@ -254,8 +254,8 @@ namespace EcomSiteMVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

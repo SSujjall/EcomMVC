@@ -8,7 +8,7 @@ namespace EcomSiteMVC.Interfaces.IRepositories
         Task<T> Update(T entity);
         Task Delete(T entity);
         Task<T>? GetById(object id);
-        Task SaveChangesAsync();
         Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression);
+        public Task<IEnumerable<T>> GetAllAsync();
     }
 }

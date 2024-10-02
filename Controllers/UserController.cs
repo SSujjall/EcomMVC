@@ -27,15 +27,11 @@ namespace EcomSiteMVC.Controllers
         public async Task<IActionResult> UpdateProfile(UserProfileUpdateDTO model)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
+            var profileUpdate = await _userService.CreateUserProfileAsync(model, userId);
 
-            if (await _userService.UpdateUserProfileAsync(model, userId))
+            if (profileUpdate)
             {
                 TempData["ToastMessage"] = "Profile updated successfully!";
-                TempData["ToastType"] = "success";
-            }
-            else if (await _userService.CreateUserProfileAsync(model, userId))
-            {
-                TempData["ToastMessage"] = "Profile added successfully!";
                 TempData["ToastType"] = "success";
             }
             else

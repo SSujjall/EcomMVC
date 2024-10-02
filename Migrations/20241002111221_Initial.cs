@@ -35,7 +35,7 @@ namespace EcomSiteMVC.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -123,7 +123,7 @@ namespace EcomSiteMVC.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -196,7 +196,7 @@ namespace EcomSiteMVC.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "CreatedDate", "Email", "IsActive", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, new DateTime(2024, 10, 2, 12, 24, 18, 843, DateTimeKind.Local).AddTicks(7100), "admin@example.com", true, "$2a$11$drNdyq6JQt88hX17T2t4FOmjD4aY.w1chtY5EqE6D/lwx4iYw37ue", 0, "admin" });
+                values: new object[] { 1, new DateOnly(2024, 10, 2), "admin@example.com", true, "$2a$11$n.i9TPpXWP4wBgklo1L8/O.YzMiFGqKda..q3cKf4nX0Wk4CMNfSa", 0, "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",

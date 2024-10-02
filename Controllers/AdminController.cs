@@ -11,5 +11,16 @@ namespace EcomSiteMVC.Controllers
             return View();
         }
 
+        [HttpGet("{controller}/add-admin")]
+        public IActionResult AddAdminView()
+        {
+            return View();
+        }
+
+        public IActionResult AddAdmin()
+        {
+            return RedirectToAction("AddAdminView");
+        }
+
     }
 }
