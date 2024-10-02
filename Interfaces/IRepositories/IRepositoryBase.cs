@@ -1,4 +1,6 @@
-﻿namespace EcomSiteMVC.Interfaces.IRepositories
+﻿using System.Linq.Expressions;
+
+namespace EcomSiteMVC.Interfaces.IRepositories
 {
     public interface IRepositoryBase<T> where T : class
     {
@@ -7,5 +9,6 @@
         Task Delete(T entity);
         Task<T>? GetById(object id);
         Task SaveChangesAsync();
+        Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression);
     }
 }

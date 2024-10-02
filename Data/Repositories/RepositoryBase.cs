@@ -1,5 +1,6 @@
 ﻿using EcomSiteMVC.Interfaces.IRepositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace EcomSiteMVC.Data.Repositories
 {
@@ -42,6 +43,11 @@ namespace EcomSiteMVC.Data.Repositories
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(expression);
         }
     }
 }

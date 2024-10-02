@@ -1,6 +1,10 @@
 ﻿using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+
 
 namespace EcomSiteMVC.Controllers
 {
@@ -47,14 +51,44 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.Login(model);
                 if (user != null)
                 {
+                    // Create the user claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim("UserId", user.UserId.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
+
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Make the login persistent
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Set the expiration time for the cookie
+                    };
+
+                    // Sign in the user
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
                     TempData["ToastMessage"] = "Login successful!";
                     TempData["ToastType"] = "success";
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ProfileView", "User");
                 }
             }
+
             TempData["ToastMessage"] = "Invalid username or password.";
             TempData["ToastType"] = "error";
             return RedirectToAction("LoginView");
         }
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["ToastMessage"] = "Logout successful!";
+            TempData["ToastType"] = "success";
+            return RedirectToAction("LoginView");
+        }
+
     }
 }

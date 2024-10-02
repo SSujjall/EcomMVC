@@ -1,0 +1,94 @@
+﻿@model EcomSiteMVC.Models.DTOs.UserProfileUpdateDTO
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<style>
+    .form-container {
+        max-width: 40rem;
+        min-width: 20rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+        .form-group input {
+            text-align: center;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+
+    .submit-button {
+        height: 3rem;
+    }
+</style>
+
+<div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow-sm">
+    <form action="UpdateProfile" method="post">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input placeholder="First Name" asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input placeholder="Last Name" asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input placeholder="Phone Number" asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input placeholder="Address" asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <!-- Placeholder for date -->
+                    <input type="text" placeholder="Date Of Birth" class="form-control date-placeholder" asp-for="DateOfBirth" onfocus="(this.type='date')" onblur="(this.type='text')" />
+                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Gender:</label><br />
+                    <input type="radio" asp-for="Gender" value="Male" id="Male" />
+                    <label for="Male">Male</label>
+                    <input type="radio" asp-for="Gender" value="Female" id="Female" class="ms-3" />
+                    <label for="Female">Female</label>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button btn btn-primary w-100 mt-3">Submit</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Ensure placeholder reappears when input loses focus without a value
+        document.querySelectorAll('.date-placeholder').forEach(function (input) {
+            input.addEventListener('blur', function () {
+                if (!input.value) {
+                    input.type = 'text'; // Change back to text to show the placeholder again
+                }
+            });
+        });
+    </script>
+}
