@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using EcomSiteMVC.Models.Enums;
 
 
 namespace EcomSiteMVC.Controllers
@@ -73,6 +74,11 @@ namespace EcomSiteMVC.Controllers
 
                     TempData["ToastMessage"] = "Login successful!";
                     TempData["ToastType"] = "success";
+
+                    if (user.Role == Role.Admin) // Assuming Role is an enum
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
                     return RedirectToAction("ProfileView", "User");
                 }
             }

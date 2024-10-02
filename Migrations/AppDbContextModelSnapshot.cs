@@ -228,6 +228,18 @@ namespace EcomSiteMVC.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            CreatedDate = new DateTime(2024, 10, 2, 12, 24, 18, 843, DateTimeKind.Local).AddTicks(7100),
+                            Email = "admin@example.com",
+                            IsActive = true,
+                            PasswordHash = "$2a$11$drNdyq6JQt88hX17T2t4FOmjD4aY.w1chtY5EqE6D/lwx4iYw37ue",
+                            Role = 0,
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.UserProfile", b =>

@@ -1,4 +1,5 @@
 ﻿using EcomSiteMVC.Models.Entities;
+using EcomSiteMVC.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcomSiteMVC.Data
@@ -43,6 +44,18 @@ namespace EcomSiteMVC.Data
                 .HasMany(p => p.CartItems)
                 .WithOne(ci => ci.Product);
 
+            modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                UserId = 1,
+                Username = "admin",
+                Email = "admin@example.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), // Ensure this is a hashed password
+                Role = Role.Admin, // Adjust based on your enum
+                IsActive = true,
+                CreatedDate = DateTime.Now
+            }
+    );
 
             base.OnModelCreating(modelBuilder);
         }

@@ -193,6 +193,11 @@ namespace EcomSiteMVC.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "CreatedDate", "Email", "IsActive", "PasswordHash", "Role", "Username" },
+                values: new object[] { 1, new DateTime(2024, 10, 2, 12, 24, 18, 843, DateTimeKind.Local).AddTicks(7100), "admin@example.com", true, "$2a$11$drNdyq6JQt88hX17T2t4FOmjD4aY.w1chtY5EqE6D/lwx4iYw37ue", 0, "admin" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",
                 table: "CartItems",
