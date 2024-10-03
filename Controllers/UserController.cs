@@ -2,7 +2,6 @@
 using EcomSiteMVC.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace EcomSiteMVC.Controllers
 {

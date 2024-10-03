@@ -28,7 +28,7 @@ namespace EcomSiteMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _authService.Register(model);
+                var user = await _authService.Register(model, HttpContext.User);
                 if (user != null)
                 {
                     TempData["ToastMessage"] = "Register successful!";
@@ -75,7 +75,7 @@ namespace EcomSiteMVC.Controllers
                     TempData["ToastMessage"] = "Login successful!";
                     TempData["ToastType"] = "success";
 
-                    if (user.Role == Role.Admin) // Assuming Role is an enum
+                    if (user.Role == Role.Superadmin || user.Role == Role.Admin) // Assuming Role is an enum
                     {
                         return RedirectToAction("Index", "Admin");
                     }

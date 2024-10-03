@@ -4,6 +4,8 @@ using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Entities;
 using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcomSiteMVC.Data.Services
 {
@@ -18,22 +20,45 @@ namespace EcomSiteMVC.Data.Services
 
         public async Task<User?> Login(LoginDTO model)
         {
-            var user = await _authRepository.GetUserByUsername(model.Username);
-            if (user != null && VerifyPassword(model.PasswordHash, user.PasswordHash))
+            // Username checking
+            var req = new LoginDTO
+            {
+                Username = model.Username.ToLower(),
+                PasswordHash = model.PasswordHash,
+            };
+
+            var user = await _authRepository.GetUserByUsername(req.Username);
+            if (user != null && VerifyPassword(req.PasswordHash, user.PasswordHash))
             {
                 return user;
             }
             return null;
         }
 
-        public async Task<User> Register(RegisterDTO model)
+        public async Task<User> Register(RegisterDTO model, ClaimsPrincipal currentUser)
         {
+            Role assignedRole = Role.User;
+
+            if (currentUser.Identity.IsAuthenticated)
+            {
+                var roleClaim = currentUser.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
+
+                if (roleClaim != null && Enum.TryParse(roleClaim.Value, out Role loggedInUserRole))
+                {
+                    if (loggedInUserRole == Role.Superadmin)
+                    {
+                        assignedRole = Role.Admin;
+                    }
+                }
+            }
+
+
             var user = new User
             {
-                Username = model.Username,
-                Email = model.Email,
+                Username = model.Username.ToLower(),
+                Email = model.Email.ToLower(),
                 PasswordHash = HashPassword(model.PasswordHash),
-                Role = Role.User,
+                Role = assignedRole,
                 IsActive = true
             };
 

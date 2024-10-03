@@ -196,7 +196,7 @@ namespace EcomSiteMVC.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "CreatedDate", "Email", "IsActive", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, new DateOnly(2024, 10, 2), "admin@example.com", true, "$2a$11$n.i9TPpXWP4wBgklo1L8/O.YzMiFGqKda..q3cKf4nX0Wk4CMNfSa", 0, "admin" });
+                values: new object[] { 1, new DateOnly(2024, 10, 3), "admin@example.com", true, "$2a$11$opuD7lk7TUUoQWx7KQUpNufonti08WDli1W3PrtoeVF894Jxrrq3O", 0, "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",

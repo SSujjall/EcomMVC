@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcomSiteMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241003055350_PC_Initial")]
-    partial class PC_Initial
+    [Migration("20241003082851_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,7 +239,7 @@ namespace EcomSiteMVC.Migrations
                             CreatedDate = new DateOnly(2024, 10, 3),
                             Email = "admin@example.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$Nb01uxKy4aODPOprFEgFD.majiQgsh3vGFnMik63gmE4FhWJpi8UW",
+                            PasswordHash = "$2a$11$opuD7lk7TUUoQWx7KQUpNufonti08WDli1W3PrtoeVF894Jxrrq3O",
                             Role = 0,
                             Username = "admin"
                         });

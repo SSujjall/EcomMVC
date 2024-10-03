@@ -1,4 +1,5 @@
 ﻿@{
+    var isSuperAdmin = User.IsInRole("Superadmin");
     var isAdmin = User.IsInRole("Admin");
 }
 
@@ -31,13 +32,13 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <div>
                         <ul class="navbar-nav flex-grow-1">
-                            @if (!isAdmin)
+                            @if (!isAdmin && !isSuperAdmin)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                                 </li>
                             }
-                            @if (isAdmin)
+                            @if (isAdmin || isSuperAdmin)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
@@ -51,6 +52,10 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Page</a>
                                 </li>
+                            }
+
+                            @if (isSuperAdmin)
+                            {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddAdminView">Add Admin</a>
                                 </li>

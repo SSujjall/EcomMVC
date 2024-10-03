@@ -51,7 +51,7 @@ namespace EcomSiteMVC.Data
                 Username = "admin",
                 Email = "admin@example.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), // Ensure this is a hashed password
-                Role = Role.Admin, // Adjust based on your enum
+                Role = Role.Superadmin, // Adjust based on your enum
                 IsActive = true,
                 CreatedDate = DateOnly.FromDateTime(DateTime.Now)
             }
