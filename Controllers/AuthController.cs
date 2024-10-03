@@ -75,7 +75,7 @@ namespace EcomSiteMVC.Controllers
                     TempData["ToastMessage"] = "Login successful!";
                     TempData["ToastType"] = "success";
 
-                    if (user.Role == Role.Superadmin || user.Role == Role.Admin) // Assuming Role is an enum
+                    if (user.Role == Role.Superadmin || user.Role == Role.Admin)
                     {
                         return RedirectToAction("Index", "Admin");
                     }
