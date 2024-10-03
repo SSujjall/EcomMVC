@@ -9,6 +9,7 @@ namespace EcomSiteMVC.Models.Entities
         public int ProfileId { get; set; }
         [ForeignKey("User")]
         public int UserId { get; set; }
+        public string ProfileImage {  get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }

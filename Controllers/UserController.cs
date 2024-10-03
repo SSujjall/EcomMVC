@@ -9,10 +9,12 @@ namespace EcomSiteMVC.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ICloudinaryService cloudinaryService)
         {
             _userService = userService;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IActionResult> ProfileView()
