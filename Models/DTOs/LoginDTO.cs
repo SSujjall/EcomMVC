@@ -10,7 +10,7 @@ namespace EcomSiteMVC.Models.DTOs
         public string Username { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
-        [MinLength(6, ErrorMessage = "Password must be atleast 3 characters")]
+        [MinLength(3, ErrorMessage = "Password must be atleast 3 characters")]
         public string PasswordHash { get; set; }
     }
 }
