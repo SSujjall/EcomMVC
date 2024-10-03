@@ -29,5 +29,27 @@ namespace EcomSiteMVC.Data.Services
             var uploadResult = await _cloudinary.UploadAsync(uploadParam);
             return uploadResult?.SecureUrl.ToString();
         }
+
+        public async Task<string> UploadProfilePictureAsync(IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = "ProfilePictures" // Folder to store images in Cloudinary
+                };
+
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    return uploadResult.SecureUrl.ToString();
+                }
+            }
+
+            return null;
+        }
     }
 }

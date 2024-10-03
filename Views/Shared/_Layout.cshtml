@@ -101,5 +101,6 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await Html.PartialAsync("_Toast")
     @await RenderSectionAsync("Scripts", required: false)
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 </body>
 </html>

@@ -26,7 +26,8 @@ namespace EcomSiteMVC.Data.Services
                     PhoneNumber = userProfile.PhoneNumber,
                     Address = userProfile.Address,
                     DateOfBirth = userProfile.DateOfBirth,
-                    Gender = userProfile.Gender
+                    Gender = userProfile.Gender,
+                    ProfileImage = userProfile.ProfileImage,
                 };
             }
             return null; // or return a new UserProfileUpdateDTO if you prefer empty fields
@@ -50,7 +51,8 @@ namespace EcomSiteMVC.Data.Services
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
                 DateOfBirth = model.DateOfBirth,
-                Gender = model.Gender
+                Gender = model.Gender,
+                ProfileImage = model.ProfileImage,
             };
 
             await _userRepository.Add(userProfile);
@@ -68,6 +70,7 @@ namespace EcomSiteMVC.Data.Services
                 userProfile.Address = model.Address;
                 userProfile.DateOfBirth = model.DateOfBirth;
                 userProfile.Gender = model.Gender;
+                userProfile.ProfileImage = model.ProfileImage;
 
                 await _userRepository.Update(userProfile);
                 return true;
