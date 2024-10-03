@@ -11,6 +11,7 @@ namespace EcomSiteMVC.Controllers
     {
         private readonly IUserService _userService;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly string profilePictureFolderName = "ProfilePictures";
 
         public UserController(IUserService userService, ICloudinaryService cloudinaryService)
         {
@@ -30,23 +31,32 @@ namespace EcomSiteMVC.Controllers
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
 
-            // Retrieve the existing user profile to check for the current image
+            // Get the existing user profile
             var existingProfile = await _userService.GetUserProfileAsync(userId);
 
             if (profileImage != null && profileImage.Length > 0)
             {
+                // If there's a new image, upload it
                 var imageUrl = await _cloudinaryService.UploadProfilePictureAsync(profileImage);
+
                 if (imageUrl != null)
                 {
+                    // If there's an existing image, delete it
+                    if (!string.IsNullOrEmpty(existingProfile.ProfileImage))
+                    {
+                        // Extract public ID from the existing image URL
+                        var existingPublicId = existingProfile.ProfileImage.Split('/').Last().Split('.').First();
+                        await _cloudinaryService.DeleteImageAsync($"{profilePictureFolderName}/{existingPublicId}");
+                    }
+                    // Update the model with the new image URL
                     model.ProfileImage = imageUrl;
                 }
             }
             else
             {
-                // If no new image is uploaded, keep the existing image
+                // If there is no new image, retain the existing image
                 model.ProfileImage = existingProfile.ProfileImage;
             }
-
 
             var profileUpdate = await _userService.CreateUserProfileAsync(model, userId);
 
@@ -62,5 +72,6 @@ namespace EcomSiteMVC.Controllers
             }
             return RedirectToAction("ProfileView");
         }
+
     }
 }

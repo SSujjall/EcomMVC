@@ -13,6 +13,22 @@ namespace EcomSiteMVC.Data.Services
             _cloudinary = cloudinary;
         }
 
+        public async Task DeleteImageAsync(string publicId)
+        {
+            if (string.IsNullOrEmpty(publicId))
+            {
+                return; // No image to delete
+            }
+
+            var deletionResult = await _cloudinary.DeleteResourcesAsync(ResourceType.Image, publicId);
+
+            if (deletionResult.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                // Handle deletion error if necessary
+                Console.WriteLine($"Error deleting image: {deletionResult.Error.Message}");
+            }
+        }
+
         public async Task<string> UploadImageAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
