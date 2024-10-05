@@ -1,6 +1,7 @@
 ﻿@{
     var isSuperAdmin = User.IsInRole("Superadmin");
     var isAdmin = User.IsInRole("Admin");
+    var isAuthenticated = User.Identity.IsAuthenticated;
 }
 
 <!DOCTYPE html>
@@ -44,7 +45,7 @@
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Products</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Product" asp-action="AddProductView">Products</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
@@ -63,7 +64,7 @@
                         </ul>
                     </div>
                     <div class="buttons">
-                        @if (User.Identity.IsAuthenticated)
+                        @if (isAuthenticated)
                         {
                             <div class="dropdown">
                                 <a class="btn btn-primary dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -16,8 +16,8 @@ namespace EcomSiteMVC.Models.Entities
         public int Price { get; set; }
         public int StockQuantity { get; set; }
         public string ImageUrl { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public DateTime LastUpdatedDate { get; set; } = DateTime.Now;
+        public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly LastUpdatedDate { get; set; }
 
         // Navigation properties
         public Category Category { get; set; }
