@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Interfaces.IServices;
+﻿using EcomSiteMVC.Data.Services;
+using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,21 +12,19 @@ namespace EcomSiteMVC.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public ProductController(IProductService productService, ICategoryService categoryService)
+        public ProductController(IProductService productService, ICategoryService categoryService, ICloudinaryService cloudinaryService)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _cloudinaryService = cloudinaryService;
         }
 
-        public IActionResult ProductView()
+        public async Task<IActionResult> AllProductView()
         {
-            return View();
-        }
-
-        public IActionResult GetAllProducts()
-        {
-            return View();
+            var products = await _productService.GetAllProduct();
+            return View(products);
         }
 
         public IActionResult GetProductById(int id)
@@ -35,7 +34,7 @@ namespace EcomSiteMVC.Controllers
 
         //Admin Methods
         [Authorize(Roles = "Superadmin,Admin")]
-        public async Task<IActionResult> AddProductView()
+        public async Task<IActionResult> ProductView()
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
@@ -44,8 +43,18 @@ namespace EcomSiteMVC.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Superadmin,Admin")]
-        public async Task<IActionResult> AddProduct(AddProductDTO model)
+        public async Task<IActionResult> AddProduct(AddProductDTO model, IFormFile productImage)
         {
+
+            if (productImage != null && productImage.Length > 0)
+            {
+                var imageUrl = await _cloudinaryService.UploadImageAsync(productImage);
+                if (imageUrl != null)
+                {
+                    model.ImageUrl = imageUrl;
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var result = await _productService.AddProduct(model);

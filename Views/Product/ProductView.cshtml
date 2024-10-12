@@ -1,0 +1,139 @@
+﻿@model EcomSiteMVC.Models.DTOs.AddProductDTO
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<h2>Product Management</h2>
+
+<!-- Add Product Button (To trigger the modal) -->
+<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
+    Add Product
+</button>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+                    <div class="form-group text-center mb-2 position-relative">
+                        @if (Model == null)
+                        {
+                            <div class="product-image-container">
+                                <img src="~/images/default-profile.png" alt="Product Picture" class="product-picture" id="productImage" />
+                                <span id="addImageText" class="add-image-text w-100 ">Add Image</span>
+                            </div>
+                            <input type="file" name="productImage" id="fileInput" class="file-input border" accept="image/*" />
+                        }
+                        else
+                        {
+                            <div class="product-image-container">
+                                <img src="@Model.ImageUrl" alt="Product Picture" class="product-picture" id="productImage" />
+                            </div>
+                            <input type="file" name="productImage" id="fileInput" class="file-input" accept="image/*" />
+                        }
+                        <span class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="ProductName">Product Name</label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="CategoryId">Category</label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryList">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="Price">Price</label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="StockQuantity">Stock Quantity</label>
+                        <input asp-for="StockQuantity" class="form-control" />
+                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-image-container {
+        position: relative;
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1rem;
+    }
+
+    .product-picture {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        transition: border-color 0.3s ease;
+    }
+
+        .product-picture:hover {
+            border-color: #007bff;
+        }
+
+    .file-input {
+        display: none;
+    }
+
+    .add-image-text {
+        position: absolute;
+        top: 85%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #007bff;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-align: center;
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    // Open file input when profile picture is clicked
+    document.getElementById('productImage').addEventListener('click', function () {
+        document.getElementById('fileInput').click();
+    });
+
+    // Display selected image in the circular profile picture
+    document.getElementById('fileInput').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('productImage').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
