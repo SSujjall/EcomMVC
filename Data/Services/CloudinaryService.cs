@@ -1,49 +1,47 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using EcomSiteMVC.Interfaces.IServices;
+using EcomSiteMVC.Models.Enums;
 
 namespace EcomSiteMVC.Data.Services
 {
     public class CloudinaryService : ICloudinaryService
     {
         private readonly Cloudinary _cloudinary;
+        private string folder = string.Empty;
 
         public CloudinaryService(Cloudinary cloudinary)
         {
             _cloudinary = cloudinary;
         }
-        public async Task<string> UploadProfilePictureAsync(IFormFile file)
+
+        public async Task<string> UploadImageAsync(IFormFile file, FolderName folderName)
         {
             if (file.Length > 0)
             {
-                using var stream = file.OpenReadStream();
-                var uploadParams = new ImageUploadParams()
-                {
-                    File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Width(500).Height(500).Crop("fill"),
-                    Folder = "ProfilePictures" // Folder to store images in Cloudinary
-                };
+                string folder;
+                Transformation transformation = null;
 
-                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-                if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                switch (folderName)
                 {
-                    return uploadResult.SecureUrl.ToString();
+                    case FolderName.ProfilePictures:
+                        folder = "ProfilePictures";
+                        transformation = new Transformation().Width(500).Height(500).Crop("fill");
+                        break;
+                    case FolderName.Ecom:
+                        folder = "Ecom";
+                        break;
+                    default:
+                        folder = "Ecom";
+                        break;
                 }
-            }
 
-            return null;
-        }
-
-        public async Task<string> UploadImageAsync(IFormFile file)
-        {
-            if (file.Length > 0)
-            {
                 using var stream = file.OpenReadStream();
                 var uploadParam = new ImageUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Folder = "Ecom"
+                    Folder = folder,
+                    Transformation = transformation
                 };
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParam);

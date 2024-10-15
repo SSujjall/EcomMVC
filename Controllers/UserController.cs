@@ -1,6 +1,7 @@
 ﻿using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Migrations;
 using EcomSiteMVC.Models.DTOs;
+using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,12 +38,12 @@ namespace EcomSiteMVC.Controllers
             if (profileImage != null && profileImage.Length > 0)
             {
                 // If there's a new image, upload it
-                var imageUrl = await _cloudinaryService.UploadProfilePictureAsync(profileImage);
+                var imageUrl = await _cloudinaryService.UploadImageAsync(profileImage, FolderName.ProfilePictures);
 
                 if (imageUrl != null)
                 {
                     // If there's an existing image, delete it
-                    if (!string.IsNullOrEmpty(existingProfile.ProfileImage))
+                    if (!string.IsNullOrEmpty(existingProfile?.ProfileImage))
                     {
                         // Extract public ID from the existing image URL
                         var existingPublicId = existingProfile.ProfileImage.Split('/').Last().Split('.').First();
@@ -55,7 +56,7 @@ namespace EcomSiteMVC.Controllers
             else
             {
                 // If there is no new image, retain the existing image
-                model.ProfileImage = existingProfile.ProfileImage;
+                model.ProfileImage = existingProfile?.ProfileImage;
             }
 
             var profileUpdate = await _userService.CreateUserProfileAsync(model, userId);

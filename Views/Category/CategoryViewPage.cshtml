@@ -1,0 +1,77 @@
+﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Category>;
+
+<h2>Category Management</h2>
+
+<!-- Add Category Button (To trigger the modal) -->
+<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+    Add Category
+</button>
+
+<!-- Add Category Modal-->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="AddCategory">
+                    <div class="form-group mb-3">
+                        <input placeholder="Category Name" type="text" name="CategoryName" class="form-control" required/>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <input placeholder="Description" type="text" name="Description" class="form-control" required />
+                    </div>
+
+                    <button type="submit" class="submit-button btn btn-primary w-100 mt-3">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Table to display categories -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            int index = 1; // For displaying row number
+            foreach (var category in Model)
+            {
+                <tr>
+                    <th scope="row">@index</th>
+                    <td>@category.CategoryName</td>
+                    <td>@category.Description</td>
+                    <td>
+                        <!-- Add action buttons for editing and deleting -->
+                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@category.CategoryId">
+                            Edit
+                        </button>
+                        <form method="post" action="DeleteCategory" class="d-inline">
+                            <input type="hidden" name="CategoryId" value="@category.CategoryId" />
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                index++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No categories available</td>
+            </tr>
+        }
+    </tbody>
+</table>

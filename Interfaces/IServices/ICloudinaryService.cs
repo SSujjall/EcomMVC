@@ -1,9 +1,10 @@
-﻿namespace EcomSiteMVC.Interfaces.IServices
+﻿using EcomSiteMVC.Models.Enums;
+
+namespace EcomSiteMVC.Interfaces.IServices
 {
     public interface ICloudinaryService
     {
-        Task<string> UploadProfilePictureAsync(IFormFile file);
-        Task<string> UploadImageAsync(IFormFile file);
+        Task<string> UploadImageAsync(IFormFile file, FolderName folderName);
         public Task DeleteImageAsync(string publicId);
     }
 }

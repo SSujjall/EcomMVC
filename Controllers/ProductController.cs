@@ -1,6 +1,7 @@
 ﻿using EcomSiteMVC.Data.Services;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
+using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -38,7 +39,9 @@ namespace EcomSiteMVC.Controllers
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-            return View();
+
+            var products = await _productService.GetAllProduct();
+            return View(products);
         }
 
         [HttpPost]
@@ -48,7 +51,7 @@ namespace EcomSiteMVC.Controllers
 
             if (productImage != null && productImage.Length > 0)
             {
-                var imageUrl = await _cloudinaryService.UploadImageAsync(productImage);
+                var imageUrl = await _cloudinaryService.UploadImageAsync(productImage, FolderName.Ecom);
                 if (imageUrl != null)
                 {
                     model.ImageUrl = imageUrl;
@@ -62,14 +65,16 @@ namespace EcomSiteMVC.Controllers
                 {
                     TempData["ToastMessage"] = "Product added successfully!";
                     TempData["ToastType"] = "success";
-                    return RedirectToAction("AddProductView");
+                    return RedirectToAction("ProductView");
                 }
             }
 
             // If there is an error, reload categories and return to view
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-            return View(model);
+            TempData["ToastMessage"] = "Failed to add product! Fill all the fields";
+            TempData["ToastType"] = "error";
+            return RedirectToAction("ProductView", model);
         }
 
         [Authorize(Roles = "Admin")]

@@ -1,5 +1,6 @@
 ﻿using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Interfaces.IServices;
+using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Entities;
 
 namespace EcomSiteMVC.Data.Services
@@ -13,11 +14,17 @@ namespace EcomSiteMVC.Data.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<bool> AddCategory(Category category)
+        public async Task<bool> AddCategory(AddCategoryDTO categoryDto)
         {
-            if (category != null)
+            var categoryModel = new Category
             {
-                await _categoryRepository.Add(category);
+                CategoryName = categoryDto.CategoryName,
+                Description = categoryDto.Description
+            };
+
+            if (categoryDto != null)
+            {
+                await _categoryRepository.Add(categoryModel);
                 return true;
             }
             return false;
