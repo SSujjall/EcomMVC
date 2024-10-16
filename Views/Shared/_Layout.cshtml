@@ -15,6 +15,11 @@
     <link rel="stylesheet" href="~/EcomSiteMVC.styles.css" asp-append-version="true" />
 
     <style>
+        /* Dropdown on hover */
+        .navbar .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
         .dropdown-menu {
             width: auto;
             min-width: unset;
@@ -47,9 +52,17 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Product" asp-action="ProductView">Products</a>
+
+                                <!-- Product Dropdown -->
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Products
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="productsDropdown">
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="ProductView">Add Product</a></li>
+                                    </ul>
                                 </li>
+
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
                                 </li>

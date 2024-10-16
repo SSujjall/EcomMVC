@@ -12,7 +12,7 @@ namespace EcomSiteMVC.Controllers
     {
         private readonly IUserService _userService;
         private readonly ICloudinaryService _cloudinaryService;
-        private readonly string profilePictureFolderName = "ProfilePictures";
+        private readonly string profilePictureFolderName = FolderName.ProfilePictures.ToString();
 
         public UserController(IUserService userService, ICloudinaryService cloudinaryService)
         {

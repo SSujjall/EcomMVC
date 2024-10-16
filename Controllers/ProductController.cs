@@ -72,6 +72,7 @@ namespace EcomSiteMVC.Controllers
             // If there is an error, reload categories and return to view
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
+
             TempData["ToastMessage"] = "Failed to add product! Fill all the fields";
             TempData["ToastType"] = "error";
             return RedirectToAction("ProductView", model);
