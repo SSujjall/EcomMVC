@@ -24,6 +24,9 @@ namespace EcomSiteMVC.Controllers
 
         public async Task<IActionResult> AllProductView()
         {
+            var categories = await _categoryService.GetAllCategories();
+            ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
+
             var products = await _productService.GetAllProduct();
             return View(products);
         }
@@ -35,20 +38,17 @@ namespace EcomSiteMVC.Controllers
 
         //Admin Methods
         [Authorize(Roles = "Superadmin,Admin")]
-        public async Task<IActionResult> ProductView()
+        public async Task<IActionResult> AddProductView()
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-
-            var products = await _productService.GetAllProduct();
-            return View(products);
+            return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "Superadmin,Admin")]
         public async Task<IActionResult> AddProduct(AddProductDTO model, IFormFile productImage)
         {
-
             if (productImage != null && productImage.Length > 0)
             {
                 var imageUrl = await _cloudinaryService.UploadImageAsync(productImage, FolderName.Ecom);
@@ -65,7 +65,7 @@ namespace EcomSiteMVC.Controllers
                 {
                     TempData["ToastMessage"] = "Product added successfully!";
                     TempData["ToastType"] = "success";
-                    return RedirectToAction("ProductView");
+                    return RedirectToAction("AddProductView");
                 }
             }
 
@@ -75,16 +75,36 @@ namespace EcomSiteMVC.Controllers
 
             TempData["ToastMessage"] = "Failed to add product! Fill all the fields";
             TempData["ToastType"] = "error";
-            return RedirectToAction("ProductView", model);
+            return RedirectToAction("AddProductView", model);
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult DeleteProduct(int id)
+        [Authorize(Roles = "Superadmin,Admin")]
+        public async Task<IActionResult> DeleteProduct(int id)
         {
-            return View();
+            var result = await _productService.DeleteProduct(id);
+
+            if (result)
+            {
+                TempData["ToastMessage"] = "Product deleted successfully!";
+                TempData["ToastType"] = "success";
+                return RedirectToAction("AllProductView");
+            }
+
+            TempData["ToastMessage"] = "Failed to delete product!";
+            TempData["ToastType"] = "error";
+            return RedirectToAction("AllProductView");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Superadmin,Admin")]
+        public async Task<IActionResult> EditProductPage(int id)
+        {
+            var product = await _productService.GetProductById(id);
+
+            return View("AddProductView", product);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Superadmin,Admin")]
         public IActionResult UpdateProduct(UpdateProductDTO model)
         {
             return View();

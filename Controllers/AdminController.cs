@@ -45,6 +45,5 @@ namespace EcomSiteMVC.Controllers
             TempData["ToastType"] = "error";
             return RedirectToAction("AddAdminView");
         }
-
     }
 }

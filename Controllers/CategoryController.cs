@@ -14,6 +14,7 @@ namespace EcomSiteMVC.Controllers
             _categoryService = categoryService;
         }
 
+        [Authorize(Roles = "Superadmin,admin")]
         public async Task<IActionResult> CategoryViewPage()
         {
             var categoryList = await _categoryService.GetAllCategories();

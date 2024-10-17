@@ -40,7 +40,7 @@ namespace EcomSiteMVC.Data.Services
             return false;
         }
 
-        public async Task<bool> DeleteProduct(string id)
+        public async Task<bool> DeleteProduct(int id)
         {
             var product = await _productRepository.GetById(id);
             if (product != null)
@@ -56,7 +56,7 @@ namespace EcomSiteMVC.Data.Services
             return await _productRepository.GetAllAsync();
         }
 
-        public async Task<Product> GetProductById(string id)
+        public async Task<Product> GetProductById(int id)
         {
             return await _productRepository.GetById(id);
         }

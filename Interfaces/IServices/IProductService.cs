@@ -7,8 +7,8 @@ namespace EcomSiteMVC.Interfaces.IServices
     {
         public Task<bool> AddProduct(AddProductDTO model);
         public Task<bool> UpdateProduct(UpdateProductDTO model);
-        public Task<bool> DeleteProduct(string id);
-        public Task<Product> GetProductById(string id);
+        public Task<bool> DeleteProduct(int id);
+        public Task<Product> GetProductById(int id);
         public Task<IEnumerable<Product>> GetAllProduct();
     }
 }

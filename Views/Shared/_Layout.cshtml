@@ -16,13 +16,17 @@
 
     <style>
         /* Dropdown on hover */
-        .navbar .dropdown:hover .dropdown-menu {
+        /* .navbar .dropdown:hover .dropdown-menu {
             display: block;
-        }
+        } */
 
         .dropdown-menu {
             width: auto;
             min-width: unset;
+        }
+
+        .body.container {
+            max-width: 95%; /* Increase the max-width */
         }
     </style>
 </head>
@@ -59,7 +63,8 @@
                                         Products
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="productsDropdown">
-                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="ProductView">Add Product</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
                                     </ul>
                                 </li>
 
@@ -102,7 +107,7 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="body container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

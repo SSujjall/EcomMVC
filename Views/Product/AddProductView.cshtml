@@ -1,10 +1,48 @@
-﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Product>
-
-@{
+﻿@{
     ViewData["Title"] = "Add Product";
 }
 
-<h2>Product Management</h2>
+<style>
+    .product-image-container {
+        position: relative;
+        display: inline-block;
+        width: 150px;
+        height: 150px;
+        margin-bottom: 1rem;
+    }
+
+    .product-picture {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        transition: border-color 0.3s ease;
+    }
+
+        .product-picture:hover {
+            border-color: #007bff;
+        }
+
+    .file-input {
+        display: none;
+    }
+
+    .add-image-text {
+        position: absolute;
+        top: 85%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #007bff;
+        font-size: 0.8rem;
+        font-weight: bold;
+        text-align: center;
+        pointer-events: none;
+    }
+</style>
+
+<h2>Add Product</h2>
 
 <!-- Add Product Button (To trigger the modal) -->
 <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
@@ -58,83 +96,6 @@
         </div>
     </div>
 </div>
-
-
-<!-- Listing Products -->
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Stock Quantity</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(product.ImageUrl))
-                    {
-                        <img src="@product.ImageUrl" alt="@product.ProductName" style="width: 100px; height: 100px;" />
-                    }
-                    else
-                    {
-                        <img src="~/images/default-profile.png" alt="Default Image" style="width: 100px; height: 100px;" />
-                    }
-                </td>
-                <td>@product.ProductName</td>
-                <td>@product.Category?.CategoryName</td> <!-- Assuming Category has CategoryName property -->
-                <td>@product.Description</td>
-                <td>@product.Price</td>
-                <td>@product.StockQuantity</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<style>
-    .product-image-container {
-        position: relative;
-        display: inline-block;
-        width: 150px;
-        height: 150px;
-        margin-bottom: 1rem;
-    }
-
-    .product-picture {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
-        object-fit: cover;
-        cursor: pointer;
-        border: 2px solid #ccc;
-        transition: border-color 0.3s ease;
-    }
-
-        .product-picture:hover {
-            border-color: #007bff;
-        }
-
-    .file-input {
-        display: none;
-    }
-
-    .add-image-text {
-        position: absolute;
-        top: 85%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: #007bff;
-        font-size: 0.8rem;
-        font-weight: bold;
-        text-align: center;
-        pointer-events: none;
-    }
-</style>
 
 <script>
     // Open file input when profile picture is clicked
