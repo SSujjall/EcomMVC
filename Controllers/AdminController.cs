@@ -10,10 +10,12 @@ namespace EcomSiteMVC.Controllers
     public class AdminController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly IAdminService _adminService;
 
-        public AdminController(IAuthService authService)
+        public AdminController(IAuthService authService, IAdminService adminService)
         {
             _authService = authService;
+            _adminService = adminService;
         }
 
         public IActionResult Index()
@@ -22,9 +24,10 @@ namespace EcomSiteMVC.Controllers
         }
 
         [HttpGet("{controller}/add-admin")]
-        public IActionResult AddAdminView()
+        public async Task<IActionResult> AddAdminView()
         {
-            return View();
+            var adminList = await _adminService.GetAdminUsers();
+            return View(adminList);
         }
 
         [Authorize(Roles = "Superadmin")] // Only superadmin can add new admins
