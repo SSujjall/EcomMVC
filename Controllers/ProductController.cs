@@ -22,7 +22,7 @@ namespace EcomSiteMVC.Controllers
             _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<IActionResult> AllProductView()
+        public async Task<IActionResult> CustomerProductView()
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
@@ -37,6 +37,16 @@ namespace EcomSiteMVC.Controllers
         }
 
         //Admin Methods
+        [Authorize(Roles = "Superadmin,Admin")]
+        public async Task<IActionResult> AllProductView()
+        {
+            var categories = await _categoryService.GetAllCategories();
+            ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
+
+            var products = await _productService.GetAllProduct();
+            return View(products);
+        }
+
         [Authorize(Roles = "Superadmin,Admin")]
         public async Task<IActionResult> AddProductView()
         {

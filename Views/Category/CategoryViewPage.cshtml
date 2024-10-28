@@ -1,5 +1,26 @@
 ﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Category>;
 
+<style>
+    .category-form-container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+        .form-group input {
+            text-align: center;
+            padding-top: 0.8rem;
+            padding-bottom: 0.8rem;
+        }
+
+    .submit-button {
+        height: 3rem;
+    }
+</style>
+
 <h2>Category Management</h2>
 
 <!-- Add Category Button (To trigger the modal) -->
@@ -16,9 +37,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="AddCategory">
+                <form method="post" action="AddCategory" class="category-form-container">
                     <div class="form-group mb-3">
-                        <input placeholder="Category Name" type="text" name="CategoryName" class="form-control" required/>
+                        <input placeholder="Category Name" type="text" name="CategoryName" class="form-control" required />
                     </div>
 
                     <div class="form-group mb-3">
@@ -34,7 +55,7 @@
 
 
 <!-- Table to display categories -->
-<table class="table table-striped">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th scope="col">S.N.</th>
@@ -53,15 +74,14 @@
                     <th scope="row">@index</th>
                     <td>@category.CategoryName</td>
                     <td>@category.Description</td>
-                    <td>
+                    <td class="d-flex flex-column">
                         <!-- Add action buttons for editing and deleting -->
-                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@category.CategoryId">
+                        <a asp-action="EditProductPage" asp-route-id="@category.CategoryId" class="btn btn-outline-success btn-sm mb-2" data-bs-toggle="modal">
                             Edit
-                        </button>
-                        <form method="post" action="DeleteCategory" class="d-inline">
-                            <input type="hidden" name="CategoryId" value="@category.CategoryId" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
+                        </a>
+                        <a asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger btn-sm">
+                            Delete
+                        </a>
                     </td>
                 </tr>
                 index++;

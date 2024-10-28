@@ -51,15 +51,16 @@
                 <th>Category</th>
                 <th>Description</th>
                 <th>Price</th>
-                <th>Stock (qty)</th>
+                <th>Stock(qty)</th>
                 <th>Actions</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var product in Model)
             {
                 <tr>
-                    <td>
+                    <td class="text-center">
                         @if (!string.IsNullOrEmpty(product.ImageUrl))
                         {
                             <img src="@product.ImageUrl" alt="@product.ProductName" />
