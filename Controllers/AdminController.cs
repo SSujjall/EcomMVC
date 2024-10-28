@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Interfaces.IServices;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
@@ -11,11 +12,13 @@ namespace EcomSiteMVC.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IAdminService _adminService;
+        private readonly INotyfService _notyf;
 
-        public AdminController(IAuthService authService, IAdminService adminService)
+        public AdminController(IAuthService authService, IAdminService adminService, INotyfService notyf)
         {
             _authService = authService;
             _adminService = adminService;
+            _notyf = notyf;
         }
 
         public IActionResult Index()
@@ -39,13 +42,12 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.Register(model, HttpContext.User);
                 if (user != null)
                 {
-                    TempData["ToastMessage"] = "Added New Admin!";
-                    TempData["ToastType"] = "success";
+                    _notyf.Success("Added New Admin!", 5);
                     return RedirectToAction("AddAdminView");
                 }
             }
-            TempData["ToastMessage"] = "Failed to add New Admin!";
-            TempData["ToastType"] = "error";
+
+            _notyf.Error("Failed to add New Admin!", 5);
             return RedirectToAction("AddAdminView");
         }
     }

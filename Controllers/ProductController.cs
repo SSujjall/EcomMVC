@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Data.Services;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using EcomSiteMVC.Data.Services;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Enums;
@@ -14,12 +15,14 @@ namespace EcomSiteMVC.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         private readonly ICloudinaryService _cloudinaryService;
+        private readonly INotyfService _notyf;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, ICloudinaryService cloudinaryService)
+        public ProductController(IProductService productService, ICategoryService categoryService, ICloudinaryService cloudinaryService, INotyfService notyf)
         {
             _productService = productService;
             _categoryService = categoryService;
             _cloudinaryService = cloudinaryService;
+            _notyf = notyf;
         }
 
         public async Task<IActionResult> CustomerProductView()
@@ -73,8 +76,7 @@ namespace EcomSiteMVC.Controllers
                 var result = await _productService.AddProduct(model);
                 if (result)
                 {
-                    TempData["ToastMessage"] = "Product added successfully!";
-                    TempData["ToastType"] = "success";
+                    _notyf.Success("Product added successfully!", 5);
                     return RedirectToAction("AddProductView");
                 }
             }
@@ -83,8 +85,7 @@ namespace EcomSiteMVC.Controllers
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
 
-            TempData["ToastMessage"] = "Failed to add product! Fill all the fields";
-            TempData["ToastType"] = "error";
+            _notyf.Error("Failed to add product! Fill all the fields", 5);
             return RedirectToAction("AddProductView", model);
         }
 
@@ -95,13 +96,11 @@ namespace EcomSiteMVC.Controllers
 
             if (result)
             {
-                TempData["ToastMessage"] = "Product deleted successfully!";
-                TempData["ToastType"] = "success";
+                _notyf.Success("Product deleted successfully!", 5);
                 return RedirectToAction("AllProductView");
             }
 
-            TempData["ToastMessage"] = "Failed to delete product!";
-            TempData["ToastType"] = "error";
+            _notyf.Error("Failed to delete product!", 5);
             return RedirectToAction("AllProductView");
         }
 

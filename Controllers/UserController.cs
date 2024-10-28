@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Interfaces.IServices;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Migrations;
 using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Enums;
@@ -13,11 +14,13 @@ namespace EcomSiteMVC.Controllers
         private readonly IUserService _userService;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly string profilePictureFolderName = FolderName.ProfilePictures.ToString();
+        private readonly INotyfService _notyf;
 
-        public UserController(IUserService userService, ICloudinaryService cloudinaryService)
+        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf)
         {
             _userService = userService;
             _cloudinaryService = cloudinaryService;
+            _notyf = notyf;
         }
 
         public async Task<IActionResult> ProfileView()
@@ -63,13 +66,11 @@ namespace EcomSiteMVC.Controllers
 
             if (profileUpdate)
             {
-                TempData["ToastMessage"] = "Profile updated successfully!";
-                TempData["ToastType"] = "success";
+                _notyf.Success("Profile updated successfully!", 5);
             }
             else
             {
-                TempData["ToastMessage"] = "Profile update failed.";
-                TempData["ToastType"] = "error";
+                _notyf.Error("Profile update failed.", 5);
             }
             return RedirectToAction("ProfileView");
         }

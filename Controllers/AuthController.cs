@@ -34,8 +34,7 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.Register(model, HttpContext.User);
                 if (user != null)
                 {
-                    TempData["ToastMessage"] = "Register successful!";
-                    TempData["ToastType"] = "success";
+                    _notyf.Success("Register Successful", 5);
                     return RedirectToAction("LoginView");
                 }
             }
