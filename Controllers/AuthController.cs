@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using EcomSiteMVC.Models.Enums;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 
 namespace EcomSiteMVC.Controllers
@@ -12,10 +13,12 @@ namespace EcomSiteMVC.Controllers
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly INotyfService _notyf;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, INotyfService notyf)
         {
             _authService = authService;
+            _notyf = notyf;
         }
 
         public IActionResult RegisterView()
@@ -72,8 +75,7 @@ namespace EcomSiteMVC.Controllers
                     // Sign in the user
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                    TempData["ToastMessage"] = "Login successful!";
-                    TempData["ToastType"] = "success";
+                    _notyf.Success("Login Successful", 5);
 
                     if (user.Role == Role.Superadmin || user.Role == Role.Admin)
                     {
@@ -82,17 +84,14 @@ namespace EcomSiteMVC.Controllers
                     return RedirectToAction("ProfileView", "User");
                 }
             }
-
-            TempData["ToastMessage"] = "Invalid username or password.";
-            TempData["ToastType"] = "error";
+            _notyf.Error("Invalid username or password.");
             return RedirectToAction("LoginView");
         }
 
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["ToastMessage"] = "Logout successful!";
-            TempData["ToastType"] = "success";
+            _notyf.Success("Logout successful", 5);
             return RedirectToAction("LoginView");
         }
 

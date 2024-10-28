@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification;
 using CloudinaryDotNet;
 using EcomSiteMVC.Data;
 using EcomSiteMVC.Data.Repositories;
@@ -30,6 +31,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Auth/Logout";
         options.AccessDeniedPath = "/Auth/AccessDenied";
     });
+
+// notification services
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 10;
+    config.IsDismissable = true;
+    config.Position = NotyfPosition.BottomRight;
+});
 
 builder.Services.AddAuthorization();
 
