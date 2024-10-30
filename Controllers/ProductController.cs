@@ -34,9 +34,16 @@ namespace EcomSiteMVC.Controllers
             return View(products);
         }
 
-        public IActionResult GetProductById(int id)
+        public async Task<IActionResult> GetProductById(int id)
         {
-            return View();
+            var product = await _productService.GetProductById(id);
+
+            if(product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
 
         //Admin Methods

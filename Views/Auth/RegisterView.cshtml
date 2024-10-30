@@ -20,9 +20,40 @@
             padding-bottom: 0.8rem;
         }
 
-    .register-button {
+    .register-button, .login-button {
         height: 3rem;
+        align-content: center;
+        font-weight: 700;
     }
+
+        .login-button:hover {
+            color: #0d6efd;
+            transition: 0.1s;
+            background: none;
+            border-color: #0d6efd;
+        }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .divider::before {
+            margin-right: 0.5em;
+        }
+
+        .divider::after {
+            margin-left: 0.5em;
+        }
 </style>
 
 <div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow-sm">
@@ -44,9 +75,11 @@
         </div>
 
         <button type="submit" class="register-button btn btn-primary w-100 mt-3">Register</button>
-    </form>
 
-    <div class="mt-2">
-        <a asp-controller="Auth" asp-action="LoginView">Already have an account? Login here.</a>
-    </div>
+        <div class="divider">
+            <span>or</span>
+        </div>
+
+        <a asp-controller="Auth" asp-action="LoginView" class="login-button btn btn-outline-dark w-100">Login</a>
+    </form>
 </div>
