@@ -17,8 +17,8 @@ namespace EcomSiteMVC.Models.Entities
         public bool IsActive { get; set; }
 
         //Navigation Property
-        public UserProfile UserProfile { get; set; }
-        public ICollection<Order> Orders { get; set; }
-        public Cart Cart { get; set; }
+        public virtual UserProfile UserProfile { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
+        public virtual Cart Cart { get; set; }
     }
 }

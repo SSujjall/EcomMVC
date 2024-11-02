@@ -18,7 +18,7 @@ namespace EcomSiteMVC.Models.Entities
         public string ShippingAddress { get; set; }
 
         // Navigation properties
-        public User Customer { get; set; }
-        public ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual User Customer { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

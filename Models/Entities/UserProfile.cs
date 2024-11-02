@@ -19,6 +19,6 @@ namespace EcomSiteMVC.Models.Entities
         public string Gender { get; set; }
 
         // Navigation property
-        public User User { get; set; }
+        public virtual User User { get; set; }
     }
 }

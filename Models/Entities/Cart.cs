@@ -14,7 +14,7 @@ namespace EcomSiteMVC.Models.Entities
         public int TotalAmount { get; set; }
 
         // Navigation properties
-        public User Customer { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        public virtual User Customer { get; set; }
+        public virtual ICollection<CartItem> CartItems { get; set; }
     }
 }

@@ -54,10 +54,15 @@ namespace EcomSiteMVC.Data
                 Role = Role.Superadmin, // Adjust based on your enum
                 IsActive = true,
                 CreatedDate = DateOnly.FromDateTime(DateTime.Now)
-            }
-    );
+            });
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+            base.OnConfiguring(optionsBuilder);
         }
 
         public DbSet<User> Users { get; set; }

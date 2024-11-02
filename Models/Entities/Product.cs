@@ -20,8 +20,8 @@ namespace EcomSiteMVC.Models.Entities
         public DateOnly LastUpdatedDate { get; set; }
 
         // Navigation properties
-        public Category Category { get; set; }
-        public ICollection<OrderDetail> OrderDetails { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        public virtual Category Category { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<CartItem> CartItems { get; set; }
     }
 }
