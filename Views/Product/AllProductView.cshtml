@@ -1,6 +1,9 @@
 ﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Products";
+}
 
-    <style>
+<style>
     /* Responsive table */
     .table-responsive {
         width: 100%;
@@ -14,29 +17,29 @@
         border-collapse: collapse;
     }
 
-    table.custom-table th, table.custom-table td {
-        padding: 12px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
+        table.custom-table th, table.custom-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
 
-    table.custom-table th {
-        background-color: #f2f2f2;
-    }
+        table.custom-table th {
+            background-color: #f2f2f2;
+        }
 
-    /* Make the image smaller */
-    table.custom-table img {
-        width: 80px;  /* Adjusted image size */
-        height: 80px;
-        object-fit: cover;
-    }
+        /* Make the image smaller */
+        table.custom-table img {
+            width: 80px; /* Adjusted image size */
+            height: 80px;
+            object-fit: cover;
+        }
 
-    /* Add some style to action buttons */
-    table.custom-table .btn {
-        padding: 8px;
-        border-radius: 4px;
-        font-size: 14px;
-    }
+        /* Add some style to action buttons */
+        table.custom-table .btn {
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 </style>
 
 <h2>All Products</h2>
