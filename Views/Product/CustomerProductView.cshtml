@@ -37,7 +37,10 @@
                         <p class="card-text">@product.Description</p>
                         <p class="card-text fw-bold">Price: $@product.Price</p>
                         <div class="mt-auto">
-                            <button class="btn btn-primary w-100">Add to Cart</button>
+                            <form asp-action="AddToCart" asp-controller="Cart" method="post">
+                                <input type="hidden" name="ProductId" value="@product.ProductId" />
+                                <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                            </form>
                         </div>
                     </div>
                 </div>

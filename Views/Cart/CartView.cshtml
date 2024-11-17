@@ -1,29 +1,67 @@
-﻿@model IEnumerable<EcomSiteMVC.Models.Entities.CartItem>;
+﻿@model EcomSiteMVC.Models.Entities.Cart
 
-@{
-    ViewData["Title"] = "Cart";
-}
+<style>
+    .button {
+        border: none;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        vertical-align: middle;
+        color: #828282;
+        transition: 0.3s;
+    }
 
-<h1>Cart</h1>
+        .button:hover {
+            color: black;
+            transition: 0.3s;
+        }
+</style>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Product Name</th>
-            <th>Price</th>
-            <th>Quantity</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            @foreach (var item in Model)
+<h2>Your Cart</h2>
+@if (Model != null && Model.CartItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
             {
-                <td>@item.Product.ImageUrl</td>
-                <td>img</td>
-                <td>img</td>
-                <td>img</td>
+                <tr>
+                    <td>@item.Product.ProductName</td>
+                    <td>
+                        <button class="button">
+                            <span class="material-symbols-outlined">
+                                add_circle
+                            </span>
+                        </button>
+                        @item.Quantity
+                        <button class="button">
+                            <span class="material-symbols-outlined">
+                                do_not_disturb_on
+                            </span>
+                        </button>
+                    </td>
+                    <td>$@item.UnitPrice</td>
+                    <td>$@(item.Quantity * item.UnitPrice)</td>
+                    <td>
+                        <button class="btn btn-danger">Remove</button>
+                        <button class="btn btn-success">Update</button>
+                    </td>
+                </tr>
             }
-        </tr>
-    </tbody>
-</table>
+        </tbody>
+    </table>
+    <p>Total Amount: $@Model.TotalAmount</p>
+    <button class="btn btn-primary">Proceed to Checkout</button>
+}
+else
+{
+    <p>Your cart is empty.</p>
+}

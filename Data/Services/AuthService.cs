@@ -39,12 +39,16 @@ namespace EcomSiteMVC.Data.Services
         {
             Role assignedRole = Role.User;
 
+            // Setting role for the new user
             if (currentUser.Identity.IsAuthenticated)
             {
+                //Check if the current user is superadmin or not.
                 var roleClaim = currentUser.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
 
+                //If the current user is not superadmin, then set the registered user role to user.
                 if (roleClaim != null && Enum.TryParse(roleClaim.Value, out Role loggedInUserRole))
                 {
+                    //If the current user is superadmin, then set the new registered user role to admin.
                     if (loggedInUserRole == Role.Superadmin)
                     {
                         assignedRole = Role.Admin;
@@ -52,17 +56,23 @@ namespace EcomSiteMVC.Data.Services
                 }
             }
 
+            var existingUsername = await _authRepository.GetUserByUsername(model.Username);
 
-            var user = new User
+            if (existingUsername == null)
             {
-                Username = model.Username.ToLower(),
-                Email = model.Email.ToLower(),
-                PasswordHash = HashPassword(model.PasswordHash),
-                Role = assignedRole,
-                IsActive = true
-            };
+                var user = new User
+                {
+                    Username = model.Username.ToLower(),
+                    Email = model.Email.ToLower(),
+                    PasswordHash = HashPassword(model.PasswordHash),
+                    Role = assignedRole,
+                    IsActive = true
+                };
 
-            return await _authRepository.AddUser(user);
+                return await _authRepository.AddUser(user);
+            }
+
+            return null;
         }
 
         private string HashPassword(string password)
