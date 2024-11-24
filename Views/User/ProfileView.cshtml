@@ -93,18 +93,17 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Gender:</label><br />
-                    <input type="radio" asp-for="Gender" value="Male" id="Male" />
-                    <label for="Male">Male</label>
-                    <input type="radio" asp-for="Gender" value="Female" id="Female" class="ms-3" />
-                    <label for="Female">Female</label>
-                    <br />
+                    <select asp-for="Gender" class="form-select" id="Gender">
+                        <option value="">-- Select Gender --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
                     <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="submit-button btn btn-primary w-100 mt-3">Submit</button>
+        <button type="submit" class="submit-button btn btn-primary w-50 mt-3">Save</button>
     </form>
 </div>
 

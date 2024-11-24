@@ -48,7 +48,9 @@ namespace EcomSiteMVC.Data.Services
                 });
             }
 
-            cart.TotalAmount += product.Price * model.Quantity;
+            var allCartItems = await _cartItemRepository.FindAllByConditionAsync(ci => ci.CartId == cart.CartId);
+            cart.TotalAmount = allCartItems.Sum(item => item.Quantity * item.UnitPrice);
+
             await _cartRepository.Update(cart);
 
             return true;

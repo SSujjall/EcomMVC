@@ -80,10 +80,34 @@
                     <td>@product.StockQuantity</td>
                     <td>
                         <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success w-100 mb-2">Edit</a>
-                        <a asp-action="DeleteProduct" asp-route-id="@product.ProductId" class="btn btn-danger w-100">Delete</a>
+                        <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-product-id="@product.ProductId"
+                                data-product-name="@product.ProductName">
+                            Delete
+                        </button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@*Importing Delete confirmation modal*@
+@await Html.PartialAsync("_DeleteModal")
+
+<script>
+    // Attach event listener for delete buttons
+    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const productId = this.getAttribute('data-product-id');
+            const productName = this.getAttribute('data-product-name');
+
+            // Set the product name in the modal
+            document.getElementById('productToDelete').textContent = productName;
+
+            // Update the confirmation button link
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            confirmDeleteBtn.href = `/Product/DeleteProduct?id=${productId}`;
+        });
+    });
+</script>

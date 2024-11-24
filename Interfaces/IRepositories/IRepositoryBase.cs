@@ -9,6 +9,7 @@ namespace EcomSiteMVC.Interfaces.IRepositories
         Task Delete(T entity);
         Task<T>? GetById(object id);
         Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression);
+        public Task<IEnumerable<T>> FindAllByConditionAsync(Expression<Func<T, bool>> expression);
         public Task<IEnumerable<T>> GetAllAsync();
     }
 }

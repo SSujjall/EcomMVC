@@ -51,5 +51,10 @@ namespace EcomSiteMVC.Data.Repositories
             var result = await _dbContext.Set<T>().ToListAsync();
             return result;
         }
+
+        public async Task<IEnumerable<T>> FindAllByConditionAsync(Expression<Func<T, bool>> expression)
+        {
+            return await _dbContext.Set<T>().Where(expression).ToListAsync();
+        }
     }
 }
