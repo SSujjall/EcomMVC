@@ -30,7 +30,7 @@ namespace EcomSiteMVC.Controllers
 
             if (result == true)
             {
-                _notyf.Success("Category Added",5);
+                _notyf.Success("Category Added", 5);
                 return RedirectToAction("CategoryViewPage", result);
             }
 

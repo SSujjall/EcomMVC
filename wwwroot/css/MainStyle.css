@@ -1,0 +1,26 @@
+﻿/* Responsive table */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+    background-color: white;
+    border-radius: 0.4rem;
+    padding: 1rem;
+}
+
+table.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    table.custom-table th, table.custom-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    /* Add some style to action buttons */
+    table.custom-table .btn {
+        border-radius: 4px;
+        display: inline-flex;
+    }

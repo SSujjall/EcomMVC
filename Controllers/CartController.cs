@@ -30,7 +30,7 @@ namespace EcomSiteMVC.Controllers
 
             if (currentUserId == 0)
             {
-                _notyf.Error("Invalid user session.");
+                _notyf.Error("Login to add to cart.");
                 return RedirectToAction("LoginView", "Auth");
             }
 
