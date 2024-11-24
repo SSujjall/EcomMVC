@@ -8,8 +8,10 @@
     .table-responsive {
         width: 100%;
         overflow-x: auto;
-        margin-bottom: 20px;
         display: block;
+        background-color: white;
+        border-radius: 0.4rem;
+        padding: 1rem;
     }
 
     table.custom-table {
@@ -19,33 +21,33 @@
 
         table.custom-table th, table.custom-table td {
             padding: 12px;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
             text-align: left;
-        }
-
-        table.custom-table th {
-            background-color: #f2f2f2;
         }
 
         /* Make the image smaller */
         table.custom-table img {
-            width: 80px; /* Adjusted image size */
-            height: 80px;
+            width: 100%;
+            height: auto;
+            min-height: 60px;
+            min-width: 60px;
+            max-width: 100px;
+            max-height: 100px;
+            aspect-ratio: 1 / 1;
             object-fit: cover;
         }
 
         /* Add some style to action buttons */
         table.custom-table .btn {
-            padding: 8px;
             border-radius: 4px;
-            font-size: 14px;
+            display: inline-flex;
         }
 </style>
 
 <h2>All Products</h2>
 
 <!-- Listing Products -->
-<div class="table-responsive">
+<div class="table-responsive shadow">
     <table class="custom-table">
         <thead>
             <tr>
@@ -79,12 +81,20 @@
                     <td>@product.Price</td>
                     <td>@product.StockQuantity</td>
                     <td>
-                        <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success w-100 mb-2">Edit</a>
-                        <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                data-product-id="@product.ProductId"
-                                data-product-name="@product.ProductName">
-                            Delete
-                        </button>
+                        <div class="d-flex gap-2">
+                            <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success btn-sm">
+                                <span class="material-symbols-outlined">
+                                    edit_note
+                                </span>
+                            </a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    data-product-id="@product.ProductId"
+                                    data-product-name="@product.ProductName">
+                                <span class="material-symbols-outlined">
+                                    delete
+                                </span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EcomSiteMVC.Controllers
 {
+    [Authorize(Roles = "Superadmin,admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -17,14 +18,12 @@ namespace EcomSiteMVC.Controllers
             _notyf = notyf;
         }
 
-        [Authorize(Roles = "Superadmin,admin")]
         public async Task<IActionResult> CategoryViewPage()
         {
             var categoryList = await _categoryService.GetAllCategories();
             return View(categoryList);
         }
 
-        [Authorize(Roles = "Superadmin,admin")]
         public async Task<IActionResult> AddCategory(AddCategoryDTO model)
         {
             var result = await _categoryService.AddCategory(model);

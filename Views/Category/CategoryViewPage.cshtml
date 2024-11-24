@@ -19,9 +19,32 @@
             padding-bottom: 0.8rem;
         }
 
-    .submit-button {
-        height: 3rem;
+    /* Responsive table */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+        background-color: white;
+        border-radius: 0.4rem;
+        padding: 1rem;
     }
+
+    table.custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table.custom-table th, table.custom-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        /* Add some style to action buttons */
+        table.custom-table .btn {
+            border-radius: 4px;
+            display: inline-flex;
+        }
 </style>
 
 <h2>Category Management</h2>
@@ -58,43 +81,49 @@
 
 
 <!-- Table to display categories -->
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th scope="col">S.N.</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            int index = 1; // For displaying row number
-            foreach (var category in Model)
+<div class="table-responsive shadow">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th scope="col">S.N.</th>
+                <th scope="col">Category Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1; // For displaying row number
+                foreach (var category in Model)
+                {
+                    <tr>
+                        <th scope="row">@index</th>
+                        <td>@category.CategoryName</td>
+                        <td>@category.Description</td>
+                        <td>
+                            <!-- Add action buttons for editing and deleting -->
+                            <a asp-action="EditProductPage" asp-route-id="@category.CategoryId" class="btn btn-outline-success btn-sm" data-bs-toggle="modal">
+                                <span class="material-symbols-outlined">
+                                    edit_note
+                                </span>
+                            </a>
+                            <a asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger btn-sm">
+                                <span class="material-symbols-outlined">
+                                    delete
+                                </span>
+                            </a>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
             {
                 <tr>
-                    <th scope="row">@index</th>
-                    <td>@category.CategoryName</td>
-                    <td>@category.Description</td>
-                    <td class="d-flex flex-column">
-                        <!-- Add action buttons for editing and deleting -->
-                        <a asp-action="EditProductPage" asp-route-id="@category.CategoryId" class="btn btn-outline-success btn-sm mb-2" data-bs-toggle="modal">
-                            Edit
-                        </a>
-                        <a asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger btn-sm">
-                            Delete
-                        </a>
-                    </td>
+                    <td colspan="4" class="text-center">No categories available</td>
                 </tr>
-                index++;
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">No categories available</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

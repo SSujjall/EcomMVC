@@ -20,6 +20,33 @@
             padding-bottom: 0.8rem;
         }
 
+    /* Responsive table */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+        background-color: white;
+        border-radius: 0.4rem;
+        padding: 1rem;
+    }
+
+    table.custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        table.custom-table th, table.custom-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        /* Add some style to action buttons */
+        table.custom-table .btn {
+            border-radius: 4px;
+            display: inline-flex;
+        }
+
     .register-button {
         height: 3rem;
     }
@@ -63,42 +90,52 @@
 </div>
 
 <!-- Table to display admins -->
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">S.N.</th>
-            <th scope="col">Admin Name</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            int index = 1; // For displaying row number
-            foreach (var admin in Model)
+<div class="table-responsive shadow">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th scope="col">S.N.</th>
+                <th scope="col">Admin Name</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                int index = 1; // For displaying row number
+                foreach (var admin in Model)
+                {
+                    <tr>
+                        <th scope="row">@index</th>
+                        <td>@admin.Username</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@admin.UserId">
+                                    <span class="material-symbols-outlined">
+                                        edit_note
+                                    </span>
+                                </button>
+
+                                <form method="post" action="DeleteCategory">
+                                    <input type="hidden" name="CategoryId" value="@admin.UserId" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <span class="material-symbols-outlined">
+                                            delete
+                                        </span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    index++;
+                }
+            }
+            else
             {
                 <tr>
-                    <th scope="row">@index</th>
-                    <td>@admin.Username</td>
-                    <td>
-                        <!-- Add action buttons for editing and deleting -->
-                        <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@admin.UserId">
-                            Edit
-                        </button>
-                        <form method="post" action="DeleteCategory" class="d-inline">
-                            <input type="hidden" name="CategoryId" value="@admin.UserId" />
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
+                    <td colspan="4" class="text-center">No admin available except superadmin</td>
                 </tr>
-                index++;
             }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">No admin available except superadmin</td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
