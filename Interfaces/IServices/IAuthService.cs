@@ -7,6 +7,6 @@ namespace EcomSiteMVC.Interfaces.IServices
     public interface IAuthService
     {
         Task<User> Register(RegisterDTO model, ClaimsPrincipal currentUser);
-        Task<User?> Login(LoginDTO model);
+        Task<User?> CheckLogin(LoginDTO model);
     }
 }

@@ -1,9 +1,12 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EcomSiteMVC.Controllers
 {
@@ -24,6 +27,50 @@ namespace EcomSiteMVC.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("{controller}/login:port")]
+        public IActionResult AdminLoginView()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> AdminLogin(LoginDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _adminService.LoginAdminUser(model);
+
+                if (user != null)
+                {
+                    // Create the user claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim("UserId", user.UserId.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Make the login persistent
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Set the expiration time for the cookie
+                    };
+
+                    // Sign in the user
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    _notyf.Success("Login Successful", 5);
+                    return RedirectToAction("Index");
+                }
+            }
+            _notyf.Error("Invalid username or password for admin.");
+            return RedirectToAction("AdminLoginView");
         }
 
         [HttpGet("{controller}/add-admin")]

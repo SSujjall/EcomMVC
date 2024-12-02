@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Interfaces.IRepositories;
+﻿using EcomSiteMVC.Helpers;
+using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Entities;
@@ -18,7 +19,7 @@ namespace EcomSiteMVC.Data.Services
             _authRepository = authRepository;
         }
 
-        public async Task<User?> Login(LoginDTO model)
+        public async Task<User?> CheckLogin(LoginDTO model)
         {
             // Username checking
             var req = new LoginDTO
@@ -28,7 +29,17 @@ namespace EcomSiteMVC.Data.Services
             };
 
             var user = await _authRepository.GetUserByUsername(req.Username);
-            if (user != null && VerifyPassword(req.PasswordHash, user.PasswordHash))
+
+            // check the user's role before login.
+            var restrictedRoles = new HashSet<Role> { Role.Superadmin, Role.Admin };
+
+            // check if user is admin. If the user isa admin ,dont let them sign in.
+            // they have to use admin portal.
+            if (user != null && restrictedRoles.Contains(user.Role))
+            {
+                return null;
+            }
+            if (user != null && PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
             {
                 return user;
             }
@@ -64,7 +75,7 @@ namespace EcomSiteMVC.Data.Services
                 {
                     Username = model.Username.ToLower(),
                     Email = model.Email.ToLower(),
-                    PasswordHash = HashPassword(model.PasswordHash),
+                    PasswordHash = PasswordHelper.HashPassword(model.PasswordHash),
                     Role = assignedRole,
                     IsActive = true
                 };
@@ -73,16 +84,6 @@ namespace EcomSiteMVC.Data.Services
             }
 
             return null;
-        }
-
-        private string HashPassword(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
-
-        private bool VerifyPassword(string enteredPassword, string storedPasswordHash)
-        {
-            return BCrypt.Net.BCrypt.Verify(enteredPassword, storedPasswordHash);
         }
     }
 }

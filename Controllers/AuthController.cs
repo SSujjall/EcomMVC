@@ -52,7 +52,7 @@ namespace EcomSiteMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _authService.Login(model);
+                var user = await _authService.CheckLogin(model);
                 if (user != null)
                 {
                     // Create the user claims
@@ -63,7 +63,6 @@ namespace EcomSiteMVC.Controllers
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Role, user.Role.ToString())
                     };
-
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties
@@ -76,11 +75,6 @@ namespace EcomSiteMVC.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                     _notyf.Success("Login Successful", 5);
-
-                    if (user.Role == Role.Superadmin || user.Role == Role.Admin)
-                    {
-                        return RedirectToAction("Index", "Admin");
-                    }
                     return RedirectToAction("ProfileView", "User");
                 }
             }
@@ -88,12 +82,11 @@ namespace EcomSiteMVC.Controllers
             return RedirectToAction("LoginView");
         }
 
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Response.Cookies.Delete("User");
             _notyf.Success("Logout successful", 5);
             return RedirectToAction("LoginView");
         }
-
     }
 }
