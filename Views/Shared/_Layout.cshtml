@@ -2,6 +2,8 @@
     var isSuperAdmin = User.IsInRole("Superadmin");
     var isAdmin = User.IsInRole("Admin");
     var isAuthenticated = User.Identity.IsAuthenticated;
+    var currentAction = ViewContext.RouteData.Values["action"].ToString();
+    var currentController = ViewContext.RouteData.Values["controller"].ToString();
 }
 
 <!DOCTYPE html>
@@ -36,95 +38,112 @@
     </style>
 </head>
 <body style="background-color: #f3f3f3">
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 p-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EcomMVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <div>
-                        <ul class="navbar-nav flex-grow-1">
-                            @if (!isAdmin && !isSuperAdmin)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                </li>
+        @if (!(currentController == "Admin" && currentAction == "AdminLoginView"))
+        {
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 p-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EcomMVC</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <div>
+                            <ul class="navbar-nav flex-grow-1">
+                                @if (!isAdmin && !isSuperAdmin)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Product" asp-action="CustomerProductView">Products</a>
-                                </li>
-                            }
-                            @if (isAdmin || isSuperAdmin)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Product" asp-action="CustomerProductView">Products</a>
+                                    </li>
+                                }
+                                @if (isAdmin || isSuperAdmin)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
+                                    </li>
 
-                                <!-- Product Dropdown -->
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Products
+                                    <!-- Product Dropdown -->
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Products
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="productsDropdown">
+                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
+                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
+                                    </li>
+                                }
+
+                                @if (isSuperAdmin)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddAdminView">Add Admin</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="buttons d-flex gap-2 gap-lg-3 align-items-center">
+                            <a class="cart-icon" asp-controller="Cart" asp-action="CartView">
+                                <span class="material-symbols-outlined">
+                                    shopping_cart
+                                </span>
+                            </a>
+
+                            @if (isAuthenticated)
+                            {
+                                <div class="dropdown">
+                                    <a class="btn btn-primary dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        @User.Identity.Name
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="productsDropdown">
-                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li><a class="dropdown-item" asp-controller="User" asp-action="ProfileView">Profile</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
                                     </ul>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
-                                </li>
+                                </div>
                             }
-
-                            @if (isSuperAdmin)
+                            else
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddAdminView">Add Admin</a>
-                                </li>
+                                <a class="btn btn-outline-primary" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
+                                <a class="btn btn-primary" asp-controller="Auth" asp-action="LoginView">Login</a>
                             }
-                        </ul>
-                    </div>
-
-                    <div class="buttons d-flex gap-2 gap-lg-3 align-items-center">
-                        <a class="cart-icon" asp-controller="Cart" asp-action="CartView">
-                            <span class="material-symbols-outlined">
-                                shopping_cart
-                            </span>
-                        </a>
-
-                        @if (isAuthenticated)
-                        {
-                            <div class="dropdown">
-                                <a class="btn btn-primary dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @User.Identity.Name
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" asp-controller="User" asp-action="ProfileView">Profile</a></li>
-                                    <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
-                                </ul>
-                            </div>
-                        }
-                        else
-                        {
-                            <a class="btn btn-outline-primary" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
-                            <a class="btn btn-primary" asp-controller="Auth" asp-action="LoginView">Login</a>
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
+        }
     </header>
-    <div class="body container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+
+    <!-- Different Layout for Admin Login-->
+    @if ((currentController == "Admin" && currentAction == "AdminLoginView"))
+    {
+        <div class="body container">
+            <main role="main">
+                @RenderBody()
+            </main>
+        </div>
+    }
+    else
+    {
+        <div class="body container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
 
     <footer class="border-top text-center footer text-muted">
         <div class="container">
