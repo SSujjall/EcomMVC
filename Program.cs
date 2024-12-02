@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using EcomSiteMVC.Data;
 using EcomSiteMVC.Data.Repositories;
 using EcomSiteMVC.Data.Services;
+using EcomSiteMVC.Helpers;
 using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.Utils;
@@ -49,9 +50,11 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-// Register generic repositories
+
+// Register generic repositories and classes
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 
+//builder.Services.AddTransient<TokenHelper>(); // Implement this later for jwt authentication instead of identity
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
