@@ -116,6 +116,9 @@ namespace EcomSiteMVC.Controllers
         {
             var product = await _productService.GetProductById(id);
 
+            var categories = await _categoryService.GetAllCategories();
+            ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
+
             return View("AddProductView", product);
         }
 

@@ -54,5 +54,16 @@ namespace EcomSiteMVC.Data.Services
             }
             return null;
         }
+
+        public async Task<bool> DeleteAdminUser(int id)
+        {
+            var result = await _adminRepository.GetById(id);
+            if (result != null)
+            {
+                await _adminRepository.Delete(result);
+                return true;
+            }
+            return false;
+        }
     }
 }

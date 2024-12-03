@@ -37,5 +37,20 @@ namespace EcomSiteMVC.Controllers
             _notyf.Error("Category not added", 5);
             return RedirectToAction("CategoryViewPage");
         }
+
+
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var result = await _categoryService.DeleteCategory(id);
+
+            if (result)
+            {
+                _notyf.Success("Category deleted successfully!", 5);
+                return RedirectToAction("CategoryViewPage");
+            }
+
+            _notyf.Error("Failed to delete category!", 5);
+            return RedirectToAction("CategoryViewPage");
+        }
     }
 }

@@ -89,14 +89,12 @@
                                     </span>
                                 </button>
 
-                                <form method="post" action="DeleteCategory">
-                                    <input type="hidden" name="CategoryId" value="@admin.UserId" />
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <span class="material-symbols-outlined">
-                                            delete
-                                        </span>
-                                    </button>
-                                </form>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-item-id="@admin.UserId" data-item-name="@admin.Username">
+                                    <span class="material-symbols-outlined">
+                                        delete
+                                    </span>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -112,3 +110,23 @@
         </tbody>
     </table>
 </div>
+
+@*Importing Delete confirmation modal*@
+@await Html.PartialAsync("_DeleteModal")
+
+<script>
+    // Attach event listener for delete buttons
+    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = this.getAttribute('data-item-id');
+            const itemName = this.getAttribute('data-item-name');
+
+            // Set the product name in the modal
+            document.getElementById('itemToDelete').textContent = itemName;
+
+            // Update the confirmation button link
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            confirmDeleteBtn.href = `/Admin/DeleteAdmin?id=${itemId}`;
+        });
+    });
+</script>

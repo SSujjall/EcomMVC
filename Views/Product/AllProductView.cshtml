@@ -35,40 +35,48 @@
         </thead>
 
         <tbody>
-            @foreach (var product in Model)
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="@product.ProductName" />
+                            }
+                            else
+                            {
+                                <img src="~/images/default-profile.png" alt="Default Image" />
+                            }
+                        </td>
+                        <td>@product.ProductName</td>
+                        <td>@product.Category?.CategoryName</td>
+                        <td>@product.Description</td>
+                        <td>@product.Price</td>
+                        <td>@product.StockQuantity</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success btn-sm">
+                                    <span class="material-symbols-outlined">
+                                        edit_note
+                                    </span>
+                                </a>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        data-item-id="@product.ProductId" data-item-name="@product.ProductName">
+                                    <span class="material-symbols-outlined">
+                                        delete
+                                    </span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td class="text-center">
-                        @if (!string.IsNullOrEmpty(product.ImageUrl))
-                        {
-                            <img src="@product.ImageUrl" alt="@product.ProductName" />
-                        }
-                        else
-                        {
-                            <img src="~/images/default-profile.png" alt="Default Image" />
-                        }
-                    </td>
-                    <td>@product.ProductName</td>
-                    <td>@product.Category?.CategoryName</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price</td>
-                    <td>@product.StockQuantity</td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success btn-sm">
-                                <span class="material-symbols-outlined">
-                                    edit_note
-                                </span>
-                            </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                    data-product-id="@product.ProductId"
-                                    data-product-name="@product.ProductName">
-                                <span class="material-symbols-outlined">
-                                    delete
-                                </span>
-                            </button>
-                        </div>
-                    </td>
+                    <td colspan="7" class="text-center">No categories available</td>
                 </tr>
             }
         </tbody>
@@ -82,11 +90,11 @@
     // Attach event listener for delete buttons
     document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
         button.addEventListener('click', function () {
-            const productId = this.getAttribute('data-product-id');
-            const productName = this.getAttribute('data-product-name');
+            const productId = this.getAttribute('data-item-id');
+            const productName = this.getAttribute('data-item-name');
 
             // Set the product name in the modal
-            document.getElementById('productToDelete').textContent = productName;
+            document.getElementById('itemToDelete').textContent = productName;
 
             // Update the confirmation button link
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');

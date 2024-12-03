@@ -7,5 +7,6 @@ namespace EcomSiteMVC.Interfaces.IServices
     {
         public Task<User?> LoginAdminUser(LoginDTO model);
         public Task<IEnumerable<User>> GetAdminUsers();
+        public Task<bool> DeleteAdminUser(int id);
     }
 }

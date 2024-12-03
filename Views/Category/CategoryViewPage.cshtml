@@ -20,6 +20,8 @@
         }
 </style>
 
+
+
 <h2>Category Management</h2>
 
 <!-- Add Category Button (To trigger the modal) -->
@@ -81,11 +83,12 @@
                                     edit_note
                                 </span>
                             </a>
-                            <a asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger btn-sm">
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    data-item-id="@category.CategoryId" data-item-name="@category.CategoryName">
                                 <span class="material-symbols-outlined">
                                     delete
                                 </span>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     index++;
@@ -100,3 +103,23 @@
         </tbody>
     </table>
 </div>
+
+@*Importing Delete confirmation modal*@
+@await Html.PartialAsync("_DeleteModal")
+
+<script>
+    // Attach event listener for delete buttons
+    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const itemId = this.getAttribute('data-item-id');
+            const itemName = this.getAttribute('data-item-name');
+
+            // Set the product name in the modal
+            document.getElementById('itemToDelete').textContent = itemName;
+
+            // Update the confirmation button link
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            confirmDeleteBtn.href = `/Category/DeleteCategory?id=${itemId}`;
+        });
+    });
+</script>

@@ -97,5 +97,24 @@ namespace EcomSiteMVC.Controllers
             _notyf.Error("Failed to add New Admin!", 5);
             return RedirectToAction("AddAdminView");
         }
+
+        [Authorize(Roles = "Superadmin")] // Only superadmin can add new admins
+        [HttpPost]
+        public async Task<IActionResult> DeleteAdmin(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _adminService.DeleteAdminUser(id);
+                if (user != null)
+                {
+                    _notyf.Success("Deleted Admin!", 5);
+                    return RedirectToAction("AddAdminView");
+                }
+            }
+
+            _notyf.Error("Failed to Delete Admin!", 5);
+            return RedirectToAction("AddAdminView");
+        }
+
     }
 }
