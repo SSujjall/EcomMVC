@@ -35,6 +35,14 @@
         .cart-icon {
             font-size: 0px; /* necessary to align the icon center vertically */
         }
+
+        .btn-signup {
+            min-width: 6rem;
+        }
+
+        .search-bar {
+            margin-left: 1rem;
+        }
     </style>
 </head>
 <body style="background-color: #f3f3f3">
@@ -96,12 +104,25 @@
                             </ul>
                         </div>
 
-                        <div class="buttons d-flex gap-2 gap-lg-3 align-items-center">
-                            <a class="cart-icon" asp-controller="Cart" asp-action="CartView">
-                                <span class="material-symbols-outlined">
-                                    shopping_cart
-                                </span>
-                            </a>
+                        <div class="buttons d-flex gap-2 gap-lg-3 align-items-center justify-content-end">
+                            @if(!isSuperAdmin && !isAdmin)
+                            {
+                                <!--Search Section-->
+                                <form class="search-bar border border-secondary h-100 d-flex p-2 rounded-pill" asp-controller="Product" asp-action="SearchProduct">
+                                    <input class="w-100 border-0" style="outline: none;" />
+                                    <button type="submit" class="cart-icon m-0 p-0" style="color: gray; background: none; border: none;">
+                                        <span class="material-symbols-outlined">
+                                            search
+                                        </span>
+                                    </button>
+                                </form>
+
+                                <a class="cart-icon" asp-controller="Cart" asp-action="CartView">
+                                    <span class="material-symbols-outlined">
+                                        shopping_cart
+                                    </span>
+                                </a>
+                            }
 
                             @if (isAuthenticated)
                             {
@@ -117,7 +138,7 @@
                             }
                             else
                             {
-                                <a class="btn btn-outline-primary" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
+                                <a class="btn btn-outline-primary btn-signup" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
                                 <a class="btn btn-primary" asp-controller="Auth" asp-action="LoginView">Login</a>
                             }
                         </div>

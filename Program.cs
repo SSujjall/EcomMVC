@@ -30,15 +30,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Auth/LoginView";
         options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.AccessDeniedPath = "/Auth/NotFound";
     });
 
 // notification services
 builder.Services.AddNotyf(config =>
 {
-    config.DurationInSeconds = 10;
+    config.DurationInSeconds = 5;
     config.IsDismissable = true;
-    config.Position = NotyfPosition.BottomRight;
+    config.Position = NotyfPosition.TopRight;
 });
 
 builder.Services.AddAuthorization();

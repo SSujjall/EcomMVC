@@ -24,6 +24,7 @@ namespace EcomSiteMVC.Controllers
             _notyf = notyf;
         }
 
+        [HttpGet("{controller}/dashboard")]
         public IActionResult Index()
         {
             return View();

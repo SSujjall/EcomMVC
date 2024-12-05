@@ -38,7 +38,7 @@ namespace EcomSiteMVC.Controllers
         {
             var product = await _productService.GetProductById(id);
 
-            if(product == null)
+            if (product == null)
             {
                 return NotFound();
             }

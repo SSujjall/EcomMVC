@@ -21,6 +21,12 @@ namespace EcomSiteMVC.Controllers
             _notyf = notyf;
         }
 
+        [HttpGet]
+        public IActionResult NotFound()
+        {
+            return View();
+        }
+
         public IActionResult RegisterView()
         {
             return View();
@@ -84,9 +90,14 @@ namespace EcomSiteMVC.Controllers
 
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("User");
-            _notyf.Success("Logout successful", 5);
-            return RedirectToAction("LoginView");
+            var logoutResult = HttpContext.SignOutAsync();
+            if (logoutResult.IsCompleted)
+            {
+                _notyf.Success("Logout successful", 5);
+                return RedirectToAction("LoginView");
+            }
+            _notyf.Error("Logout not successful", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
         }
     }
 }
