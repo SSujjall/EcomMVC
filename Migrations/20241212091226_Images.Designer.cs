@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcomSiteMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241102075626_LazyLoading")]
-    partial class LazyLoading
+    [Migration("20241212091226_Images")]
+    partial class Images
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,10 +178,6 @@ namespace EcomSiteMVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateOnly>("LastUpdatedDate")
                         .HasColumnType("date");
 
@@ -200,6 +196,28 @@ namespace EcomSiteMVC.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("EcomSiteMVC.Models.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.User", b =>
@@ -239,12 +257,12 @@ namespace EcomSiteMVC.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedDate = new DateOnly(2024, 11, 2),
-                            Email = "admin@example.com",
+                            CreatedDate = new DateOnly(2024, 12, 12),
+                            Email = "superadmin@gmail.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$03TQ33Hs9iOEA8LnXgUhg.9K1t4QD.jOryyCHUFhcl4RdpbF5w6Qy",
+                            PasswordHash = "$2a$11$tap9IBR/IVunJJ6qAmdI4.xpTy7Ol8pWKUNqSJYsyq14VEKSqgHrC",
                             Role = 0,
-                            Username = "admin"
+                            Username = "superadmin"
                         });
                 });
 
@@ -365,6 +383,17 @@ namespace EcomSiteMVC.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("EcomSiteMVC.Models.Entities.ProductImage", b =>
+                {
+                    b.HasOne("EcomSiteMVC.Models.Entities.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.UserProfile", b =>
                 {
                     b.HasOne("EcomSiteMVC.Models.Entities.User", "User")
@@ -394,6 +423,8 @@ namespace EcomSiteMVC.Migrations
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.Product", b =>
                 {
                     b.Navigation("CartItems");
+
+                    b.Navigation("Images");
 
                     b.Navigation("OrderDetails");
                 });

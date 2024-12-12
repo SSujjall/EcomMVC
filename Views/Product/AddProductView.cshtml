@@ -2,8 +2,7 @@
     ViewData["Title"] = "Add Product";
 }
 
-@model EcomSiteMVC.Models.Entities.Product;
-
+@model EcomSiteMVC.Models.DTOs.AddProductDTO;
 
 <style>
     .product-image-container {
@@ -43,95 +42,69 @@
         text-align: center;
         pointer-events: none;
     }
+
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .image-preview {
+        position: relative;
+        margin: 5px;
+    }
+
+    .remove-image {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        padding: 5px;
+        cursor: pointer;
+        border-radius: 50%;
+    }
 </style>
 
-@if (Model == null)
-{
-    <h2>Add Product</h2>
-}
-else
-{
-    <h2>Update Product</h2>
-}
-
+<h2>Add Product</h2>
 
 <div class="table-responsive p-4 mx-auto">
-    @if (Model != null)
-    {
-        <form asp-action="UpdateProduct" method="post" enctype="multipart/form-data">
-
-            <div class="form-group text-center mb-2 position-relative">
-                <div class="product-image-container">
-                    <img src="@Model.ImageUrl" alt="Product Picture" class="product-picture" id="productImage" />
-                    <span id="addImageText" class="add-image-text w-100 ">Add Image</span>
-                </div>
-                <input type="file" name="productImage" id="fileInput" class="file-input border" accept="image/*" />
-                <span class="text-danger"></span>
+    <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+        <div class="form-group text-center mb-2 position-relative">
+            <div class="product-image-container">
+                <img src="~/images/default-profile.png" alt="Product Picture" class="product-picture" id="productImage" />
+                <span id="addImageText" class="add-image-text w-100 ">Add Image</span>
             </div>
+            <input type="file" name="Images" id="fileInput" class="file-input border" accept="image/*" multiple />
+            <span class="text-danger"></span>
+        </div>
 
-            <div class="form-group mb-3">
-                <input name="ProductName" placeholder="Product Name" class="form-control" value="@Model.ProductName" required />
-            </div>
+        <div class="form-group mb-3">
+            <input name="ProductName" placeholder="Product Name" class="form-control" required />
+        </div>
 
-            <div class="form-group mb-3">
-                <textarea name="Description" placeholder="Description" class="form-control" required></textarea>
-            </div>
+        <div class="form-group mb-3">
+            <textarea name="Description" placeholder="Description" class="form-control" required></textarea>
+        </div>
 
-            <div class="form-group mb-3">
-                <select name="CategoryId" class="form-select" asp-items="ViewBag.CategoryList" required>
-                    <option value="">-- Select Category --</option>
-                </select>
-            </div>
+        <div class="form-group mb-3">
+            <select name="CategoryId" class="form-select" asp-items="ViewBag.CategoryList" required>
+                <option value="">-- Select Category --</option>
+            </select>
+        </div>
 
-            <div class="form-group mb-3">
-                <input type="number" name="Price" placeholder="Price" class="form-control" value="@Model.Price" required />
-            </div>
+        <div class="form-group mb-3">
+            <input type="number" name="Price" placeholder="Price" class="form-control" required />
+        </div>
 
-            <div class="form-group mb-3">
-                <input type="number" name="StockQuantity" placeholder="Stock Quantity" class="form-control" value="@Model.StockQuantity" required />
-            </div>
+        <div class="form-group mb-3">
+            <input type="number" name="StockQuantity" placeholder="Stock Quantity" class="form-control" required />
+        </div>
 
-            <button type="submit" class="btn btn-primary">Update Product</button>
-        </form>
-    }
-    else
-    {
-        <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+        <!-- Display selected image previews -->
+        <div class="image-preview-container" id="imagePreviewContainer"></div>
 
-            <div class="form-group text-center mb-2 position-relative">
-                <div class="product-image-container">
-                    <img src="~/images/default-profile.png" alt="Product Picture" class="product-picture" id="productImage" />
-                    <span id="addImageText" class="add-image-text w-100 ">Add Image</span>
-                </div>
-                <input type="file" name="productImage" id="fileInput" class="file-input border" accept="image/*" />
-                <span class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <input name="ProductName" placeholder="Product Name" class="form-control" required />
-            </div>
-
-            <div class="form-group mb-3">
-                <textarea name="Description" placeholder="Description" class="form-control" required></textarea>
-            </div>
-
-            <div class="form-group mb-3">
-                <select name="CategoryId" class="form-select" asp-items="ViewBag.CategoryList" required>
-                    <option value="">-- Select Category --</option>
-                </select>
-            </div>
-
-            <div class="form-group mb-3">
-                <input type="number" name="Price" placeholder="Price" class="form-control" required />
-            </div>
-
-            <div class="form-group mb-3">
-                <input type="number" name="StockQuantity" placeholder="Stock Quantity" class="form-control" required />
-            </div>
-
-            <button type="submit" class="btn btn-primary">Add Product</button>
-        </form>
-    }
+        <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
 </div>
 
 <script>
@@ -140,15 +113,35 @@ else
         document.getElementById('fileInput').click();
     });
 
-    // Display selected image in the circular profile picture
+    // Display selected images in preview container
     document.getElementById('fileInput').addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.innerHTML = ''; // Clear existing previews
+
+        // Loop through selected files and show previews
+        Array.from(files).forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = function (e) {
-                document.getElementById('productImage').src = e.target.result;
+                const div = document.createElement('div');
+                div.classList.add('image-preview');
+                div.innerHTML = `
+                        <img src="${e.target.result}" alt="Image Preview" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;" />
+                        <span class="remove-image" onclick="removeImage(${index})">X</span>
+                    `;
+                previewContainer.appendChild(div);
             };
             reader.readAsDataURL(file);
-        }
+        });
     });
+
+    // Remove image preview from the UI (not from form)
+    function removeImage(index) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.children[index].remove();
+        const input = document.getElementById('fileInput');
+        const files = Array.from(input.files);
+        files.splice(index, 1);
+        input.files = new FileList(...files);
+    }
 </script>

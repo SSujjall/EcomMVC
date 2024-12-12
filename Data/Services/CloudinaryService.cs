@@ -55,6 +55,29 @@ namespace EcomSiteMVC.Data.Services
             return null;
         }
 
+        public async Task<List<string>> UploadMultipleImageAsync(List<IFormFile> files, FolderName folderName)
+        {
+            if (files != null || files.Count != 0)
+            {
+                var uploadedImageUrls = new List<string>();
+
+                foreach (var file in files)
+                {
+                    if (file.Length > 0)
+                    {
+                        var uploadedUrl = await UploadImageAsync(file, folderName);
+                        if (!string.IsNullOrEmpty(uploadedUrl))
+                        {
+                            uploadedImageUrls.Add(uploadedUrl);
+                        }
+                    }
+                }
+
+                return uploadedImageUrls;
+            }
+            return null;
+        }
+
         public async Task DeleteImageAsync(string publicId)
         {
             if (string.IsNullOrEmpty(publicId))
