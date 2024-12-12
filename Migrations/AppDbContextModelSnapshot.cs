@@ -236,12 +236,12 @@ namespace EcomSiteMVC.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedDate = new DateOnly(2024, 11, 2),
-                            Email = "admin@example.com",
+                            CreatedDate = new DateOnly(2024, 12, 12),
+                            Email = "superadmin@gmail.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$03TQ33Hs9iOEA8LnXgUhg.9K1t4QD.jOryyCHUFhcl4RdpbF5w6Qy",
+                            PasswordHash = "$2a$11$Z1hl6VbjmSVhfzv2i5zCZ.FcVjnM5BVA5yXKFY2aTGg.CYufUtpl.",
                             Role = 0,
-                            Username = "admin"
+                            Username = "superadmin"
                         });
                 });
 
