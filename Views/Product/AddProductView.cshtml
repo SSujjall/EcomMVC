@@ -2,7 +2,7 @@
     ViewData["Title"] = "Add Product";
 }
 
-@model EcomSiteMVC.Models.DTOs.AddProductDTO;
+@model EcomSiteMVC.Models.Entities.Product; // Model is necessary if you want to make the update page here as well. else not necessary.
 
 <style>
     .product-image-container {
@@ -46,6 +46,8 @@
     .image-preview-container {
         display: flex;
         flex-wrap: wrap;
+        max-height: 225px;
+        overflow-y: auto;
     }
 
     .image-preview {
@@ -59,16 +61,22 @@
         right: 0;
         background-color: red;
         color: white;
-        padding: 5px;
+        padding: 1px;
         cursor: pointer;
-        border-radius: 50%;
+        border-radius: 100%;
+        font-size: 20px;
     }
 </style>
 
-<h2>Add Product</h2>
+<h2>@(Model == null ? "Add Product" : "Update Product")</h2>
+
+@* asp-for ko satta name nai use garda hunxa, only if yeuta page le specific kaam matra garxa
+eg: AddProduct page le product add matra garne ho vaye chai AddProductDTO ko model halera tesma asp-for use garda hunxa
+it makes it secure.
+*@
 
 <div class="table-responsive p-4 mx-auto">
-    <form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+    <form asp-action="@(Model == null ? "AddProduct" : "UpdateProduct")" method="post" enctype="multipart/form-data">
         <div class="form-group text-center mb-2 position-relative">
             <div class="product-image-container">
                 <img src="~/images/default-profile.png" alt="Product Picture" class="product-picture" id="productImage" />
@@ -78,12 +86,15 @@
             <span class="text-danger"></span>
         </div>
 
+        <!-- Display selected image previews -->
+        <div class="image-preview-container" id="imagePreviewContainer"></div>
+
         <div class="form-group mb-3">
-            <input name="ProductName" placeholder="Product Name" class="form-control" required />
+            <input name="ProductName" placeholder="Product Name" class="form-control" value="@(Model != null ? Model.ProductName : string.Empty)" required />
         </div>
 
         <div class="form-group mb-3">
-            <textarea name="Description" placeholder="Description" class="form-control" required></textarea>
+            <textarea name="Description" placeholder="Description" class="form-control" value="@(Model != null ? Model.Description : string.Empty)" required></textarea>
         </div>
 
         <div class="form-group mb-3">
@@ -93,17 +104,14 @@
         </div>
 
         <div class="form-group mb-3">
-            <input type="number" name="Price" placeholder="Price" class="form-control" required />
+            <input type="number" name="Price" placeholder="Price" class="form-control" value="@(Model != null ? Model.Price : null)" required />
         </div>
 
         <div class="form-group mb-3">
-            <input type="number" name="StockQuantity" placeholder="Stock Quantity" class="form-control" required />
+            <input type="number" name="StockQuantity" placeholder="Stock Quantity" class="form-control" value="@(Model != null ? Model.StockQuantity : string.Empty)" required />
         </div>
 
-        <!-- Display selected image previews -->
-        <div class="image-preview-container" id="imagePreviewContainer"></div>
-
-        <button type="submit" class="btn btn-primary">Add Product</button>
+        <button type="submit" class="btn btn-primary">@(Model == null ? "Add Product" : "Update Product")</button>
     </form>
 </div>
 
@@ -126,9 +134,9 @@
                 const div = document.createElement('div');
                 div.classList.add('image-preview');
                 div.innerHTML = `
-                        <img src="${e.target.result}" alt="Image Preview" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;" />
-                        <span class="remove-image" onclick="removeImage(${index})">X</span>
-                    `;
+                        <img src="${e.target.result}" alt="Image Preview" style="width: 150px; height: 100px; border-radius: 8px; object-fit: cover;" />
+                        <span class="remove-image material-symbols-outlined" onclick="removeImage(${index})">close</span>
+                        `;
                 previewContainer.appendChild(div);
             };
             reader.readAsDataURL(file);
