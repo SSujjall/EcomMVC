@@ -62,27 +62,35 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.CheckLogin(model);
                 if (user != null)
                 {
-                    // Create the user claims
-                    var claims = new List<Claim>
+                    if (model.RememberMe == true)
                     {
-                        new Claim("UserId", user.UserId.ToString()),
-                        new Claim(ClaimTypes.Name, user.Username),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
-                    };
+                        // Create the user claims
+                        var claims = new List<Claim>
+                        {
+                            new Claim("UserId", user.UserId.ToString()),
+                            new Claim(ClaimTypes.Name, user.Username),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Role, user.Role.ToString())
+                        };
 
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var authProperties = new AuthenticationProperties
+                        {
+                            IsPersistent = true, // Make the login persistent
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Set the expiration time for the cookie
+                        };
+
+                        // Sign in the user
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    }
+                    else
                     {
-                        IsPersistent = true, // Make the login persistent
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Set the expiration time for the cookie
-                    };
-
-                    // Sign in the user
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                        // if remember me is false then use session for login storage.
+                    }
 
                     _notyf.Success("Login Successful", 5);
                     return RedirectToAction("ProfileView", "User");
+
                 }
             }
             _notyf.Error("Invalid username or password.");

@@ -13,6 +13,6 @@ namespace EcomSiteMVC.Models.DTOs
         [MinLength(3, ErrorMessage = "Password must be atleast 3 characters")]
         public string PasswordHash { get; set; }
 
-        public bool RememberMe { get; set; }
+        public bool RememberMe { get; set; } = false;
     }
 }

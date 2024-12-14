@@ -19,13 +19,14 @@
             padding-bottom: 0.8rem;
         }
 
-    .login-button, .signup-button, google-button {
+    .login-button, .google-button {
         height: 3rem;
         align-content: center;
         font-weight: 700;
+        text-decoration: none;
     }
 
-        .signup-button:hover {
+        .google-button:hover {
             color: #0d6efd;
             transition: 0.1s;
             background: none;
@@ -36,7 +37,7 @@
         display: flex;
         align-items: center;
         text-align: center;
-        margin: 1.5rem 0;
+        margin: 1rem 0;
     }
 
         .divider::before,
@@ -66,18 +67,28 @@
             <input placeholder="Password" asp-for="PasswordHash" type="password" class="form-control" />
             <span asp-validation-for="PasswordHash" class="text-danger"></span>
         </div>
-        <a asp-controller="Auth" asp-action="ForgotPassword" class="float-start text-decoration-none"><b>Forgot Password</b></a>
+        <div class="form-check">
+            <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="RememberMeCheckbox" />
+            <label asp-for="RememberMe" class="form-check-label float-start" for="RememberMeCheckbox">
+                Remember Me
+            </label>
 
-        <button type="submit" class="login-button btn btn-primary w-100 mt-3">Login</button>
+            <a asp-controller="Auth" asp-action="ForgotPassword" class="float-end text-decoration-none"><b>Forgot Password</b></a>
+        </div>
 
-        <a asp-controller="Auth" asp-action="GoogleLoginPage" class="google-button btn btn-outline-primary w-100 mt-3">
-            <i class="fab fa-google" style="margin-right: 8px;"></i> Sign-in with Google 
-        </a>
+        <button type="submit" class="login-button btn btn-primary w-100 mt-3 mb-3">Login</button>
+
+        <span>
+            Don't have and account?
+            <a asp-controller="Auth" asp-action="RegisterView" style="text-decoration: none;">Signup</a>
+        </span>
 
         <div class="divider">
             <span>or</span>
         </div>
 
-        <a asp-controller="Auth" asp-action="RegisterView" class="signup-button btn btn-outline-dark w-100">Signup</a>
+        <a asp-controller="Auth" asp-action="GoogleLoginPage" class="google-button btn btn-outline-dark w-100">
+            <i class="fab fa-google" style="margin-right: 8px;"></i> Sign-in with Google
+        </a>
     </form>
 </div>
