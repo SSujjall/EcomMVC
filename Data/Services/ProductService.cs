@@ -2,6 +2,7 @@
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Entities;
+using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -11,30 +12,49 @@ namespace EcomSiteMVC.Data.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository)
+
+        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<bool> AddProduct(AddProductDTO model)
         {
             if (model != null)
             {
-                var data = new Product
+                var product = new Product
                 {
                     CategoryId = model.CategoryId,
                     ProductName = model.ProductName,
                     Description = model.Description,
                     Price = model.Price,
                     StockQuantity = model.StockQuantity,
-                    ImageUrl = model.ImageUrl,
                     LastUpdatedDate = DateOnly.FromDateTime(DateTime.Now)
                 };
 
-                await _productRepository.Add(data);
-                return true;
+                await _productRepository.Add(product);
+
+                if (model.Images != null)
+                {
+                    foreach (var image in model.Images)
+                    {
+                        var imageUrl = await _cloudinaryService.UploadImageAsync(image, FolderName.Ecom);
+                        if (imageUrl != null)
+                        {
+                            var productImage = new ProductImage
+                            {
+                                ProductId = product.ProductId,
+                                ImageUrl = imageUrl
+                            };
+                            await _productRepository.AddImage(productImage);
+                        }
+                    }
+                    return true;
+                }
             }
 
             return false;
@@ -70,7 +90,7 @@ namespace EcomSiteMVC.Data.Services
                 product.Description = model.Description;
                 product.Price = model.Price;
                 product.StockQuantity = model.StockQuantity;
-                product.ImageUrl = model.ImageUrl;
+                //product.ImageUrl = model.ImageUrl;
                 product.LastUpdatedDate = DateOnly.FromDateTime(DateTime.Now);
 
                 await _productRepository.Update(product);

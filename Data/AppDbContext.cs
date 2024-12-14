@@ -28,6 +28,11 @@ namespace EcomSiteMVC.Data
                 .HasMany(p => p.OrderDetails)
                 .WithOne(od => od.Product);
 
+            modelBuilder.Entity<Product>()
+               .HasMany(p => p.Images)
+               .WithOne(pi => pi.Product)
+               .HasForeignKey(pi => pi.ProductId);
+
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.OrderDetails)
                 .WithOne(od => od.Order);
@@ -69,6 +74,7 @@ namespace EcomSiteMVC.Data
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Cart> Carts { get; set; }

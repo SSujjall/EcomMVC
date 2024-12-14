@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EcomSiteMVC.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Images : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -54,9 +54,8 @@ namespace EcomSiteMVC.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
                     StockQuantity = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    LastUpdatedDate = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,6 +118,7 @@ namespace EcomSiteMVC.Migrations
                     ProfileId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -134,6 +134,26 @@ namespace EcomSiteMVC.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductImages",
+                columns: table => new
+                {
+                    ImageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductImages", x => x.ImageId);
+                    table.ForeignKey(
+                        name: "FK_ProductImages_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -196,7 +216,7 @@ namespace EcomSiteMVC.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "UserId", "CreatedDate", "Email", "IsActive", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, new DateOnly(2024, 10, 3), "admin@example.com", true, "$2a$11$opuD7lk7TUUoQWx7KQUpNufonti08WDli1W3PrtoeVF894Jxrrq3O", 0, "admin" });
+                values: new object[] { 1, new DateOnly(2024, 12, 12), "superadmin@gmail.com", true, "$2a$11$tap9IBR/IVunJJ6qAmdI4.xpTy7Ol8pWKUNqSJYsyq14VEKSqgHrC", 0, "superadmin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_CartItems_CartId",
@@ -230,6 +250,11 @@ namespace EcomSiteMVC.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductImages_ProductId",
+                table: "ProductImages",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
@@ -249,6 +274,9 @@ namespace EcomSiteMVC.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");
+
+            migrationBuilder.DropTable(
+                name: "ProductImages");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

@@ -175,10 +175,6 @@ namespace EcomSiteMVC.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateOnly>("LastUpdatedDate")
                         .HasColumnType("date");
 
@@ -197,6 +193,28 @@ namespace EcomSiteMVC.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("EcomSiteMVC.Models.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.User", b =>
@@ -239,7 +257,7 @@ namespace EcomSiteMVC.Migrations
                             CreatedDate = new DateOnly(2024, 12, 12),
                             Email = "superadmin@gmail.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$Z1hl6VbjmSVhfzv2i5zCZ.FcVjnM5BVA5yXKFY2aTGg.CYufUtpl.",
+                            PasswordHash = "$2a$11$tap9IBR/IVunJJ6qAmdI4.xpTy7Ol8pWKUNqSJYsyq14VEKSqgHrC",
                             Role = 0,
                             Username = "superadmin"
                         });
@@ -362,6 +380,17 @@ namespace EcomSiteMVC.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("EcomSiteMVC.Models.Entities.ProductImage", b =>
+                {
+                    b.HasOne("EcomSiteMVC.Models.Entities.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.UserProfile", b =>
                 {
                     b.HasOne("EcomSiteMVC.Models.Entities.User", "User")
@@ -391,6 +420,8 @@ namespace EcomSiteMVC.Migrations
             modelBuilder.Entity("EcomSiteMVC.Models.Entities.Product", b =>
                 {
                     b.Navigation("CartItems");
+
+                    b.Navigation("Images");
 
                     b.Navigation("OrderDetails");
                 });

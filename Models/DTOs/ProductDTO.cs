@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public int Price { get; set; }
         public int StockQuantity { get; set; }
-        public string? ImageUrl { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 
     public class UpdateProductDTO
@@ -18,6 +18,6 @@
         public string Description { get; set; }
         public int Price { get; set; }
         public int StockQuantity { get; set; }
-        public string ImageUrl { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 }

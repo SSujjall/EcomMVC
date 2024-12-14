@@ -5,7 +5,7 @@
 
 <style>
     /* Make the image smaller */
-    table.custom-table img {
+    .carousel-item img {
         width: 100%;
         height: auto;
         min-height: 60px;
@@ -41,13 +41,32 @@
                 {
                     <tr>
                         <td class="text-center">
-                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            @if (product.Images != null && product.Images.Any())
                             {
-                                <img src="@product.ImageUrl" alt="@product.ProductName" />
+                                <div id="carousel-@product.ProductId" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        @foreach (var image in product.Images)
+                                        {
+                                            var imageUrl = image.ImageUrl;
+
+                                            <div class="carousel-item @((product.Images.First() == image) ? "active" : "")">
+                                                <img src="@imageUrl" alt="@product.ProductName" class="d-block w-100" />
+                                            </div>
+                                        }
+                                    </div>
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon bg-black" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon bg-black" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
                             }
                             else
                             {
-                                <img src="~/images/default-profile.png" alt="Default Image" />
+                                <img src="~/images/default-profile.png" alt="Default Image" class="d-block w-100" />
                             }
                         </td>
                         <td>@product.ProductName</td>

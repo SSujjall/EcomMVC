@@ -14,14 +14,12 @@ namespace EcomSiteMVC.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly INotyfService _notyf;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, ICloudinaryService cloudinaryService, INotyfService notyf)
+        public ProductController(IProductService productService, ICategoryService categoryService, INotyfService notyf)
         {
             _productService = productService;
             _categoryService = categoryService;
-            _cloudinaryService = cloudinaryService;
             _notyf = notyf;
         }
 
@@ -67,17 +65,8 @@ namespace EcomSiteMVC.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Superadmin,Admin")]
-        public async Task<IActionResult> AddProduct(AddProductDTO model, IFormFile productImage)
+        public async Task<IActionResult> AddProduct(AddProductDTO model)
         {
-            if (productImage != null && productImage.Length > 0)
-            {
-                var imageUrl = await _cloudinaryService.UploadImageAsync(productImage, FolderName.Ecom);
-                if (imageUrl != null)
-                {
-                    model.ImageUrl = imageUrl;
-                }
-            }
-
             if (ModelState.IsValid)
             {
                 var result = await _productService.AddProduct(model);
@@ -88,7 +77,6 @@ namespace EcomSiteMVC.Controllers
                 }
             }
 
-            // If there is an error, reload categories and return to view
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
 

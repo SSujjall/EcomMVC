@@ -15,7 +15,6 @@ namespace EcomSiteMVC.Models.Entities
         public string Description { get; set; }
         public int Price { get; set; }
         public int StockQuantity { get; set; }
-        public string ImageUrl { get; set; }
         public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public DateOnly LastUpdatedDate { get; set; }
 
@@ -23,5 +22,6 @@ namespace EcomSiteMVC.Models.Entities
         public virtual Category Category { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<CartItem> CartItems { get; set; }
+        public virtual ICollection<ProductImage> Images { get; set; }
     }
 }
