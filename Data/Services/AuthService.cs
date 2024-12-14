@@ -35,13 +35,20 @@ namespace EcomSiteMVC.Data.Services
 
             // check if user is admin. If the user isa admin ,dont let them sign in.
             // they have to use admin portal.
-            if (user != null && restrictedRoles.Contains(user.Role))
+            if (user != null)
             {
-                return null;
-            }
-            if (user != null && PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
-            {
-                return user;
+                if (restrictedRoles.Contains(user.Role))
+                {
+                    return null;
+                }
+                if (user.GoogleUserId != null)// If user has signed up via Google
+                {
+                    return user; // Skip password check for Google users
+                }
+                if (PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
+                {
+                    return user;
+                }
             }
             return null;
         }
@@ -50,40 +57,66 @@ namespace EcomSiteMVC.Data.Services
         {
             Role assignedRole = Role.User;
 
-            // Setting role for the new user
-            if (currentUser.Identity.IsAuthenticated)
+            // If the user is registering via Google, no password is needed. So checking if there is password or not
+            if (model.PasswordHash != null)
             {
-                //Check if the current user is superadmin or not.
-                var roleClaim = currentUser.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
-
-                //If the current user is not superadmin, then set the registered user role to user.
-                if (roleClaim != null && Enum.TryParse(roleClaim.Value, out Role loggedInUserRole))
+                // Setting role for the new user
+                if (currentUser.Identity.IsAuthenticated)
                 {
-                    //If the current user is superadmin, then set the new registered user role to admin.
-                    if (loggedInUserRole == Role.Superadmin)
+                    //Check if the current user is superadmin or not.
+                    var roleClaim = currentUser.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role);
+
+                    //If the current user is not superadmin, then set the registered user role to user.
+                    if (roleClaim != null && Enum.TryParse(roleClaim.Value, out Role loggedInUserRole))
                     {
-                        assignedRole = Role.Admin;
+                        //If the current user is superadmin, then set the new registered user role to admin.
+                        if (loggedInUserRole == Role.Superadmin)
+                        {
+                            assignedRole = Role.Admin;
+                        }
                     }
                 }
+
+                var existingUsername = await _authRepository.GetUserByUsername(model.Username);
+
+                if (existingUsername == null)
+                {
+                    var user = new User
+                    {
+                        Username = model.Username.ToLower(),
+                        Email = model.Email.ToLower(),
+                        PasswordHash = PasswordHelper.HashPassword(model.PasswordHash),
+                        Role = assignedRole,
+                        IsActive = true
+                    };
+
+                    return await _authRepository.AddUser(user);
+                }
             }
+            return null;
+        }
 
-            var existingUsername = await _authRepository.GetUserByUsername(model.Username);
-
-            if (existingUsername == null)
+        // if user is not created then it will create user
+        // if user already exists then it gives out the user.
+        // No need to verify password like in the "CheckLogin" method as google auth users do not need password, it is handled by google itself.
+        public async Task<User?> AuthFromGoogle(string email, string googleUserId)
+        {
+            var existingUser = await _authRepository.GetUserByUsername(email.ToLower());
+            if (existingUser == null)
             {
                 var user = new User
                 {
-                    Username = model.Username.ToLower(),
-                    Email = model.Email.ToLower(),
-                    PasswordHash = PasswordHelper.HashPassword(model.PasswordHash),
-                    Role = assignedRole,
+                    Email = email.ToLower(),
+                    Username = email.Split('@')[0], // Set username as email prefix
+                    GoogleUserId = googleUserId, // Store Google User ID
+                    Role = Role.User, // Default role or assign based on the current context
                     IsActive = true
                 };
 
                 return await _authRepository.AddUser(user);
             }
 
-            return null;
+            return existingUser; // Return the existing user if found
         }
     }
 }

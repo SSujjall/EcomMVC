@@ -82,42 +82,29 @@ namespace EcomSiteMVC.Controllers
 
                         // Sign in the user
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                        _notyf.Success("Login Successful", 5);
+                        return RedirectToAction("ProfileView", "User");
                     }
                     else
                     {
                         // if remember me is false then use session for login storage.
                     }
-
-                    _notyf.Success("Login Successful", 5);
-                    return RedirectToAction("ProfileView", "User");
-
                 }
             }
             _notyf.Error("Invalid username or password.");
             return RedirectToAction("LoginView");
         }
 
-        public IActionResult Logout()
-        {
-            var logoutResult = HttpContext.SignOutAsync();
-            if (logoutResult.IsCompleted)
-            {
-                _notyf.Success("Logout successful", 5);
-                return RedirectToAction("LoginView");
-            }
-            _notyf.Error("Logout not successful", 5);
-            return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
-        }
-
         #region Google Auth 
         public IActionResult GoogleLoginPage()
         {
-            var redirectUrl = Url.Action("GoogleAuthResponse");
+            var redirectUrl = Url.Action("GoogleLoginCallback");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        public async Task<IActionResult> GoogleAuthResponse()
+        public async Task<IActionResult> GoogleLoginCallback()
         {
             var result = await HttpContext.AuthenticateAsync("Google");
             if (result.Succeeded)
@@ -134,10 +121,46 @@ namespace EcomSiteMVC.Controllers
                     });
 
                 var email = claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value.ToLower();
+                var googleUserId = result?.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var username = email?.Split('@')[0];
+
+                var user = await _authService.AuthFromGoogle(email, googleUserId);
+
+                var claimsList = new List<Claim>
+                {
+                    new Claim("UserId", user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claimsList, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,  // Always persist Google login
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                _notyf.Success("Login Successful", 5);
+                return RedirectToAction("ProfileView", "User");
             }
-            return null;
+            _notyf.Error("Google login failed.", 5);
+            return RedirectToAction("LoginView");
         }
         #endregion
+
+        public IActionResult Logout()
+        {
+            var logoutResult = HttpContext.SignOutAsync();
+            if (logoutResult.IsCompleted)
+            {
+                _notyf.Success("Logout successful", 5);
+                return RedirectToAction("LoginView");
+            }
+            _notyf.Error("Logout not successful", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
+        }
     }
 }

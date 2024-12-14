@@ -30,7 +30,7 @@ builder.Services.AddSingleton(cloudinary);
 builder.Services.AddAuthentication(authOptions =>
 {
     authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    authOptions.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    authOptions.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
   // For users who ticks the "remember me?" checkbox during login 
   .AddCookie(options =>

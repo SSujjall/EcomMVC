@@ -8,5 +8,6 @@ namespace EcomSiteMVC.Interfaces.IServices
     {
         Task<User> Register(RegisterDTO model, ClaimsPrincipal currentUser);
         Task<User?> CheckLogin(LoginDTO model);
+        Task<User?> AuthFromGoogle(string email, string googleUserId);
     }
 }
