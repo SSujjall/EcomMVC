@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using EcomSiteMVC.Models.Enums;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authentication.Google;
 
 
 namespace EcomSiteMVC.Controllers
@@ -99,5 +100,36 @@ namespace EcomSiteMVC.Controllers
             _notyf.Error("Logout not successful", 5);
             return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
         }
+
+        #region Google Auth 
+        public IActionResult GoogleLoginPage()
+        {
+            var redirectUrl = Url.Action("GoogleAuthResponse");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        public async Task<IActionResult> GoogleAuthResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync("Google");
+            if (result.Succeeded)
+            {
+                var claims = result?.Principal?.Identities?
+                    .FirstOrDefault()?
+                    .Claims
+                    .Select(claim => new
+                    {
+                        claim.Issuer,
+                        claim.OriginalIssuer,
+                        claim.Type,
+                        claim.Value
+                    });
+
+                var email = claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value.ToLower();
+                var username = email?.Split('@')[0];
+            }
+            return null;
+        }
+        #endregion
     }
 }

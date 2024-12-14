@@ -19,7 +19,7 @@
             padding-bottom: 0.8rem;
         }
 
-    .login-button, .signup-button {
+    .login-button, .signup-button, google-button {
         height: 3rem;
         align-content: center;
         font-weight: 700;
@@ -69,6 +69,10 @@
         <a asp-controller="Auth" asp-action="ForgotPassword" class="float-start text-decoration-none"><b>Forgot Password</b></a>
 
         <button type="submit" class="login-button btn btn-primary w-100 mt-3">Login</button>
+
+        <a asp-controller="Auth" asp-action="GoogleLoginPage" class="google-button btn btn-outline-primary w-100 mt-3">
+            <i class="fab fa-google" style="margin-right: 8px;"></i> Sign-in with Google 
+        </a>
 
         <div class="divider">
             <span>or</span>
