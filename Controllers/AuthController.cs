@@ -92,7 +92,7 @@ namespace EcomSiteMVC.Controllers
                     }
                 }
             }
-            _notyf.Error("Invalid username or password.");
+            _notyf.Error("Error Logging In.");
             return RedirectToAction("LoginView");
         }
 
@@ -124,6 +124,8 @@ namespace EcomSiteMVC.Controllers
                 var googleUserId = result?.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var username = email?.Split('@')[0];
 
+                // Create new user if user is not in database, and give the added user data
+                // If user exists, get the existing user data
                 var user = await _authService.AuthFromGoogle(email, googleUserId);
 
                 var claimsList = new List<Claim>
