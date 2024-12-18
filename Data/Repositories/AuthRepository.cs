@@ -24,5 +24,11 @@ namespace EcomSiteMVC.Data.Repositories
             await _dbContext.SaveChangesAsync();
             return result.Entity;
         }
+
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            var result = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == email);
+            return result;
+        }
     }
 }

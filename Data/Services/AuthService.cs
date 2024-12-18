@@ -101,7 +101,7 @@ namespace EcomSiteMVC.Data.Services
         // No need to verify password like in the "CheckLogin" method as google auth users do not need password, it is handled by google itself.
         public async Task<User?> AuthFromGoogle(string email, string googleUserId)
         {
-            var existingUser = await _authRepository.GetUserByUsername(email.ToLower());
+            var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
             if (existingUser == null)
             {
                 var user = new User

@@ -62,10 +62,8 @@ namespace EcomSiteMVC.Controllers
                 var user = await _authService.CheckLogin(model);
                 if (user != null)
                 {
-                    if (model.RememberMe == true)
-                    {
-                        // Create the user claims
-                        var claims = new List<Claim>
+                    // Create the user claims
+                    var claims = new List<Claim>
                         {
                             new Claim("UserId", user.UserId.ToString()),
                             new Claim(ClaimTypes.Name, user.Username),
@@ -73,32 +71,30 @@ namespace EcomSiteMVC.Controllers
                             new Claim(ClaimTypes.Role, user.Role.ToString())
                         };
 
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var authProperties = new AuthenticationProperties
-                        {
-                            IsPersistent = true, // Make the login persistent
-                            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Set the expiration time for the cookie
-                        };
-
-                        // Sign in the user
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                        _notyf.Success("Login Successful", 5);
-                        return RedirectToAction("ProfileView", "User");
-                    }
-                    else
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
                     {
-                        // if remember me is false then use session for login storage.
-                    }
+                        IsPersistent = model.RememberMe, // Make the login persistent according to RememberMe attribute
+
+                        // Set the expiration time for the cookie
+                        ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddMinutes(30)
+                    };
+
+                    // Sign in the user
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    _notyf.Success("Login Successful", 5);
+                    return RedirectToAction("ProfileView", "User");
                 }
             }
-            _notyf.Error("Error Logging In.");
+            _notyf.Error("Invalid Email or Password");
             return RedirectToAction("LoginView");
         }
 
         #region Google Auth 
         public IActionResult GoogleLoginPage()
         {
+            // GoogleLoginCallback() url.
             var redirectUrl = Url.Action("GoogleLoginCallback");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
