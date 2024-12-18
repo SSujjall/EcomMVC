@@ -1,181 +1,184 @@
 ﻿@{
-    var isSuperAdmin = User.IsInRole("Superadmin");
-    var isAdmin = User.IsInRole("Admin");
-    var isAuthenticated = User.Identity.IsAuthenticated;
-    var currentAction = ViewContext.RouteData.Values["action"].ToString();
-    var currentController = ViewContext.RouteData.Values["controller"].ToString();
+	var isSuperAdmin = User.IsInRole("Superadmin");
+	var isAdmin = User.IsInRole("Admin");
+	var isAuthenticated = User.Identity.IsAuthenticated;
+	var currentAction = ViewContext.RouteData.Values["action"].ToString();
+	var currentController = ViewContext.RouteData.Values["controller"].ToString();
 }
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/EcomSiteMVC.styles.css" asp-append-version="true" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/EcomSiteMVC.styles.css" asp-append-version="true" />
 
-    @* Main Style from wwwroot/css *@
-    <link rel="stylesheet" href="~/css/MainStyle.css" asp-append-version="true" />
+	@* Main Style from wwwroot/css *@
+	<link rel="stylesheet" href="~/css/MainStyle.css" asp-append-version="true" />
 
-    @* Google Icons *@
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+	@* Google Icons *@
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
-    <style>
-        .dropdown-menu {
-            width: auto;
-            min-width: unset;
-        }
+	<!-- Font awesome icons -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-        .body.container {
-            max-width: 95%; /* Increase the max-width */
-        }
+	<style>
+		.dropdown-menu {
+			width: auto;
+			min-width: unset;
+		}
 
-        .cart-icon {
-            font-size: 0px; /* necessary to align the icon center vertically */
-        }
+		.body.container {
+			max-width: 95%; /* Increase the max-width */
+		}
 
-        .btn-signup {
-            min-width: 6rem;
-        }
+		.cart-icon {
+			font-size: 0px; /* necessary to align the icon center vertically */
+		}
 
-        .search-bar {
-            margin-left: 1rem;
-        }
-    </style>
+		.btn-signup {
+			min-width: 6rem;
+		}
+
+		.search-bar {
+			margin-left: 1rem;
+		}
+	</style>
 </head>
 <body style="background-color: #f3f3f3">
 
-    <header>
-        @if (!(currentController == "Admin" && currentAction == "AdminLoginView"))
-        {
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 p-3">
-                <div class="container-fluid">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EcomMVC</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <div>
-                            <ul class="navbar-nav flex-grow-1">
-                                @if (!isAdmin && !isSuperAdmin)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                                    </li>
+	<header>
+		@if (!(currentController == "Admin" && currentAction == "AdminLoginView"))
+		{
+			<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 p-3">
+				<div class="container-fluid">
+					<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EcomMVC</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+							aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+						<div>
+							<ul class="navbar-nav flex-grow-1">
+								@if (!isAdmin && !isSuperAdmin)
+								{
+									<li class="nav-item">
+										<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+									</li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Product" asp-action="CustomerProductView">Products</a>
-                                    </li>
-                                }
-                                @if (isAdmin || isSuperAdmin)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
-                                    </li>
+									<li class="nav-item">
+										<a class="nav-link" asp-area="" asp-controller="Product" asp-action="CustomerProductView">Products</a>
+									</li>
+								}
+								@if (isAdmin || isSuperAdmin)
+								{
+									<li class="nav-item">
+										<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
+									</li>
 
-                                    <!-- Product Dropdown -->
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Products
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="productsDropdown">
-                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
-                                            <li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
-                                        </ul>
-                                    </li>
+									<!-- Product Dropdown -->
+									<li class="nav-item dropdown">
+										<a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+											Products
+										</a>
+										<ul class="dropdown-menu" aria-labelledby="productsDropdown">
+											<li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
+											<li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
+										</ul>
+									</li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
-                                    </li>
-                                }
+									<li class="nav-item">
+										<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Orders</a>
+									</li>
+								}
 
-                                @if (isSuperAdmin)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddAdminView">Add Admin</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
+								@if (isSuperAdmin)
+								{
+									<li class="nav-item">
+										<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="AddAdminView">Add Admin</a>
+									</li>
+								}
+							</ul>
+						</div>
 
-                        <div class="buttons d-flex gap-2 gap-lg-3 align-items-center justify-content-end">
-                            @if(!isSuperAdmin && !isAdmin)
-                            {
-                                <!--Search Section-->
-                                <form class="search-bar border border-secondary h-100 d-flex p-2 rounded-pill" asp-controller="Product" asp-action="SearchProduct">
-                                    <input class="w-100 border-0" style="outline: none;" />
-                                    <button type="submit" class="cart-icon m-0 p-0" style="color: gray; background: none; border: none;">
-                                        <span class="material-symbols-outlined">
-                                            search
-                                        </span>
-                                    </button>
-                                </form>
+						<div class="buttons d-flex gap-2 gap-lg-3 align-items-center justify-content-end">
+							@if (!isSuperAdmin && !isAdmin)
+							{
+								<!--Search Section-->
+								<form class="search-bar border border-secondary h-100 d-flex p-2 rounded-pill" asp-controller="Product" asp-action="SearchProduct">
+									<input class="w-100 border-0" placeholder="search" style="outline: none;" />
+									<button type="submit" class="cart-icon m-0 p-0" style="color: gray; background: none; border: none;">
+										<span class="material-symbols-outlined">
+											search
+										</span>
+									</button>
+								</form>
 
-                                <a class="cart-icon" asp-controller="Cart" asp-action="CartView">
-                                    <span class="material-symbols-outlined">
-                                        shopping_cart
-                                    </span>
-                                </a>
-                            }
+								<a class="cart-icon" asp-controller="Cart" asp-action="CartView">
+									<span class="material-symbols-outlined">
+										shopping_cart
+									</span>
+								</a>
+							}
 
-                            @if (isAuthenticated)
-                            {
-                                <div class="dropdown">
-                                    <a class="btn btn-primary dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        @User.Identity.Name
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                        <li><a class="dropdown-item" asp-controller="User" asp-action="ProfileView">Profile</a></li>
-                                        <li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
-                                    </ul>
-                                </div>
-                            }
-                            else
-                            {
-                                <a class="btn btn-outline-primary btn-signup" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
-                                <a class="btn btn-primary" asp-controller="Auth" asp-action="LoginView">Login</a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        }
-    </header>
+							@if (isAuthenticated)
+							{
+								<div class="dropdown">
+									<a class="btn btn-primary dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										@User.Identity.Name
+									</a>
+									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+										<li><a class="dropdown-item" asp-controller="User" asp-action="ProfileView">Profile</a></li>
+										<li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
+									</ul>
+								</div>
+							}
+							else
+							{
+								<a class="btn btn-outline-primary btn-signup" asp-controller="Auth" asp-action="RegisterView">Sign Up</a>
+								<a class="btn btn-primary" asp-controller="Auth" asp-action="LoginView">Login</a>
+							}
+						</div>
+					</div>
+				</div>
+			</nav>
+		}
+	</header>
 
-    <!-- Different Layout for Admin Login-->
-    @if ((currentController == "Admin" && currentAction == "AdminLoginView"))
-    {
-        <div class="body container">
-            <main role="main">
-                @RenderBody()
-            </main>
-        </div>
-    }
-    else
-    {
-        <div class="body container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
-    }
+	<!-- Different Layout for Admin Login-->
+	@if ((currentController == "Admin" && currentAction == "AdminLoginView"))
+	{
+		<div class="body container">
+			<main role="main">
+				@RenderBody()
+			</main>
+		</div>
+	}
+	else
+	{
+		<div class="body container">
+			<main role="main" class="pb-3">
+				@RenderBody()
+			</main>
+		</div>
+	}
 
-    <footer class="border-top text-center footer text-muted">
-        <div class="container">
-            &copy; 2024 - EcomSiteMVC
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await Component.InvokeAsync("Notyf")
-    @await RenderSectionAsync("Scripts", required: false)
-    @await Html.PartialAsync("_ValidationScriptsPartial")
+	<footer class="border-top text-center footer text-muted">
+		<div class="container">
+			&copy; 2024 - EcomSiteMVC
+		</div>
+	</footer>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await Component.InvokeAsync("Notyf")
+	@await RenderSectionAsync("Scripts", required: false)
+	@await Html.PartialAsync("_ValidationScriptsPartial")
 </body>
 </html>

@@ -4,6 +4,7 @@ using EcomSiteMVC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcomSiteMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214075147_Google Login Flag Added")]
+    partial class GoogleLoginFlagAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,7 +233,7 @@ namespace EcomSiteMVC.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GoogleUserId")
                         .HasColumnType("nvarchar(max)");
@@ -246,15 +249,9 @@ namespace EcomSiteMVC.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("Users");
 
@@ -262,10 +259,10 @@ namespace EcomSiteMVC.Migrations
                         new
                         {
                             UserId = 1,
-                            CreatedDate = new DateOnly(2024, 12, 18),
+                            CreatedDate = new DateOnly(2024, 12, 14),
                             Email = "superadmin@gmail.com",
                             IsActive = true,
-                            PasswordHash = "$2a$11$V3K4dKhtBv5oZRC9qLyTmuQ442oxwrWcTDWd.rmNbVmdecU3WBT7K",
+                            PasswordHash = "$2a$11$04CJhXUcGsav0AfssBkZAurox218HSaiBJMm1EBaTjNyIl8orNIUm",
                             Role = 0,
                             Username = "superadmin"
                         });

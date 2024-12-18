@@ -8,6 +8,7 @@ using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,20 +26,41 @@ var account = new Account(cloudinaryConfig.CloudName, cloudinaryConfig.ApiKey, c
 var cloudinary = new Cloudinary(account);
 builder.Services.AddSingleton(cloudinary);
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Auth/LoginView";
-        options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/NotFound";
-    });
+// Configuring Authentications properties
+builder.Services.AddAuthentication(authOptions =>
+{
+    authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    authOptions.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+  // For users who ticks the "remember me?" checkbox during login 
+  .AddCookie(options =>
+  {
+      options.LoginPath = "/Auth/LoginView";
+      options.LogoutPath = "/Auth/Logout";
+      options.AccessDeniedPath = "/Auth/NotFound";
+  }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
+  {
+      googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+      googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+      googleOptions.SaveTokens = true;
+  });
+
+// For users who login but do not ticks the "remember me?" checkbox
+// (The login session is deleted when the browser is closed or if inactive for 30 mins)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout 
+    options.Cookie.HttpOnly = false;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name = "EcomSiteMVCSession";
+});
 
 // notification services
 builder.Services.AddNotyf(config =>
 {
     config.DurationInSeconds = 5;
     config.IsDismissable = true;
-    config.Position = NotyfPosition.TopRight;
+    config.Position = NotyfPosition.BottomRight;
 });
 
 builder.Services.AddAuthorization();
@@ -80,6 +102,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

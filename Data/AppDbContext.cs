@@ -24,14 +24,22 @@ namespace EcomSiteMVC.Data
                 .WithOne(c => c.Customer)
                 .HasForeignKey<Cart>(c => c.CustomerId);
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             modelBuilder.Entity<Product>()
                 .HasMany(p => p.OrderDetails)
                 .WithOne(od => od.Product);
 
             modelBuilder.Entity<Product>()
-               .HasMany(p => p.Images)
-               .WithOne(pi => pi.Product)
-               .HasForeignKey(pi => pi.ProductId);
+                .HasMany(p => p.Images)
+                .WithOne(pi => pi.Product)
+                .HasForeignKey(pi => pi.ProductId);
 
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.OrderDetails)
