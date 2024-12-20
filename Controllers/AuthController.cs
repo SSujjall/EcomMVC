@@ -149,6 +149,17 @@ namespace EcomSiteMVC.Controllers
         }
         #endregion
 
+        public IActionResult ForgotPasswordView()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            return null;
+        }
+
         public IActionResult Logout()
         {
             var logoutResult = HttpContext.SignOutAsync();

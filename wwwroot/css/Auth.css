@@ -1,0 +1,65 @@
+﻿.form-container {
+    max-width: 25rem;
+    min-width: 20rem;
+    background-color: white;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+    .form-group input {
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+
+.password {
+    padding-right: 2.5rem;
+}
+
+#togglePassword {
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    color: gray;
+}
+
+.register-button, .login-button, .sendlink-button, .google-button {
+    display: flex;
+    height: 3rem;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .google-button:hover {
+        color: #0d6efd;
+        transition: 0.1s;
+        background: none;
+        border-color: #0d6efd;
+    }
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .divider::before {
+        margin-right: 0.5em;
+    }
+
+    .divider::after {
+        margin-left: 0.5em;
+    }
