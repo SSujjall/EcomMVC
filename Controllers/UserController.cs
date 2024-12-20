@@ -37,7 +37,21 @@ namespace EcomSiteMVC.Controllers
             // Get the existing user profile
             var existingProfile = await _userService.GetUserProfileAsync(userId);
 
-            if (profileImage != null && profileImage.Length > 0)
+            if (profileImage == null)
+            {
+                if (existingProfile == null || string.IsNullOrEmpty(existingProfile.ProfileImage))
+                {
+                    // If the profile image input is empty and there is no existing profile, show this error
+                    _notyf.Error("Profile image is required. Please upload an image.", 5);
+                    return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
+                }
+                else
+                {
+                    // Retain the existing image if it exists
+                    model.ProfileImage = existingProfile.ProfileImage;
+                }
+            }
+            else
             {
                 // If there's a new image, upload it
                 var imageUrl = await _cloudinaryService.UploadImageAsync(profileImage, FolderName.ProfilePictures);
@@ -55,11 +69,6 @@ namespace EcomSiteMVC.Controllers
                     model.ProfileImage = imageUrl;
                 }
             }
-            else
-            {
-                // If there is no new image, retain the existing image
-                model.ProfileImage = existingProfile?.ProfileImage;
-            }
 
             var profileUpdate = await _userService.CreateUserProfileAsync(model, userId);
 
@@ -73,6 +82,5 @@ namespace EcomSiteMVC.Controllers
             }
             return RedirectToAction("ProfileView");
         }
-
     }
 }
