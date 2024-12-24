@@ -37,7 +37,7 @@ builder.Services.AddAuthentication(authOptions =>
   {
       options.LoginPath = "/Auth/LoginView";
       options.LogoutPath = "/Auth/Logout";
-      options.AccessDeniedPath = "/Auth/NotFound";
+      options.AccessDeniedPath = "/NotFound";
   }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
   {
       googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
@@ -97,6 +97,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Redirect to "PageNotFound" view if the endpoint is invalid
+app.Use(async (context, next) =>
+{
+    await next();
+    if (context.Response.StatusCode == 404)
+    {
+        context.Request.Path = "/NotFound";
+        await next();
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

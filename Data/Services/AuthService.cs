@@ -28,7 +28,8 @@ namespace EcomSiteMVC.Data.Services
                 PasswordHash = model.PasswordHash,
             };
 
-            var user = await _authRepository.GetUserByUsername(req.Username);
+            //check user using both username and email.
+            var user = await _authRepository.GetUserByUsername(req.Username) ?? await _authRepository.GetUserByEmail(req.Username);
 
             // check the user's role before login.
             var restrictedRoles = new HashSet<Role> { Role.Superadmin, Role.Admin };
@@ -43,7 +44,10 @@ namespace EcomSiteMVC.Data.Services
                 }
                 if (user.GoogleUserId != null)// If user has signed up via Google
                 {
-                    return user; // Skip password check for Google users
+                    //if google user tries to signin using a login portal then return null
+                    //they should not be able to login through normal login portal
+                    //they can only login using google singin
+                    return null;
                 }
                 if (PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
                 {

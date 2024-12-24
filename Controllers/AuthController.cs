@@ -22,12 +22,6 @@ namespace EcomSiteMVC.Controllers
             _notyf = notyf;
         }
 
-        [HttpGet]
-        public IActionResult NotFound()
-        {
-            return View();
-        }
-
         public IActionResult RegisterView()
         {
             return View();
@@ -76,7 +70,7 @@ namespace EcomSiteMVC.Controllers
                     {
                         IsPersistent = model.RememberMe, // Make the login persistent according to RememberMe attribute
 
-                        // Set the expiration time for the cookie
+                        // Set the expiration time for the cookie according to "Remember Me" boolean
                         ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddMinutes(30)
                     };
 
