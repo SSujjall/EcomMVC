@@ -120,7 +120,11 @@ namespace EcomSiteMVC.Data.Services
                 return await _authRepository.AddUser(user);
             }
 
-            return existingUser; // Return the existing user if found
+            if (existingUser.GoogleUserId == googleUserId)
+            {
+                return existingUser; // Return the existing user if found
+            }
+            return null;
         }
     }
 }
