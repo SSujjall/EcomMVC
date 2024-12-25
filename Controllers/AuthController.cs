@@ -15,19 +15,8 @@ using EcomSiteMVC.EmailService.Service;
 
 namespace EcomSiteMVC.Controllers
 {
-    public class AuthController : Controller
+    public class AuthController(IAuthService _authService, INotyfService _notyf, IEmailService _emailService) : Controller
     {
-        private readonly IAuthService _authService;
-        private readonly INotyfService _notyf;
-        private readonly IEmailService _emailService;
-
-        public AuthController(IAuthService authService, INotyfService notyf, IEmailService emailService)
-        {
-            _authService = authService;
-            _notyf = notyf;
-            _emailService = emailService;
-        }
-
         public IActionResult RegisterView()
         {
             return View();
