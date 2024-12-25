@@ -15,7 +15,7 @@ namespace EcomSiteMVC.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<User> GetUserProfileByUserIdAsync(int userId)
+        public async Task<User> GetUserAndProfileByUserIdAsync(int userId)
         {
             return await _dbContext.Users.Include(u => u.UserProfile).FirstOrDefaultAsync(u => u.UserId == userId);
         }

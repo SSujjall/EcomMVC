@@ -14,12 +14,12 @@ namespace EcomSiteMVC.Data.Services
             _userRepository = userRepository;
         }
 
-        public async Task<User> GetUserProfileAsync(int userId)
+        public async Task<UserDTO> GetUserProfileAsync(int userId)
         {
-            var user = await _userRepository.GetUserProfileByUserIdAsync(userId);
+            var user = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
             if (user.UserProfile != null)
             {
-                return new User
+                return new UserDTO
                 {
                     Username = user.Username,
                     Email = user.Email,
@@ -38,9 +38,9 @@ namespace EcomSiteMVC.Data.Services
             return null; // return a new UserProfileUpdateDTO if you prefer empty fields
         }
 
-        public async Task<bool> CreateUserProfileAsync(User model, int userId)
+        public async Task<bool> CreateUserProfileAsync(UserDTO model, int userId)
         {
-            var existingUserProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
+            var existingUserProfile = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
 
             if (existingUserProfile != null)
             {
@@ -66,9 +66,9 @@ namespace EcomSiteMVC.Data.Services
             return true;
         }
 
-        public async Task<bool> UpdateUserProfileAsync(User model, int userId)
+        public async Task<bool> UpdateUserProfileAsync(UserDTO model, int userId)
         {
-            var user = await _userRepository.GetUserProfileByUserIdAsync(userId);
+            var user = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
             if (user != null)
             {
                 user.Username = model.Username;

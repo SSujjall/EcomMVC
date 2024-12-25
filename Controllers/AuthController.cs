@@ -48,10 +48,10 @@ namespace EcomSiteMVC.Controllers
             if (response == true)
             {
                 _notyf.Success("Email Verification Successful", 5);
-                return RedirectToAction("EmailVerifiedPage"); // TODO : PAGES NEEDS TO BE MADE FOR THESE
+                return RedirectToAction("LoginView"); 
             }
             _notyf.Error("Email Verification Failed", 5);
-            return RedirectToAction("EmailVerificationFailed");
+            return RedirectToAction("EmailVerificationFailed"); // TODO : PAGES NEEDS TO BE MADE FOR THESE
         }
 
         public IActionResult LoginView()

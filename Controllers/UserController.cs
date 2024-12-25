@@ -31,7 +31,7 @@ namespace EcomSiteMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile(User model, IFormFile profileImage)
+        public async Task<IActionResult> UpdateProfile(UserDTO model, IFormFile profileImage)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
 

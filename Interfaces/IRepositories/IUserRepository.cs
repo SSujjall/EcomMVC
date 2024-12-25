@@ -6,6 +6,6 @@ namespace EcomSiteMVC.Interfaces.IRepositories
 {
     public interface IUserRepository : IRepositoryBase<User>
     {
-        Task<User> GetUserProfileByUserIdAsync(int userId);
+        Task<User> GetUserAndProfileByUserIdAsync(int userId);
     }
 }
