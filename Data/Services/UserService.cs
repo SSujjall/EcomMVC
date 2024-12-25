@@ -16,14 +16,17 @@ namespace EcomSiteMVC.Data.Services
 
         public async Task<UserDTO> GetUserProfileAsync(int userId)
         {
+            var returnObject = new UserDTO();
+
             var user = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
-            if (user.UserProfile != null)
+            if (user != null)
             {
-                return new UserDTO
+                returnObject.Username = user.Username;
+                returnObject.Email = user.Email;
+
+                if (user.UserProfile != null)
                 {
-                    Username = user.Username,
-                    Email = user.Email,
-                    UserProfile = new UserProfile
+                    returnObject.UserProfile = new UserProfile
                     {
                         FirstName = user.UserProfile.FirstName,
                         LastName = user.UserProfile.LastName,
@@ -32,8 +35,9 @@ namespace EcomSiteMVC.Data.Services
                         DateOfBirth = user.UserProfile.DateOfBirth,
                         Gender = user.UserProfile.Gender,
                         ProfileImage = user.UserProfile.ProfileImage,
-                    }
-                };
+                    };
+                }
+                return returnObject;
             }
             return null; // return a new UserProfileUpdateDTO if you prefer empty fields
         }
