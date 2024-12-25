@@ -7,16 +7,19 @@ using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text;
 
 namespace EcomSiteMVC.Data.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
+        private readonly IRepositoryBase<User> _baseRepo;
 
-        public AuthService(IAuthRepository authRepository)
+        public AuthService(IAuthRepository authRepository, IRepositoryBase<User> baseRepo)
         {
             _authRepository = authRepository;
+            _baseRepo = baseRepo;
         }
 
         public async Task<User?> CheckLogin(LoginDTO model)
@@ -30,6 +33,11 @@ namespace EcomSiteMVC.Data.Services
 
             //check user using both username and email.
             var user = await _authRepository.GetUserByUsername(req.Username) ?? await _authRepository.GetUserByEmail(req.Username);
+
+            if (user.IsEmailVerified == false)
+            {
+                return null;
+            }
 
             // check the user's role before login.
             var restrictedRoles = new HashSet<Role> { Role.Superadmin, Role.Admin };
@@ -81,9 +89,9 @@ namespace EcomSiteMVC.Data.Services
                     }
                 }
 
-                var existingUsername = await _authRepository.GetUserByUsername(model.Username);
+                var existingUser = await _authRepository.GetUserByUsername(model.Username);
 
-                if (existingUsername == null)
+                if (existingUser == null)
                 {
                     var user = new User
                     {
@@ -91,7 +99,9 @@ namespace EcomSiteMVC.Data.Services
                         Email = model.Email.ToLower(),
                         PasswordHash = PasswordHelper.HashPassword(model.PasswordHash),
                         Role = assignedRole,
-                        IsActive = true
+                        IsActive = true,
+                        IsEmailVerified = false,
+                        EmailVerificationToken = model.EmailVerificationToken
                     };
 
                     return await _authRepository.AddUser(user);
@@ -125,6 +135,20 @@ namespace EcomSiteMVC.Data.Services
                 return existingUser; // Return the existing user if found
             }
             return null;
+        }
+
+        public async Task<bool> ConfirmEmailVerification(string token, string email)
+        {
+            var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
+            var decodedTokenFromURL = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+            var decodedTokenFromDB = Encoding.UTF8.GetString(Convert.FromBase64String(existingUser.EmailVerificationToken));
+            if (existingUser != null && decodedTokenFromDB == decodedTokenFromURL)
+            {
+                existingUser.IsEmailVerified = true;
+                await _baseRepo.Update(existingUser);
+                return true;
+            }
+            return false;
         }
     }
 }
