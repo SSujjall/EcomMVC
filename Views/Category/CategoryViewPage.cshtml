@@ -1,125 +1,145 @@
-﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Category>;
+﻿@model IEnumerable<EcomSiteMVC.Models.Entities.Category>
 @{
-    ViewData["Title"] = "Category";
+	ViewData["Title"] = "Category";
 }
 
 <style>
-    .category-form-container {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
+	.category-form-container {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
 
-    .form-group {
-        margin-bottom: 1rem;
-    }
+	.form-group {
+		margin-bottom: 1rem;
+	}
 
-        .form-group input {
-            text-align: center;
-            padding-top: 0.8rem;
-            padding-bottom: 0.8rem;
-        }
+		.form-group input {
+			text-align: center;
+			padding-top: 0.8rem;
+			padding-bottom: 0.8rem;
+		}
 </style>
-
-
 
 <h2>Category Management</h2>
 
-<!-- Add Category Button (To trigger the modal) -->
-<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-    Add Category
+<!-- Add Category Button -->
+<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#categoryModal" onclick="resetModal()">
+	Add Category
 </button>
 
-<!-- Add Category Modal-->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="AddCategory" class="category-form-container">
-                    <div class="form-group mb-3">
-                        <input placeholder="Category Name" type="text" name="CategoryName" class="form-control" required />
-                    </div>
+<!-- Generic Category Modal -->
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="categoryModalLabel">Add New Category</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="categoryForm" method="post" action="AddCategory" class="category-form-container">
+					<input type="hidden" id="categoryId" name="CategoryId" value="" />
+					<div class="form-group mb-3">
+						<input placeholder="Category Name" type="text" id="categoryName" name="CategoryName" class="form-control" required />
+					</div>
 
-                    <div class="form-group mb-3">
-                        <input placeholder="Description" type="text" name="Description" class="form-control" required />
-                    </div>
+					<div class="form-group mb-3">
+						<input placeholder="Description" type="text" id="categoryDescription" name="Description" class="form-control" required />
+					</div>
 
-                    <button type="submit" class="submit-button btn btn-primary w-100 mt-3">Submit</button>
-                </form>
-            </div>
-        </div>
-    </div>
+					<button type="submit" class="submit-button btn btn-primary w-100 mt-3">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
-
 
 <!-- Table to display categories -->
 <div class="table-responsive shadow">
-    <table class="custom-table">
-        <thead>
-            <tr>
-                <th scope="col">S.N.</th>
-                <th scope="col">Category Name</th>
-                <th scope="col">Description</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                int index = 1; // For displaying row number
-                foreach (var category in Model)
-                {
-                    <tr>
-                        <th scope="row">@index</th>
-                        <td>@category.CategoryName</td>
-                        <td>@category.Description</td>
-                        <td>
-                            <!-- Add action buttons for editing and deleting -->
-                            <a asp-action="EditProductPage" asp-route-id="@category.CategoryId" class="btn btn-outline-success btn-sm" data-bs-toggle="modal">
-                                <span class="material-symbols-outlined">
-                                    edit_note
-                                </span>
-                            </a>
-                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                    data-item-id="@category.CategoryId" data-item-name="@category.CategoryName">
-                                <span class="material-symbols-outlined">
-                                    delete
-                                </span>
-                            </button>
-                        </td>
-                    </tr>
-                    index++;
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="4" class="text-center">No categories available</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<table class="custom-table">
+		<thead>
+			<tr>
+				<th scope="col">S.N.</th>
+				<th scope="col">Category Name</th>
+				<th scope="col">Description</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model != null && Model.Any())
+			{
+				int index = 1;
+				foreach (var category in Model)
+				{
+					<tr>
+						<th scope="row">@index</th>
+						<td>@category.CategoryName</td>
+						<td>@category.Description</td>
+						<td>
+							<button class="btn btn-outline-success btn-sm" onclick="editCategory(@category.CategoryId, '@category.CategoryName', '@category.Description')" data-bs-toggle="modal" data-bs-target="#categoryModal">
+								<span class="material-symbols-outlined">
+									edit_note
+								</span>
+							</button>
+							<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+									data-item-id="@category.CategoryId" data-item-name="@category.CategoryName">
+								<span class="material-symbols-outlined">
+									delete
+								</span>
+							</button>
+						</td>
+					</tr>
+					index++;
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="4" class="text-center">No categories available</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 </div>
 
-@*Importing Delete confirmation modal*@
 @await Html.PartialAsync("_DeleteModal")
 
 <script>
-    // Attach event listener for delete buttons
-    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
-        button.addEventListener('click', function () {
-            const itemId = this.getAttribute('data-item-id');
-            const itemName = this.getAttribute('data-item-name');
+	// Modal populated when updating category
+	function editCategory(id, name, description) {
+		// Update modal title
+		document.getElementById('categoryModalLabel').textContent = 'Edit Category';
 
-            // Set the product name in the modal
-            document.getElementById('itemToDelete').textContent = itemName;
+		// Populate form fields
+		document.getElementById('categoryId').value = id;
+		document.getElementById('categoryName').value = name;
+		document.getElementById('categoryDescription').value = description;
 
-            // Update the confirmation button link
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            confirmDeleteBtn.href = `/Category/DeleteCategory?id=${itemId}`;
-        });
-    });
+		// Update form action
+		document.getElementById('categoryForm').action = 'UpdateCategory';
+	}
+
+	function resetModal() {
+		// Reset modal title
+		document.getElementById('categoryModalLabel').textContent = 'Add New Category';
+
+		// Clear form fields
+		document.getElementById('categoryId').value = '';
+		document.getElementById('categoryName').value = '';
+		document.getElementById('categoryDescription').value = '';
+
+		// Reset form action
+		document.getElementById('categoryForm').action = 'AddCategory';
+	}
+
+	// Delete modal functionality
+	document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+		button.addEventListener('click', function () {
+			const itemId = this.getAttribute('data-item-id');
+			const itemName = this.getAttribute('data-item-name');
+
+			document.getElementById('itemToDelete').textContent = itemName;
+			const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+			confirmDeleteBtn.href = `/Category/DeleteCategory?id=${itemId}`;
+		});
+	});
 </script>

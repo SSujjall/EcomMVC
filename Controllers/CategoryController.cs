@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
+using EcomSiteMVC.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,26 @@ namespace EcomSiteMVC.Controllers
             return RedirectToAction("CategoryViewPage");
         }
 
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryDTO model)
+        {
+            var categoryModel = new Category
+            {
+                CategoryId = model.CategoryId,
+                CategoryName = model.CategoryName,
+                Description = model.Description
+            };
+
+            var result = await _categoryService.UpdateCategory(categoryModel);
+
+            if (result == true)
+            {
+                _notyf.Success("Category Updated", 5);
+                return RedirectToAction("CategoryViewPage", result);
+            }
+
+            _notyf.Error("Error updating category", 5);
+            return RedirectToAction("CategoryViewPage");
+        }
 
         public async Task<IActionResult> DeleteCategory(int id)
         {
