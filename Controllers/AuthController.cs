@@ -41,7 +41,7 @@ namespace EcomSiteMVC.Controllers
             var user = await _authService.Register(model, HttpContext.User);
             if (user != null)
             {
-                var verificationLink = Url.Action("ConfirmEmail", "Auth", new { token = user.EmailVerificationToken, email = user.Email }, Request.Scheme);
+                var verificationLink = Url.Action("ConfirmEmail", "Auth", new { token = model.EmailVerificationToken, email = user.Email }, Request.Scheme);
                 var emailMessage = new EmailMessage(new[] { user.Email }, "Please confirm your email", $"Please confirm your email by clicking the link: {verificationLink}");
 
                 _emailService.SendEmail(emailMessage);
