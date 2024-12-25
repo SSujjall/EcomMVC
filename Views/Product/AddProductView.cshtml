@@ -77,6 +77,10 @@ it makes it secure.
 
 <div class="table-responsive p-4 mx-auto">
     <form asp-action="@(Model == null ? "AddProduct" : "UpdateProduct")" method="post" enctype="multipart/form-data">
+        @if (Model != null)
+        {
+            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+        }
         <div class="form-group text-center mb-2 position-relative">
             <div class="product-image-container">
                 <img src="~/images/default-profile.png" alt="Product Picture" class="product-picture" id="productImage" />
@@ -94,11 +98,11 @@ it makes it secure.
         </div>
 
         <div class="form-group mb-3">
-            <textarea name="Description" placeholder="Description" class="form-control" value="@(Model != null ? Model.Description : string.Empty)" required></textarea>
+            <textarea name="Description" placeholder="Description" class="form-control" required>@(Model != null ? Model.Description : string.Empty)</textarea>
         </div>
 
         <div class="form-group mb-3">
-            <select name="CategoryId" class="form-select" asp-items="ViewBag.CategoryList" required>
+            <select name="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.CategoryList, "Value", "Text", Model?.CategoryId))" required>
                 <option value="">-- Select Category --</option>
             </select>
         </div>

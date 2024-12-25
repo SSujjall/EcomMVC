@@ -38,6 +38,9 @@ namespace EcomSiteMVC.Data.Services
 
                 await _productRepository.Add(product);
 
+                /* TODO: esko satta "var upImage = await _cloudinaryService.UploadMultipleImageAsync(model.Images, FolderName.Ecom);"
+                         yo implement garnu parne xa for uploading multiple images.
+                */
                 if (model.Images != null)
                 {
                     foreach (var image in model.Images)

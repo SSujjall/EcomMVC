@@ -112,9 +112,23 @@ namespace EcomSiteMVC.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Superadmin,Admin")]
-        public IActionResult UpdateProduct(UpdateProductDTO model)
+        public async Task<IActionResult> UpdateProduct(UpdateProductDTO model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                var result = await _productService.UpdateProduct(model);
+
+                if (result)
+                {
+                    _notyf.Success("Product updated successfully!", 5);
+                    return RedirectToAction("AllProductView");
+                }
+
+                _notyf.Error("Failed to update product!", 5);
+                return RedirectToAction("AllProductView");
+            }
+            _notyf.Error("Model not valid! Please try again.", 5);
+            return RedirectToAction("AllProductView");
         }
     }
 }
