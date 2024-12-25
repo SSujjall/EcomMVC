@@ -40,17 +40,17 @@ namespace EcomSiteMVC.Controllers
 
             if (profileImage == null)
             {
-                if (existingProfile == null || string.IsNullOrEmpty(existingProfile.UserProfile.ProfileImage))
+                if (existingProfile.UserProfile == null)
                 {
-                    // If the profile image input is empty and there is no existing profile, show this error
                     _notyf.Error("Profile image is required. Please upload an image.", 5);
-                    return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
+                    return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
                 }
                 else
                 {
                     // Retain the existing image if it exists
                     model.UserProfile.ProfileImage = existingProfile.UserProfile.ProfileImage;
                 }
+
             }
             else
             {
