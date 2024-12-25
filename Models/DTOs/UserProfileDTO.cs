@@ -1,28 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EcomSiteMVC.Models.Entities;
+using EcomSiteMVC.Models.Enums;
 
 namespace EcomSiteMVC.Models.DTOs
 {
-    public class UserProfileUpdateDTO
+    public class UserDTO
     {
-        public string ProfileImage { get; set; }
-
-        [Required(ErrorMessage = "FirstName Required")]
-        public string FirstName { get; set; }
-
-        [Required(ErrorMessage = "LastName Required")]
-        public string LastName { get; set; }
-
-        [Required(ErrorMessage = "PhoneNumber Required")]
-        public string PhoneNumber { get; set; }
-
-        [Required(ErrorMessage = "Address Required")]
-        public string Address { get; set; }
-
-        [Required(ErrorMessage = "DateOfBirth Required")]
-        public DateOnly DateOfBirth { get; set; }
-
-        [Required(ErrorMessage = "Gender Required")]
-        public string Gender { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string? PasswordHash { get; set; }
+        public Role Role { get; set; }
+        public UserProfile UserProfile { get; set; }
     }
 
     public class UserPasswordUpdateDTO

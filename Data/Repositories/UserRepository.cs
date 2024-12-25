@@ -1,11 +1,12 @@
-﻿using EcomSiteMVC.Interfaces.IRepositories;
+﻿using System.Reflection.Metadata.Ecma335;
+using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Models.DTOs;
 using EcomSiteMVC.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcomSiteMVC.Data.Repositories
 {
-    public class UserRepository : RepositoryBase<UserProfile>, IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
         private readonly AppDbContext _dbContext;
 
@@ -14,9 +15,9 @@ namespace EcomSiteMVC.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<UserProfile> GetUserProfileByUserIdAsync(int userId)
+        public async Task<User> GetUserProfileByUserIdAsync(int userId)
         {
-            return await FindByConditionAsync(up => up.UserId == userId);
+            return await _dbContext.Users.Include(u => u.UserProfile).FirstOrDefaultAsync(u => u.UserId == userId);
         }
     }
 }

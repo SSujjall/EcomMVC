@@ -4,8 +4,8 @@ using EcomSiteMVC.Models.Entities;
 
 namespace EcomSiteMVC.Interfaces.IRepositories
 {
-    public interface IUserRepository : IRepositoryBase<UserProfile>
+    public interface IUserRepository : IRepositoryBase<User>
     {
-        Task<UserProfile> GetUserProfileByUserIdAsync(int userId);
+        Task<User> GetUserProfileByUserIdAsync(int userId);
     }
 }

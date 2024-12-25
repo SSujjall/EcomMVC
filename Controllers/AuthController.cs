@@ -4,12 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
-using EcomSiteMVC.Models.Enums;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authentication.Google;
 using EcomSiteMVC.Helpers;
 using EcomSiteMVC.EmailService.Model;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using EcomSiteMVC.EmailService.Service;
 
 
