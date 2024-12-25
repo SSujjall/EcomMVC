@@ -34,6 +34,7 @@ namespace EcomSiteMVC.Data.Services
             //check user using both username and email.
             var user = await _authRepository.GetUserByUsername(req.Username) ?? await _authRepository.GetUserByEmail(req.Username);
 
+            // If user's email is not verified, don't let them sign in
             if (user.IsEmailVerified == false)
             {
                 return null;
@@ -124,7 +125,8 @@ namespace EcomSiteMVC.Data.Services
                     Username = email.Split('@')[0], // Set username as email prefix
                     GoogleUserId = googleUserId, // Store Google User ID
                     Role = Role.User, // Default role or assign based on the current context
-                    IsActive = true
+                    IsActive = true,
+                    IsEmailVerified = true, // Verify the email by default for google login users
                 };
 
                 return await _authRepository.AddUser(user);
