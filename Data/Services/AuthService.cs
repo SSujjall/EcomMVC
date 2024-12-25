@@ -7,16 +7,19 @@ using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text;
 
 namespace EcomSiteMVC.Data.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
+        private readonly IRepositoryBase<User> _baseRepo;
 
-        public AuthService(IAuthRepository authRepository)
+        public AuthService(IAuthRepository authRepository, IRepositoryBase<User> baseRepo)
         {
             _authRepository = authRepository;
+            _baseRepo = baseRepo;
         }
 
         public async Task<User?> CheckLogin(LoginDTO model)
@@ -47,6 +50,10 @@ namespace EcomSiteMVC.Data.Services
                     //if google user tries to signin using a login portal then return null
                     //they should not be able to login through normal login portal
                     //they can only login using google singin
+                    return null;
+                }
+                if (user.IsEmailVerified == false) // If user's email is not verified, don't let them sign in
+                {
                     return null;
                 }
                 if (PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
@@ -81,9 +88,9 @@ namespace EcomSiteMVC.Data.Services
                     }
                 }
 
-                var existingUsername = await _authRepository.GetUserByUsername(model.Username);
+                var existingUser = await _authRepository.GetUserByUsername(model.Username);
 
-                if (existingUsername == null)
+                if (existingUser == null)
                 {
                     var user = new User
                     {
@@ -91,7 +98,9 @@ namespace EcomSiteMVC.Data.Services
                         Email = model.Email.ToLower(),
                         PasswordHash = PasswordHelper.HashPassword(model.PasswordHash),
                         Role = assignedRole,
-                        IsActive = true
+                        IsActive = true,
+                        IsEmailVerified = false,
+                        EmailVerificationToken = model.EmailVerificationToken
                     };
 
                     return await _authRepository.AddUser(user);
@@ -114,7 +123,8 @@ namespace EcomSiteMVC.Data.Services
                     Username = email.Split('@')[0], // Set username as email prefix
                     GoogleUserId = googleUserId, // Store Google User ID
                     Role = Role.User, // Default role or assign based on the current context
-                    IsActive = true
+                    IsActive = true,
+                    IsEmailVerified = true, // Verify the email by default for google login users
                 };
 
                 return await _authRepository.AddUser(user);
@@ -125,6 +135,20 @@ namespace EcomSiteMVC.Data.Services
                 return existingUser; // Return the existing user if found
             }
             return null;
+        }
+
+        public async Task<bool> ConfirmEmailVerification(string token, string email)
+        {
+            var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
+            var decodedTokenFromURL = Encoding.UTF8.GetString(Convert.FromBase64String(token));
+            var decodedTokenFromDB = Encoding.UTF8.GetString(Convert.FromBase64String(existingUser.EmailVerificationToken));
+            if (existingUser != null && decodedTokenFromDB == decodedTokenFromURL)
+            {
+                existingUser.IsEmailVerified = true;
+                await _baseRepo.Update(existingUser);
+                return true;
+            }
+            return false;
         }
     }
 }

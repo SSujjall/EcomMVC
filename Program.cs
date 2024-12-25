@@ -3,6 +3,8 @@ using CloudinaryDotNet;
 using EcomSiteMVC.Data;
 using EcomSiteMVC.Data.Repositories;
 using EcomSiteMVC.Data.Services;
+using EcomSiteMVC.EmailService.Config;
+using EcomSiteMVC.EmailService.Service;
 using EcomSiteMVC.Helpers;
 using EcomSiteMVC.Interfaces.IRepositories;
 using EcomSiteMVC.Interfaces.IServices;
@@ -25,6 +27,10 @@ var cloudinaryConfig = builder.Configuration.GetSection("CloudinarySettings").Ge
 var account = new Account(cloudinaryConfig.CloudName, cloudinaryConfig.ApiKey, cloudinaryConfig.ApiSecret);
 var cloudinary = new Cloudinary(account);
 builder.Services.AddSingleton(cloudinary);
+
+// Email Configuration
+var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+builder.Services.AddSingleton(emailConfig);
 
 // Configuring Authentications properties
 builder.Services.AddAuthentication(authOptions =>
@@ -73,8 +79,9 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 
-// Register generic repositories and classes
+// Register generic/helper repositories and classes
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 //builder.Services.AddTransient<TokenHelper>(); // Implement this later for jwt authentication instead of identity
 
@@ -86,6 +93,14 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+
+// Cors 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 
 
 var app = builder.Build();
@@ -114,6 +129,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();

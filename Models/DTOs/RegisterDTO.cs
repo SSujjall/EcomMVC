@@ -16,5 +16,7 @@ namespace EcomSiteMVC.Models.DTOs
         [Required(ErrorMessage = "Password is required")]
         [MinLength(3, ErrorMessage = "Password must be atleast 3 characters.")]
         public string PasswordHash { get; set; }
+
+        public string EmailVerificationToken { get; set; }
     }
 }

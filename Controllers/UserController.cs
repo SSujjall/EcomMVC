@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Interfaces.IServices;
 using EcomSiteMVC.Models.DTOs;
+using EcomSiteMVC.Models.Entities;
 using EcomSiteMVC.Models.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace EcomSiteMVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateProfile(UserProfileUpdateDTO model, IFormFile profileImage)
+        public async Task<IActionResult> UpdateProfile(UserDTO model, IFormFile profileImage)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
 
@@ -39,7 +40,7 @@ namespace EcomSiteMVC.Controllers
 
             if (profileImage == null)
             {
-                if (existingProfile == null || string.IsNullOrEmpty(existingProfile.ProfileImage))
+                if (existingProfile == null || string.IsNullOrEmpty(existingProfile.UserProfile.ProfileImage))
                 {
                     // If the profile image input is empty and there is no existing profile, show this error
                     _notyf.Error("Profile image is required. Please upload an image.", 5);
@@ -48,7 +49,7 @@ namespace EcomSiteMVC.Controllers
                 else
                 {
                     // Retain the existing image if it exists
-                    model.ProfileImage = existingProfile.ProfileImage;
+                    model.UserProfile.ProfileImage = existingProfile.UserProfile.ProfileImage;
                 }
             }
             else
@@ -59,14 +60,14 @@ namespace EcomSiteMVC.Controllers
                 if (imageUrl != null)
                 {
                     // If there's an existing image, delete it
-                    if (!string.IsNullOrEmpty(existingProfile?.ProfileImage))
+                    if (!string.IsNullOrEmpty(existingProfile?.UserProfile.ProfileImage))
                     {
                         // Extract public ID from the existing image URL
-                        var existingPublicId = existingProfile.ProfileImage.Split('/').Last().Split('.').First();
+                        var existingPublicId = existingProfile.UserProfile.ProfileImage.Split('/').Last().Split('.').First();
                         await _cloudinaryService.DeleteImageAsync($"{profilePictureFolderName}/{existingPublicId}");
                     }
                     // Update the model with the new image URL
-                    model.ProfileImage = imageUrl;
+                    model.UserProfile.ProfileImage = imageUrl;
                 }
             }
 

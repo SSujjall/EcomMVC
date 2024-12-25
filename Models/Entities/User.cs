@@ -16,7 +16,9 @@ namespace EcomSiteMVC.Models.Entities
         public Role Role { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
+        public string? EmailVerificationToken{ get; set; }
+        public bool IsEmailVerified { get; set; } = false;
 
         //Navigation Property
         public virtual UserProfile UserProfile { get; set; }

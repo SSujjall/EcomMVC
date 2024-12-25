@@ -14,28 +14,33 @@ namespace EcomSiteMVC.Data.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserProfileUpdateDTO> GetUserProfileAsync(int userId)
+        public async Task<UserDTO> GetUserProfileAsync(int userId)
         {
-            var userProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
-            if (userProfile != null)
+            var user = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
+            if (user.UserProfile != null)
             {
-                return new UserProfileUpdateDTO
+                return new UserDTO
                 {
-                    FirstName = userProfile.FirstName,
-                    LastName = userProfile.LastName,
-                    PhoneNumber = userProfile.PhoneNumber,
-                    Address = userProfile.Address,
-                    DateOfBirth = userProfile.DateOfBirth,
-                    Gender = userProfile.Gender,
-                    ProfileImage = userProfile.ProfileImage,
+                    Username = user.Username,
+                    Email = user.Email,
+                    UserProfile = new UserProfile
+                    {
+                        FirstName = user.UserProfile.FirstName,
+                        LastName = user.UserProfile.LastName,
+                        PhoneNumber = user.UserProfile.PhoneNumber,
+                        Address = user.UserProfile.Address,
+                        DateOfBirth = user.UserProfile.DateOfBirth,
+                        Gender = user.UserProfile.Gender,
+                        ProfileImage = user.UserProfile.ProfileImage,
+                    }
                 };
             }
-            return null; // or return a new UserProfileUpdateDTO if you prefer empty fields
+            return null; // return a new UserProfileUpdateDTO if you prefer empty fields
         }
 
-        public async Task<bool> CreateUserProfileAsync(UserProfileUpdateDTO model, int userId)
+        public async Task<bool> CreateUserProfileAsync(UserDTO model, int userId)
         {
-            var existingUserProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
+            var existingUserProfile = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
 
             if (existingUserProfile != null)
             {
@@ -43,36 +48,43 @@ namespace EcomSiteMVC.Data.Services
                 return result;
             }
 
-            var userProfile = new UserProfile
+            var userProfile = new User
             {
-                UserId = userId,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                DateOfBirth = model.DateOfBirth,
-                Gender = model.Gender,
-                ProfileImage = model.ProfileImage,
+                UserProfile = new UserProfile
+                {
+                    FirstName = model.UserProfile.FirstName,
+                    LastName = model.UserProfile.LastName,
+                    PhoneNumber = model.UserProfile.PhoneNumber,
+                    Address = model.UserProfile.Address,
+                    DateOfBirth = model.UserProfile.DateOfBirth,
+                    Gender = model.UserProfile.Gender,
+                    ProfileImage = model.UserProfile.ProfileImage,
+                }
             };
 
             await _userRepository.Add(userProfile);
             return true;
         }
 
-        public async Task<bool> UpdateUserProfileAsync(UserProfileUpdateDTO model, int userId)
+        public async Task<bool> UpdateUserProfileAsync(UserDTO model, int userId)
         {
-            var userProfile = await _userRepository.GetUserProfileByUserIdAsync(userId);
-            if (userProfile != null)
+            var user = await _userRepository.GetUserAndProfileByUserIdAsync(userId);
+            if (user != null)
             {
-                userProfile.FirstName = model.FirstName;
-                userProfile.LastName = model.LastName;
-                userProfile.PhoneNumber = model.PhoneNumber;
-                userProfile.Address = model.Address;
-                userProfile.DateOfBirth = model.DateOfBirth;
-                userProfile.Gender = model.Gender;
-                userProfile.ProfileImage = model.ProfileImage;
+                user.Username = model.Username;
+                user.Email = model.Email;
+                user.UserProfile = new UserProfile
+                {
+                    FirstName = model.UserProfile.FirstName,
+                    LastName = model.UserProfile.LastName,
+                    PhoneNumber = model.UserProfile.PhoneNumber,
+                    Address = model.UserProfile.Address,
+                    DateOfBirth = model.UserProfile.DateOfBirth,
+                    Gender = model.UserProfile.Gender,
+                    ProfileImage = model.UserProfile.ProfileImage,
+                };
 
-                await _userRepository.Update(userProfile);
+                await _userRepository.Update(user);
                 return true;
             }
             return false;

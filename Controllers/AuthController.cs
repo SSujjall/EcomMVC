@@ -4,24 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
-using EcomSiteMVC.Models.Enums;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authentication.Google;
+using EcomSiteMVC.Helpers;
+using EcomSiteMVC.EmailService.Model;
+using EcomSiteMVC.EmailService.Service;
 
 
 namespace EcomSiteMVC.Controllers
 {
-    public class AuthController : Controller
+    public class AuthController(IAuthService _authService, INotyfService _notyf, IEmailService _emailService) : Controller
     {
-        private readonly IAuthService _authService;
-        private readonly INotyfService _notyf;
-
-        public AuthController(IAuthService authService, INotyfService notyf)
-        {
-            _authService = authService;
-            _notyf = notyf;
-        }
-
         public IActionResult RegisterView()
         {
             return View();
@@ -30,17 +23,35 @@ namespace EcomSiteMVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDTO model)
         {
-            if (ModelState.IsValid)
+            model.EmailVerificationToken = EmailVerificationToken.GenerateEmailVerificationToken();
+
+            var user = await _authService.Register(model, HttpContext.User);
+            if (user != null)
             {
-                var user = await _authService.Register(model, HttpContext.User);
-                if (user != null)
-                {
-                    _notyf.Success("Register Successful", 5);
-                    return RedirectToAction("LoginView");
-                }
+                var verificationLink = Url.Action("ConfirmEmail", "Auth", new { token = model.EmailVerificationToken, email = user.Email }, Request.Scheme);
+                var emailMessage = new EmailMessage(new[] { user.Email }, "Please confirm your email", $"Please confirm your email by clicking the link: {verificationLink}");
+
+                _emailService.SendEmail(emailMessage);
+
+                _notyf.Success("Register Successful", 5);
+                return RedirectToAction("LoginView");
             }
+
             _notyf.Error("Error creating user, try another Username.", 5);
             return RedirectToAction("RegisterView");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var response = await _authService.ConfirmEmailVerification(token, email);
+            if (response == true)
+            {
+                _notyf.Success("Email Verification Successful", 5);
+                return RedirectToAction("LoginView"); 
+            }
+            _notyf.Error("Email Verification Failed", 5);
+            return RedirectToAction("EmailVerificationFailed"); // TODO : PAGES NEEDS TO BE MADE FOR THESE
         }
 
         public IActionResult LoginView()
@@ -81,7 +92,7 @@ namespace EcomSiteMVC.Controllers
                     return RedirectToAction("ProfileView", "User");
                 }
             }
-            _notyf.Error("Invalid Email or Password");
+            _notyf.Error("Invalid Email or Password. OR Verify Email.");
             return RedirectToAction("LoginView");
         }
 

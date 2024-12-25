@@ -5,8 +5,8 @@ namespace EcomSiteMVC.Interfaces.IServices
 {
     public interface IUserService
     {
-        Task<UserProfileUpdateDTO> GetUserProfileAsync(int userId);
-        Task<bool> CreateUserProfileAsync(UserProfileUpdateDTO model, int userId);
-        Task<bool> UpdateUserProfileAsync(UserProfileUpdateDTO model, int userId);
+        Task<UserDTO> GetUserProfileAsync(int userId);
+        Task<bool> CreateUserProfileAsync(UserDTO model, int userId);
+        Task<bool> UpdateUserProfileAsync(UserDTO model, int userId);
     }
 }
