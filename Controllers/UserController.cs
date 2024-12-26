@@ -26,8 +26,8 @@ namespace EcomSiteMVC.Controllers
         public async Task<IActionResult> ProfileView()
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
-            var profileDto = await _userService.GetUserProfileAsync(userId);
-            return View(profileDto);
+            var profileData = await _userService.GetExistingUserProfileAsync(userId);
+            return View(profileData);
         }
 
         [HttpPost]
@@ -36,7 +36,7 @@ namespace EcomSiteMVC.Controllers
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
 
             // Get the existing user profile
-            var existingProfile = await _userService.GetUserProfileAsync(userId);
+            var existingProfile = await _userService.GetExistingUserProfileAsync(userId);
 
             if (profileImage == null)
             {

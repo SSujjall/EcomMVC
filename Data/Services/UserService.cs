@@ -14,7 +14,7 @@ namespace EcomSiteMVC.Data.Services
             _userRepository = userRepository;
         }
 
-        public async Task<UserDTO> GetUserProfileAsync(int userId)
+        public async Task<UserDTO> GetExistingUserProfileAsync(int userId)
         {
             var returnObject = new UserDTO();
 
@@ -56,6 +56,7 @@ namespace EcomSiteMVC.Data.Services
             {
                 UserProfile = new UserProfile
                 {
+                    UserId = userId,
                     FirstName = model.UserProfile.FirstName,
                     LastName = model.UserProfile.LastName,
                     PhoneNumber = model.UserProfile.PhoneNumber,
