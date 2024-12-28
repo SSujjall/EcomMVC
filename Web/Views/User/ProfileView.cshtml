@@ -1,0 +1,154 @@
+﻿@model EcomSiteMVC.Core.DTOs.UserDTO
+@{
+	ViewData["Title"] = "User Profile";
+}
+
+<style>
+	.form-container {
+		max-width: 40rem;
+		min-width: 20rem;
+		background-color: white;
+	}
+
+	.form-group {
+		margin-bottom: 1rem;
+	}
+
+	.profile-picture {
+		width: 150px;
+		height: 150px;
+		border-radius: 50%;
+		object-fit: cover;
+		cursor: pointer;
+		border: 2px solid #ccc;
+		display: block;
+		margin: 0 auto 1rem;
+		transition: border-color 0.3s ease;
+	}
+
+		.profile-picture:hover {
+			border-color: #007bff;
+		}
+
+	.file-input {
+		display: none;
+	}
+
+	.submit-button {
+		height: 3rem;
+	}
+</style>
+
+<div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow-sm">
+	<form action="UpdateProfile" method="post" enctype="multipart/form-data">
+		<div class="form-group text-center mb-5">
+			@if (Model != null && Model.UserProfile != null)
+			{
+				<img src="@Model.UserProfile.ProfileImage" alt="Profile Picture" class="profile-picture" id="profileImage" />
+				<input type="file" name="ProfileImage" id="fileInput" class="file-input" accept="image/*" />
+			}
+			else
+			{
+				<img src="~/images/default-profile.png" alt="Profile Picture" class="profile-picture" id="profileImage" />
+				<input type="file" name="ProfileImage" id="fileInput" class="file-input" accept="image/*" />
+			}
+			<span class="text-danger"></span>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="Username" asp-for="Username" class="form-control" />
+					<span asp-validation-for="Username" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="Email" asp-for="Email" class="form-control" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="First Name" asp-for="UserProfile.FirstName" class="form-control" />
+					<span asp-validation-for="UserProfile.FirstName" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="Last Name" asp-for="UserProfile.LastName" class="form-control" />
+					<span asp-validation-for="UserProfile.LastName" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="Phone Number" asp-for="UserProfile.PhoneNumber" class="form-control" />
+					<span asp-validation-for="UserProfile.PhoneNumber" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<input placeholder="Address" asp-for="UserProfile.Address" class="form-control" />
+					<span asp-validation-for="UserProfile.Address" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<input type="text" placeholder="Date Of Birth" class="form-control date-placeholder" asp-for="UserProfile.DateOfBirth" onfocus="(this.type='date')" onblur="(this.type='text')" />
+					<span asp-validation-for="UserProfile.DateOfBirth" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<select asp-for="UserProfile.Gender" class="form-select" id="Gender">
+						<option value="">-- Select Gender --</option>
+						<option value="Male">Male</option>
+						<option value="Female">Female</option>
+					</select>
+					<span asp-validation-for="UserProfile.Gender" class="text-danger"></span>
+				</div>
+			</div>
+		</div>
+
+		<button type="submit" class="submit-button btn btn-primary w-50 mt-3">Save</button>
+	</form>
+</div>
+
+@section Scripts {
+	<script>
+		// Open file input when profile picture is clicked
+		document.getElementById('profileImage').addEventListener('click', function () {
+			document.getElementById('fileInput').click();
+		});
+
+		// Display selected image in the circular profile picture
+		document.getElementById('fileInput').addEventListener('change', function (event) {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					document.getElementById('profileImage').src = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}
+		});
+
+		// Ensure placeholder reappears when input loses focus without a value
+		document.querySelectorAll('.date-placeholder').forEach(function (input) {
+			input.addEventListener('blur', function () {
+				if (!input.value) {
+					input.type = 'text'; // Change back to text to show the placeholder again
+				}
+			});
+		});
+	</script>
+}
