@@ -1,0 +1,53 @@
+﻿@using EcomSiteMVC.Core.DTOs
+@model LoginDTO
+@{
+	ViewData["Title"] = "Login";
+}
+
+<link rel="stylesheet" href="~/css/Auth.css" type="text/css" />
+
+<div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow">
+	<h1 class="text-center mb-4">@ViewData["Title"]</h1>
+	<form asp-action="Login" method="post">
+		<div class="form-floating">
+			<input placeholder="Username" asp-for="Username" class="form-control form-group" />
+			<label>Username or Email</label>
+			<span asp-validation-for="Username" class="text-danger"></span>
+		</div>
+		<div class="form-floating position-relative">
+			<input id="passwordInput" placeholder="Password" asp-for="PasswordHash" type="password" class="form-control form-group password" />
+			<label>Password</label>
+			<span asp-validation-for="PasswordHash" class="text-danger"></span>
+			<span id="togglePassword"
+			   class="material-symbols-outlined position-absolute">
+				visibility_off
+			</span>
+		</div>
+		<div class="form-check">
+			<input asp-for="RememberMe" class="form-check-input" type="checkbox" id="RememberMeCheckbox" />
+			<label asp-for="RememberMe" class="form-check-label float-start" for="RememberMeCheckbox">
+				Remember Me
+			</label>
+
+			<a asp-controller="Auth" asp-action="ForgotPasswordView" class="float-end text-decoration-none"><b>Forgot Password</b></a>
+		</div>
+
+		<button type="submit" class="login-button btn btn-primary w-100 mt-3 mb-3">Login</button>
+
+		<span>
+			Don't have and account?
+			<a asp-controller="Auth" asp-action="RegisterView" style="text-decoration: none;">Signup</a>
+		</span>
+
+		<div class="divider">
+			<span>or</span>
+		</div>
+
+		<a asp-controller="Auth" asp-action="GoogleLoginPage" class="google-button btn btn-outline-dark w-100">
+			<i class="fab fa-google" style="margin-right: 5px;"></i> Sign-in with Google
+		</a>
+	</form>
+</div>
+
+@*Importing toogle script*@
+@await Html.PartialAsync("_TogglePasswordScript")

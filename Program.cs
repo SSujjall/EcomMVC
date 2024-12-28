@@ -1,14 +1,14 @@
 using AspNetCoreHero.ToastNotification;
 using CloudinaryDotNet;
-using EcomSiteMVC.Data;
-using EcomSiteMVC.Data.Repositories;
-using EcomSiteMVC.Data.Services;
-using EcomSiteMVC.EmailService.Config;
-using EcomSiteMVC.EmailService.Service;
-using EcomSiteMVC.Helpers;
-using EcomSiteMVC.Interfaces.IRepositories;
-using EcomSiteMVC.Interfaces.IServices;
-using EcomSiteMVC.Models.Utils;
+using EcomSiteMVC.Core.IRepositories;
+using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.Configs;
+using EcomSiteMVC.Extensions.EmailService.Config;
+using EcomSiteMVC.Extensions.EmailService.Service;
+using EcomSiteMVC.Infrastructure.Data.Contexts;
+using EcomSiteMVC.Infrastructure.Repositories;
+using EcomSiteMVC.Infrastructure.Services;
+using EcomSiteMVC.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +101,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
+
+
+// Custom View Expander for nested Views folder
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options =>
+    {
+        options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
+    });
+
 
 
 var app = builder.Build();
