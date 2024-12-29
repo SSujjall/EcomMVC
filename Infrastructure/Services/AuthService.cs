@@ -109,9 +109,10 @@ namespace EcomSiteMVC.Infrastructure.Services
             return null;
         }
 
-        // if user is not created then it will create user
-        // if user already exists then it gives out the user.
-        // No need to verify password like in the "CheckLogin" method as google auth users do not need password, it is handled by google itself.
+        /** if user is not created then it will create user
+            if user already exists then it gives out the user.
+            No need to verify password like in the "CheckLogin" method as google auth users do not need password, it is handled by google itself.
+        **/
         public async Task<User?> AuthFromGoogle(string email, string googleUserId)
         {
             var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
