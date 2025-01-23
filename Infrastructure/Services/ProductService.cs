@@ -11,14 +11,12 @@ namespace EcomSiteMVC.Infrastructure.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly ICategoryRepository _categoryRepository;
         private readonly ICloudinaryService _cloudinaryService;
 
 
-        public ProductService(IProductRepository productRepository, ICategoryRepository categoryRepository, ICloudinaryService cloudinaryService)
+        public ProductService(IProductRepository productRepository, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
-            _categoryRepository = categoryRepository;
             _cloudinaryService = cloudinaryService;
         }
 
@@ -79,6 +77,19 @@ namespace EcomSiteMVC.Infrastructure.Services
             return await _productRepository.GetAllAsync();
         }
 
+        public async Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter)
+        {
+            var products = await _productRepository.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(searchFilter))
+            {
+                var filteredProducts = products.Where(p => p.ProductName.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) ||
+                                                           p.Description.Contains(searchFilter, StringComparison.OrdinalIgnoreCase));
+                return filteredProducts;
+            }
+            return products;
+        }
+
         public async Task<Product> GetProductById(int id)
         {
             return await _productRepository.GetById(id);
@@ -100,11 +111,6 @@ namespace EcomSiteMVC.Infrastructure.Services
                 return true;
             }
             return false;
-        }
-
-        public async Task<IEnumerable<Category>> GetAllCategories()
-        {
-            return await _categoryRepository.GetAllAsync();
         }
     }
 }

@@ -10,5 +10,6 @@ namespace EcomSiteMVC.Core.IServices
         public Task<bool> DeleteProduct(int id);
         public Task<Product> GetProductById(int id);
         public Task<IEnumerable<Product>> GetAllProduct();
+        public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter);
     }
 }

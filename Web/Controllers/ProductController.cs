@@ -20,12 +20,19 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf = notyf;
         }
 
-        public async Task<IActionResult> CustomerProductView()
+        public async Task<IActionResult> CustomerProductView(string? searchFilter)
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-
             var products = await _productService.GetAllProduct();
+
+            if (!string.IsNullOrEmpty(searchFilter))
+            {
+                products = await _productService.GetFilteredProducts(searchFilter);
+            }
+            if (!products.Any())
+                _notyf.Warning("No products found.");
+
             return View(products);
         }
 
@@ -41,7 +48,7 @@ namespace EcomSiteMVC.Web.Controllers
             return View(product);
         }
 
-        //Admin Methods
+        #region Admin Methods
         [Authorize(Roles = "Superadmin,Admin")]
         public async Task<IActionResult> AllProductView()
         {
@@ -127,5 +134,6 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf.Error("Model not valid! Please try again.", 5);
             return RedirectToAction("AllProductView");
         }
+        #endregion
     }
 }

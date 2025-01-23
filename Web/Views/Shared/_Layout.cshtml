@@ -111,8 +111,8 @@
 							@if (!isSuperAdmin && !isAdmin)
 							{
 								<!--Search Section-->
-								<form class="search-bar border border-secondary h-100 d-flex p-2 rounded-pill" asp-controller="Product" asp-action="SearchProduct">
-									<input class="w-100 border-0" placeholder="search" style="outline: none;" />
+								<form class="search-bar border border-secondary h-100 d-flex p-2 rounded-pill" asp-controller="Product" asp-action="CustomerProductView">
+									<input name="searchFilter" class="w-100 border-0" placeholder="search" style="outline: none; padding-left: 0.3rem;" />
 									<button type="submit" class="cart-icon m-0 p-0" style="color: gray; background: none; border: none;">
 										<span class="material-symbols-outlined">
 											search
