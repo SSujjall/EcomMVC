@@ -1,54 +1,77 @@
 ﻿@using EcomSiteMVC.Core.Models.Entities
 @model Product
-
 @{
-	ViewData["Title"] = @Model.ProductName;
+    ViewData["Title"] = @Model.ProductName;
 }
 
-<style>
-	.product-detail-container {
-		border: 2px solid red;
-	}
+<!-- CSS is coming from GetProductById.cshtml.css file hai -->
 
-	.right-div {
-		padding: 2rem;
-	}
+<div class="product-layout">
+    <div class="product-gallery">
+        <div class="product-main-image">
+            <img id="mainImage" src="@Model.Images.First().ImageUrl" alt="@Model.ProductName" />
+        </div>
+        <div class="product-thumbnails">
+            @foreach (var image in Model.Images)
+            {
+                <img src="@image.ImageUrl"
+                     alt="@Model.ProductName"
+                     class="product-thumbnail @(image == Model.Images.First() ? "active" : "")"
+                     data-full-image="@image.ImageUrl" />
+            }
+        </div>
+    </div>
 
-	.left-div, .right-div {
-		border: 2px solid black;
-	}
-</style>
+    <div class="product-info">
+        <div>
+            <h1 class="product-title">@Model.ProductName</h1>
+            <p class="product-description">@Model.Description</p>
+            <div class="product-price">
+                $@Model.Price.ToString("0.00")
+            </div>
+        </div>
 
-<div class="product-detail-container d-flex justify-content-evenly">
-	<div class="left-div w-50">
-		<div class="image-container">
-			<div class="col-2">
-				@foreach (var image in Model.Images)
-				{
-					var imageUrl = image.ImageUrl;
-					<img src="@imageUrl" alt="@Model.ProductName" />
-				}
-			</div>
-		</div>
-	</div>
+        <form method="post" action="@Url.Action("AddToCart", "Cart")">
+            <input type="hidden" name="productId" value="@Model.ProductId" />
 
-	<div class="right-div w-50">
-		<h2>@Model.ProductName</h2>
-		<p>@Model.Description</p>
-		<p><strong>Price: $@Model.Price</strong></p>
+            <div class="product-quantity-control">
+                <label for="Quantity">Quantity</label>
+                <input type="number"
+                       id="Quantity"
+                       name="Quantity"
+                       class="form-control quantity-input"
+                       value="1"
+                       min="1" />
+            </div>
 
-		<form method="post" action="@Url.Action("AddToCart", "Cart")">
-			<input type="hidden" name="productId" value="@Model.ProductId" />
-
-			<div class="form-group">
-				<label for="quantity">Quantity</label>
-				<input type="number" id="Quantity" name="Quantity" class="form-control" value="1" min="1" />
-			</div>
-
-			<div class="mt-3">
-				<button type="submit" class="btn btn-primary">Add to Cart</button>
-				<button type="submit" formaction="@Url.Action("BuyNow", "Cart")" class="btn btn-success">Buy Now</button>
-			</div>
-		</form>
-	</div>
+            <div class="product-actions">
+                <button type="submit" class="btn product-action-btn btn-add-cart">
+                    Add to Cart
+                </button>
+                <button type="submit"
+                        formaction="@Url.Action("BuyNow", "Cart")"
+                        class="btn product-action-btn btn-buy-now">
+                    Buy Now
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const thumbnails = document.querySelectorAll('.product-thumbnail');
+        const mainImage = document.getElementById('mainImage');
+
+        thumbnails.forEach((thumbnail) => {
+            thumbnail.addEventListener('click', () => {
+                thumbnails.forEach(t => t.classList.remove('active'));
+
+                thumbnail.classList.add('active');
+
+                const newImageUrl = thumbnail.getAttribute('data-full-image');
+                mainImage.src = newImageUrl;
+            });
+        });
+    });
+</script>

@@ -13,10 +13,6 @@
         padding-bottom: 0.8rem;
     }
 
-.password {
-    padding-right: 2.5rem;
-}
-
 #togglePassword {
     top: 50%;
     right: 10px;
