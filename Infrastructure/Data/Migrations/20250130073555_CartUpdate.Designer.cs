@@ -4,6 +4,7 @@ using EcomSiteMVC.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcomSiteMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250130073555_CartUpdate")]
+    partial class CartUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,22 +105,11 @@ namespace EcomSiteMVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShippingAddress")
                         .IsRequired()
@@ -126,7 +118,7 @@ namespace EcomSiteMVC.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalOrderAmount")
+                    b.Property<int>("TotalAmount")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId");
@@ -152,10 +144,6 @@ namespace EcomSiteMVC.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<string>("TotalAmount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UnitPrice")
                         .HasColumnType("int");
@@ -284,7 +272,7 @@ namespace EcomSiteMVC.Migrations
                             Email = "superadmin@gmail.com",
                             IsActive = true,
                             IsEmailVerified = false,
-                            PasswordHash = "$2a$11$uRBF8Ty3GlWnSaJQMBgTYOUiWKCehU9Jyj66pIbpY04iv7T8PSUVG",
+                            PasswordHash = "$2a$11$Xm8DZAC/u52uzVRzh9YRZuOP7OlsmnHNJTN7SHz/bWmqvmQ0iMRo.",
                             Role = 0,
                             Username = "superadmin"
                         });

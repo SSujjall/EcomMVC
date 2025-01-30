@@ -1,0 +1,179 @@
+﻿@using EcomSiteMVC.Core.Models.Entities
+@model Cart
+@{
+    var FirstName = Model.Customer.UserProfile.FirstName;
+    var LastName = Model.Customer.UserProfile.LastName;
+    var fullName = FirstName + " " + LastName;
+
+    var addressParts = Model.Customer?.UserProfile?.Address?.Split(',')
+        .Select(x => x?.Trim())
+        .Where(x => !string.IsNullOrEmpty(x))
+        .ToList() ?? new List<string>();
+
+    // Get address components with safe indexing (to handle index out of bound exception)
+    var address = addressParts.Count > 0 ? addressParts[0] : "";
+    var city = addressParts.Count > 1 ? addressParts[1] : "";
+    var zipcode = addressParts.Count > 2 ? addressParts[2] : "";
+    var province = addressParts.Count > 3 ? addressParts[3] : "";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <!-- Order Summary Card -->
+                    <div class="card bg-light border-0 rounded-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold mb-3">
+                                <i class="bi bi-cart-check me-2"></i>Order Summary
+                            </h5>
+                            <div class="table-responsive">
+                                <table class="table mb-0">
+                                    <thead class="text-muted">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th class="text-center">Quantity</th>
+                                            <th class="text-end">Price</th>
+                                            <th class="text-end">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.CartItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="@item.Product.Images.FirstOrDefault().ImageUrl" alt="@item.Product.ProductName"
+                                                             class="rounded me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        <span style="padding-left: 0.2rem;">@item.Product.ProductName</span>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">@item.Quantity</td>
+                                                <td class="text-end">$@item.UnitPrice.ToString("F2")</td>
+                                                <td class="text-end">$@((item.Quantity * item.UnitPrice).ToString("F2"))</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot class="border-top">
+                                        <tr class="fw-bold">
+                                            <td colspan="3" class="text-end">Subtotal:</td>
+                                            <td class="text-end">$@Model.CartItems.Sum(x => x.Quantity * x.UnitPrice).ToString("F2")</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="PlaceOrder" asp-controller="Order" method="post">
+                        <div class="row g-4">
+                            <!-- Shipping Information -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title fw-bold mb-3">
+                                            <i class="bi bi-truck me-2"></i>Shipping Information
+                                        </h5>
+                                        <div class="mb-3">
+                                            <label for="fullName" class="form-label small fw-bold">Full Name</label>
+                                            <input type="text" class="form-control form-control-lg bg-light"
+                                                   id="fullName" name="FullName" asp-for="@fullName" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="address" class="form-label small fw-bold">Address</label>
+                                            <input type="text" class="form-control form-control-lg bg-light"
+                                                   id="address" name="Address" asp-for="@address" required>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="city" class="form-label small fw-bold">City</label>
+                                                <input type="text" class="form-control form-control-lg bg-light"
+                                                       id="city" name="City" asp-for="@city" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="province" class="form-label small fw-bold">Province</label>
+                                                <input type="text" class="form-control form-control-lg bg-light"
+                                                       id="province" name="Province" asp-for="@province" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="zipCode" class="form-label small fw-bold">ZIP Code</label>
+                                            <input type="text" class="form-control form-control-lg bg-light"
+                                                   id="zipCode" name="ZipCode" asp-for="@zipcode" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm rounded-3">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title fw-bold mb-3">
+                                            <i class="bi bi-credit-card me-2"></i>Payment Method
+                                        </h5>
+                                        <div class="payment-methods">
+                                            <!-- Khalti Payment Option -->
+                                            <div class="form-check custom-radio mb-3">
+                                                <input class="form-check-input" type="radio" name="paymentMethod"
+                                                       id="khaltiPayment" value="khalti" required>
+                                                <label class="form-check-label d-flex align-items-center" for="khaltiPayment">
+                                                    <div class="payment-option p-3 flex-grow-1 bg-light rounded-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div>
+                                                                <span class="fw-bold d-block">Pay with Khalti</span>
+                                                                <small class="text-muted">Safe and secure online payment</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+
+                                            <!-- Cash on Delivery Option -->
+                                            <div class="form-check custom-radio">
+                                                <input class="form-check-input" type="radio" name="paymentMethod"
+                                                       id="codPayment" value="cod" required>
+                                                <label class="form-check-label d-flex align-items-center" for="codPayment">
+                                                    <div class="payment-option p-3 flex-grow-1 bg-light rounded-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-cash-stack fs-3 me-2"></i>
+                                                            <div>
+                                                                <span class="fw-bold d-block">Cash on Delivery</span>
+                                                                <small class="text-muted">Pay when you receive</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <a href="@Url.Action("CartView", "Cart")" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Cart
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                Place Order<i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // // Initialize tooltips for popup info
+        // var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        // var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        //     return new bootstrap.Tooltip(tooltipTriggerEl)
+        // })
+    </script>
+}

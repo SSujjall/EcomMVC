@@ -2,6 +2,17 @@
 @model Cart
 
 <style>
+	img {
+		width: 100%;
+		height: auto;
+		min-height: 60px;
+		min-width: 60px;
+		max-width: 100px;
+		max-height: 100px;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
+	}
+
 	.quantity-button {
 		border: none;
 		background: transparent;
@@ -26,6 +37,7 @@
 	<table class="custom-table">
 		<thead>
 			<tr>
+				<th>Image</th>
 				<th>Product</th>
 				<th>Quantity</th>
 				<th>Price</th>
@@ -39,6 +51,7 @@
 				@foreach (var item in Model.CartItems)
 				{
 					<tr>
+						<td><img src="@item.Product.Images.FirstOrDefault().ImageUrl" /></td>
 						<td>@item.Product.ProductName</td>
 						<td>
 							<button class="quantity-button" onclick="location.href='@Url.Action("AddQuantity", "Cart", new { id = item.CartItemId })'">
@@ -77,7 +90,7 @@
 
 	@*Calculating total price*@
 	<p class="mt-5">Total Amount: $@Model.CartItems.Sum(x => x.Quantity * x.UnitPrice)</p>
-	<button class="btn btn-primary">Proceed to Checkout</button>
+	<button class="btn btn-primary" onclick="location.href='@Url.Action("OrderConfirmation", "Order")'">Proceed to Checkout</button>
 </div>
 
 
@@ -99,7 +112,4 @@
 			confirmDeleteBtn.href = `/Cart/DeleteItem?id=${productId}`;
 		});
 	});
-
-
-
 </script>
