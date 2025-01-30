@@ -5,6 +5,7 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Configs;
 using EcomSiteMVC.Extensions.EmailService.Config;
 using EcomSiteMVC.Extensions.EmailService.Service;
+using EcomSiteMVC.Extensions.KhaltiPaymentService.Config;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Infrastructure.Repositories;
 using EcomSiteMVC.Infrastructure.Services;
@@ -32,6 +33,10 @@ builder.Services.AddSingleton(cloudinary);
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
 builder.Services.AddSingleton(emailConfig);
 
+// Khalti Configuration
+var khaltiConfig = builder.Configuration.GetSection("Payment:Khalti").Get<KhaltiConfig>();
+builder.Services.AddSingleton(khaltiConfig);
+
 // Configuring Authentications properties
 builder.Services.AddAuthentication(authOptions =>
 {
@@ -41,7 +46,7 @@ builder.Services.AddAuthentication(authOptions =>
   // For users who ticks the "remember me?" checkbox during login 
   .AddCookie(options =>
   {
-      options.LoginPath = "/Auth/LoginView";
+      options.LoginPath = "/Auth/LoginView"; // if not authorized, send to login page
       options.LogoutPath = "/Auth/Logout";
       options.AccessDeniedPath = "/NotFound";
   }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
@@ -77,6 +82,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 
 // Register generic/helper repositories and classes
@@ -91,6 +97,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 

@@ -1,9 +1,12 @@
-﻿using EcomSiteMVC.Core.Models.Entities;
+﻿using EcomSiteMVC.Core.DTOs;
+using EcomSiteMVC.Core.Models.Entities;
 
 namespace EcomSiteMVC.Core.IServices
 {
     public interface IOrderService
     {
-        Task<Order> PlaceOrder();
+        Task<Order> CreateOrder(PlaceOrderDTO model, string userId, Cart cartProducts);
+
+        Task<>
     }
 }
