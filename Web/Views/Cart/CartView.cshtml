@@ -46,7 +46,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			@if (Model != null && Model.CartItems.Any())
+			@if (Model != null)
 			{
 				@foreach (var item in Model.CartItems)
 				{
@@ -82,14 +82,14 @@
 			else
 			{
 				<tr>
-					<td colspan="5">No items in cart</td>
+					<td colspan="6">No items in cart</td>
 				</tr>
 			}
 		</tbody>
 	</table>
 
 	@*Calculating total price*@
-	<p class="mt-5">Total Amount: $@Model.CartItems.Sum(x => x.Quantity * x.UnitPrice)</p>
+	<p class="mt-5">Total Amount: $@Model?.CartItems?.Sum(x => x.Quantity * x.UnitPrice)</p>
 	<button class="btn btn-primary" onclick="location.href='@Url.Action("OrderConfirmation", "Order")'">Proceed to Checkout</button>
 </div>
 

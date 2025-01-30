@@ -6,6 +6,7 @@ using EcomSiteMVC.Core.Models.Configs;
 using EcomSiteMVC.Extensions.EmailService.Config;
 using EcomSiteMVC.Extensions.EmailService.Service;
 using EcomSiteMVC.Extensions.KhaltiPaymentService.Config;
+using EcomSiteMVC.Extensions.KhaltiPaymentService.Service;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Infrastructure.Repositories;
 using EcomSiteMVC.Infrastructure.Services;
@@ -99,6 +100,10 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+// Register generic/helper repositories and classes
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IKhaltiService, KhaltiService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 
@@ -117,7 +122,9 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
     });
 
-
+// Adding HttpContextAccessor for accessing Request Context in Services Classes (OrderService.cs)
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient(); // Adding HTTP Client FOR CALLING APIs
 
 var app = builder.Build();
 
@@ -138,6 +145,12 @@ app.Use(async (context, next) =>
         context.Request.Path = "/NotFound";
         await next();
     }
+    //// UNCOMMENT THIS WHEN YOU DONT WANT TO SEE EXCEPTION PAGE if exception occurs
+    //else
+    //{
+    //    context.Request.Path = "/Home/Error";
+    //    await next();
+    //}
 });
 
 app.UseHttpsRedirection();

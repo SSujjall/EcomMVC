@@ -25,7 +25,7 @@ namespace EcomSiteMVC.Extensions.KhaltiPaymentService.Service
 
             var request = JsonConvert.SerializeObject(requestModel);
             var content = new StringContent(request, Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Key {_khaltiConfig.SecretKey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Key {_khaltiConfig.SecretKey}");
 
             var apiResponse = await _httpClient.PostAsync(initiateUrl, content);
 
@@ -36,6 +36,25 @@ namespace EcomSiteMVC.Extensions.KhaltiPaymentService.Service
             }
 
             var response = JsonConvert.DeserializeObject<PaymentInitiateResponse>(responseString);
+            return response;
+        }
+
+        public async Task<PaymentLookupResponse> VerifyPayment(string pidx)
+        {
+            var lookupUrl = _khaltiConfig.LookupUrl.ToString();
+
+            var requestModel = new
+            {
+                pidx = pidx,
+            };
+            var request = JsonConvert.SerializeObject(requestModel);
+            var content = new StringContent(request, Encoding.UTF8, "application/json");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Key {_khaltiConfig.SecretKey}");
+
+            var apiResponse = await _httpClient.PostAsync(lookupUrl, content);
+            var responseString = await apiResponse.Content.ReadAsStringAsync();
+
+            var response = JsonConvert.DeserializeObject<PaymentLookupResponse>(responseString);
             return response;
         }
     }

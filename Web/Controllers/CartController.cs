@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,11 @@ namespace EcomSiteMVC.Web.Controllers
         public async Task<IActionResult> CartView()
         {
             var cart = await _cartService.GetCartByUserIdAsync(GetCurrentUserId());
+            if (!cart.CartItems.Any())
+            {
+                return View(null);
+            }
+
             return View(cart);
         }
 

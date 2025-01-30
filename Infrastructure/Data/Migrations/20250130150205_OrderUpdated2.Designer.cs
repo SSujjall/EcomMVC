@@ -4,6 +4,7 @@ using EcomSiteMVC.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcomSiteMVC.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250130150205_OrderUpdated2")]
+    partial class OrderUpdated2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,8 +105,8 @@ namespace EcomSiteMVC.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -289,7 +292,7 @@ namespace EcomSiteMVC.Migrations
                             Email = "superadmin@gmail.com",
                             IsActive = true,
                             IsEmailVerified = false,
-                            PasswordHash = "$2a$11$GP6uWq8ZeqBh41Fx3Q1ptuSpHeOQAfDdGO2eysX3DHRhNDPUB7cym",
+                            PasswordHash = "$2a$11$eHr0Gaj2eWz/X1YyyPU/1ezjJwSk0y3N5Jz0dE254FOniiKkIdAlO",
                             Role = 0,
                             Username = "superadmin"
                         });

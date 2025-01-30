@@ -16,11 +16,11 @@ namespace EcomSiteMVC.Core.Models.Entities
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public int TotalOrderAmount { get; set; }
-        public Status OrderStatus { get; set; } // Pending, Shipped, Delivered, Cancelled
-        public Status PaymentStatus { get; set; }
+        public string OrderStatus { get; set; } // Pending, Shipped, Delivered, Cancelled
+        public string PaymentStatus { get; set; }
         public string PaymentMethod { get; set; }
         public string ShippingAddress { get; set; }
-        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public virtual User Customer { get; set; }
