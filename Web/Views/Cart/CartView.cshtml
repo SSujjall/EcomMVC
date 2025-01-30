@@ -2,78 +2,104 @@
 @model Cart
 
 <style>
-    .quantity-button {
-        border: none;
-        background: transparent;
-        padding: 0;
-        margin: 0;
-        vertical-align: middle;
-        color: #828282;
-        transition: 0.3s;
-    }
+	.quantity-button {
+		border: none;
+		background: transparent;
+		padding: 0;
+		margin: 0;
+		vertical-align: middle;
+		color: #828282;
+		transition: 0.3s;
+		cursor: pointer;
+		user-select: none;
+	}
 
-        .quantity-button:hover {
-            color: black;
-            transition: 0.3s;
-        }
+		.quantity-button:hover {
+			color: black;
+			transition: 0.3s;
+		}
 </style>
 
 <h2>Your Cart</h2>
-@if (Model != null && Model.CartItems.Any())
-{
-    <div class="table-responsive">
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.CartItems)
-                {
-                    <tr>
-                        <td>@item.Product.ProductName</td>
-                        <td>
-                            <button class="quantity-button">
-                                <span class="material-symbols-outlined">
-                                    add_circle
-                                </span>
-                            </button>
-                            @item.Quantity
-                            <button class="quantity-button">
-                                <span class="material-symbols-outlined">
-                                    do_not_disturb_on
-                                </span>
-                            </button>
-                        </td>
-                        <td>$@item.UnitPrice</td>
-                        <td>$@(item.Quantity * item.UnitPrice)</td>
-                        <td>
-                            <button class="btn btn-success btn-sm">
-                                <span class="material-symbols-outlined">
-                                    edit_note
-                                </span>
-                            </button>
 
-                            <button class="btn btn-danger btn-sm">
-                                <span class="material-symbols-outlined">
-                                    delete
-                                </span>
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <p>Total Amount: $@Model.TotalAmount</p>
-        <button class="btn btn-primary">Proceed to Checkout</button>
-    </div>
-}
-else
-{
-    <p>Your cart is empty.</p>
-}
+<div class="table-responsive">
+	<table class="custom-table">
+		<thead>
+			<tr>
+				<th>Product</th>
+				<th>Quantity</th>
+				<th>Price</th>
+				<th>Total</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model != null && Model.CartItems.Any())
+			{
+				@foreach (var item in Model.CartItems)
+				{
+					<tr>
+						<td>@item.Product.ProductName</td>
+						<td>
+							<button class="quantity-button" onclick="location.href='@Url.Action("AddQuantity", "Cart", new { id = item.CartItemId })'">
+								<span class="material-symbols-outlined">
+									add_circle
+								</span>
+							</button>
+							@item.Quantity
+							<button class="quantity-button" onclick="location.href='@Url.Action("SubstractQuantity", "Cart", new { id = item.CartItemId })'">
+								<span class="material-symbols-outlined">
+									do_not_disturb_on
+								</span>
+							</button>
+						</td>
+						<td>$@item.UnitPrice</td>
+						<td>$@(item.Quantity * item.UnitPrice)</td>
+						<td>
+							<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+									data-item-id="@item.CartItemId" data-item-name="@item.Product.ProductName">
+								<span class="material-symbols-outlined">
+									delete
+								</span>
+							</button>
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				<tr>
+					<td colspan="5">No items in cart</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	@*Calculating total price*@
+	<p class="mt-5">Total Amount: $@Model.CartItems.Sum(x => x.Quantity * x.UnitPrice)</p>
+	<button class="btn btn-primary">Proceed to Checkout</button>
+</div>
+
+
+@*Importing Delete confirmation modal*@
+@await Html.PartialAsync("_DeleteModal")
+
+<script>
+	// Attach event listener for delete buttons
+	document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+		button.addEventListener('click', function () {
+			const productId = this.getAttribute('data-item-id');
+			const productName = this.getAttribute('data-item-name');
+
+			// Set the product name in the modal
+			document.getElementById('itemToDelete').textContent = productName;
+
+			// Update the confirmation button link
+			const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+			confirmDeleteBtn.href = `/Cart/DeleteItem?id=${productId}`;
+		});
+	});
+
+
+
+</script>

@@ -11,8 +11,6 @@ namespace EcomSiteMVC.Core.Models.Entities
         [ForeignKey("User")]
         public int CustomerId { get; set; }
 
-        public int TotalAmount { get; set; }
-
         // Navigation properties
         public virtual User Customer { get; set; }
         public virtual ICollection<CartItem> CartItems { get; set; }

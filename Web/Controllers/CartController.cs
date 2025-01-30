@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EcomSiteMVC.Web.Controllers
@@ -43,6 +44,47 @@ namespace EcomSiteMVC.Web.Controllers
             {
                 _notyf.Error("Failed to add product to cart.");
             }
+            return RedirectToAction("CustomerProductView", "Product");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            var result = await _cartService.DeleteCartItem(id);
+
+            if (result)
+            {
+                _notyf.Success("Product deleted successfully!", 5);
+                return RedirectToAction("CartView");
+            }
+
+            _notyf.Error("Failed to delete product!", 5);
+            return RedirectToAction("CartView");
+        }
+
+        public async Task<IActionResult> AddQuantity(int id)
+        {
+            var result = await _cartService.AddQuantity(id);
+            if (result)
+            {
+                _notyf.Success("Quantity Added successfully!", 5);
+                return RedirectToAction("CartView");
+            }
+
+            _notyf.Error("Failed to delete product!", 5);
+            return RedirectToAction("CartView");
+        }
+
+        public async Task<IActionResult> SubstractQuantity(int id)
+        {
+            var result = await _cartService.SubstractQuantity(id);
+            if (result)
+            {
+                _notyf.Success("Quantity Reduced successfully!", 5);
+                return RedirectToAction("CartView");
+            }
+
+            _notyf.Error("Failed to delete product!", 5);
             return RedirectToAction("CartView");
         }
 
