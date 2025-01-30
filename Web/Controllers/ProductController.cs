@@ -1,6 +1,8 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,16 +22,19 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf = notyf;
         }
 
-        public async Task<IActionResult> CustomerProductView(string? searchFilter)
+        public async Task<IActionResult> CustomerProductView(string? searchFilter, FilterModel filterModel)
         {
+            var products = new List<Product>(); // sabai product load garera if ma janu and feri load vaisakeko products lai change garnu vanda yeuta var declare garera tesma changes garne.
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-            var products = await _productService.GetAllProduct();
 
-            if (!string.IsNullOrEmpty(searchFilter))
+            if (!string.IsNullOrEmpty(searchFilter) || filterModel != null)
             {
-                products = await _productService.GetFilteredProducts(searchFilter);
+                products = (await _productService.GetFilteredProducts(searchFilter, filterModel)).ToList();
             }
+
+            products = (await _productService.GetAllProduct()).ToList();
+
             if (!products.Any())
                 _notyf.Warning("No products found.");
 
@@ -52,9 +57,6 @@ namespace EcomSiteMVC.Web.Controllers
         [Authorize(Roles = "Superadmin,Admin")]
         public async Task<IActionResult> AllProductView()
         {
-            var categories = await _categoryService.GetAllCategories();
-            ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
-
             var products = await _productService.GetAllProduct();
             return View(products);
         }
@@ -80,9 +82,6 @@ namespace EcomSiteMVC.Web.Controllers
                     return RedirectToAction("AddProductView");
                 }
             }
-
-            var categories = await _categoryService.GetAllCategories();
-            ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
 
             _notyf.Error("Failed to add product! Fill all the fields", 5);
             return RedirectToAction("AddProductView", model);

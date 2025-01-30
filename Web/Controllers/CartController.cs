@@ -44,7 +44,7 @@ namespace EcomSiteMVC.Web.Controllers
             {
                 _notyf.Error("Failed to add product to cart.");
             }
-            return RedirectToAction("CustomerProductView", "Product");
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
         [Authorize]
@@ -55,11 +55,11 @@ namespace EcomSiteMVC.Web.Controllers
             if (result)
             {
                 _notyf.Success("Product deleted successfully!", 5);
-                return RedirectToAction("CartView");
+                return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
             }
 
             _notyf.Error("Failed to delete product!", 5);
-            return RedirectToAction("CartView");
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
         public async Task<IActionResult> AddQuantity(int id)
@@ -68,11 +68,11 @@ namespace EcomSiteMVC.Web.Controllers
             if (result)
             {
                 _notyf.Success("Quantity Added successfully!", 5);
-                return RedirectToAction("CartView");
+                return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
             }
 
-            _notyf.Error("Failed to delete product!", 5);
-            return RedirectToAction("CartView");
+            _notyf.Error("Failed to add quantity!", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
         public async Task<IActionResult> SubstractQuantity(int id)
@@ -81,11 +81,11 @@ namespace EcomSiteMVC.Web.Controllers
             if (result)
             {
                 _notyf.Success("Quantity Reduced successfully!", 5);
-                return RedirectToAction("CartView");
+                return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
             }
 
-            _notyf.Error("Failed to delete product!", 5);
-            return RedirectToAction("CartView");
+            _notyf.Error("Failed to remove quantity!", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
         private int GetCurrentUserId()

@@ -5,6 +5,7 @@ using EcomSiteMVC.Core.Models.Entities;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using EcomSiteMVC.Core.Enums;
+using EcomSiteMVC.Core.Models.Helper;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {
@@ -12,7 +13,7 @@ namespace EcomSiteMVC.Infrastructure.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly ICloudinaryService _cloudinaryService;
-
+        private readonly string productPhotosFolder = FolderName.Ecom.ToString();
 
         public ProductService(IProductRepository productRepository, ICloudinaryService cloudinaryService)
         {
@@ -54,21 +55,10 @@ namespace EcomSiteMVC.Infrastructure.Services
                             await _productRepository.AddImage(productImage);
                         }
                     }
-                    return true;
                 }
-            }
-
-            return false;
-        }
-
-        public async Task<bool> DeleteProduct(int id)
-        {
-            var product = await _productRepository.GetById(id);
-            if (product != null)
-            {
-                await _productRepository.Delete(product);
                 return true;
             }
+
             return false;
         }
 
@@ -77,16 +67,30 @@ namespace EcomSiteMVC.Infrastructure.Services
             return await _productRepository.GetAllAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter)
+        public async Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter, FilterModel filterModel)
         {
             var products = await _productRepository.GetAllAsync();
 
             if (!string.IsNullOrEmpty(searchFilter))
             {
-                var filteredProducts = products.Where(p => p.ProductName.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) ||
+                products = products.Where(p => p.ProductName.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) ||
                                                            p.Description.Contains(searchFilter, StringComparison.OrdinalIgnoreCase));
-                return filteredProducts;
             }
+            if (!string.IsNullOrEmpty(filterModel.Category) && int.TryParse(filterModel.Category, out int categoryId))
+            {
+                products = products.Where(p => p.CategoryId == categoryId);
+            }
+
+            if (!string.IsNullOrEmpty(filterModel.MinPrice) && decimal.TryParse(filterModel.MinPrice, out decimal minPrice))
+            {
+                products = products.Where(p => p.Price >= minPrice);
+            }
+
+            if (!string.IsNullOrEmpty(filterModel.MaxPrice) && decimal.TryParse(filterModel.MaxPrice, out decimal maxPrice))
+            {
+                products = products.Where(p => p.Price <= maxPrice);
+            }
+
             return products;
         }
 
@@ -108,6 +112,22 @@ namespace EcomSiteMVC.Infrastructure.Services
                 product.LastUpdatedDate = DateOnly.FromDateTime(DateTime.Now);
 
                 await _productRepository.Update(product);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> DeleteProduct(int id)
+        {
+            var product = await _productRepository.GetById(id);
+            if (product != null)
+            {
+                foreach (var item in product.Images)
+                {
+                    var existingPublicId = item.ImageUrl.Split('/').Last().Split('.').First();
+                    await _cloudinaryService.DeleteImageAsync($"{productPhotosFolder}/{existingPublicId}");
+                }
+                await _productRepository.Delete(product);
                 return true;
             }
             return false;

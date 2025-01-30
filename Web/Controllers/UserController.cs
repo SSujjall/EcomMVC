@@ -59,7 +59,7 @@ namespace EcomSiteMVC.Web.Controllers
                 if (imageUrl != null)
                 {
                     // If there's an existing image, delete it
-                    if (!string.IsNullOrEmpty(existingProfile?.UserProfile.ProfileImage))
+                    if (!string.IsNullOrEmpty(existingProfile?.UserProfile?.ProfileImage))
                     {
                         // Extract public ID from the existing image URL
                         var existingPublicId = existingProfile.UserProfile.ProfileImage.Split('/').Last().Split('.').First();

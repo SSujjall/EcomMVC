@@ -70,7 +70,10 @@ namespace EcomSiteMVC.Infrastructure.Services
         public async Task<bool> AddQuantity(int id)
         {
             var existingCartItem = await _cartItemRepository.GetById(id);
-            if (existingCartItem != null)
+            var existingProduct = await _productRepository.GetById(existingCartItem.ProductId);
+            var isStockAvailable = existingProduct.StockQuantity - existingCartItem.Quantity != 0 ? true : false;
+
+            if (existingCartItem != null && isStockAvailable)
             {
                 existingCartItem.Quantity += 1;
                 var res = await _cartItemRepository.Update(existingCartItem);
@@ -100,6 +103,7 @@ namespace EcomSiteMVC.Infrastructure.Services
                 else // Delete the cart item if the quantity is 0 or -ve
                 {
                     await _cartItemRepository.Delete(existingCartItem);
+                    return true;
                 }
             }
             return false;

@@ -1,5 +1,6 @@
 ﻿using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.Helper;
 
 namespace EcomSiteMVC.Core.IServices
 {
@@ -10,6 +11,6 @@ namespace EcomSiteMVC.Core.IServices
         public Task<bool> DeleteProduct(int id);
         public Task<Product> GetProductById(int id);
         public Task<IEnumerable<Product>> GetAllProduct();
-        public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter);
+        public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter, FilterModel? filterModel);
     }
 }
