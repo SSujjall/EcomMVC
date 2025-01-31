@@ -21,11 +21,11 @@ namespace EcomSiteMVC.Web.Controllers
         public async Task<IActionResult> CartView()
         {
             var cart = await _cartService.GetCartByUserIdAsync(GetCurrentUserId());
-            if (!cart.CartItems.Any())
-            {
-                return View(null);
-            }
 
+            if (cart?.CartItems == null)
+            {
+                return View(new Cart());
+            }
             return View(cart);
         }
 

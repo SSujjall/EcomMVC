@@ -46,9 +46,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			@if (Model != null)
+			@if (Model != null && Model.CartItems != null)
 			{
-				@foreach (var item in Model.CartItems)
+				@foreach (var item in Model?.CartItems)
 				{
 					<tr>
 						<td><img src="@item.Product.Images.FirstOrDefault().ImageUrl" /></td>

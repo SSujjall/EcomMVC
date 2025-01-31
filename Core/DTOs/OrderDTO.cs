@@ -11,7 +11,7 @@ namespace EcomSiteMVC.Core.DTOs
         public string Province { get; set; }
         public string ZipCode { get; set; }
         public string PaymentMethod { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.Now;
-        public virtual List<CartItem> CartItems { get; set; }
     }
+
+
 }
