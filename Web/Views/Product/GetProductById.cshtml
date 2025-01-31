@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <form method="post" action="@Url.Action("AddToCart", "Cart")">
+        <form method="post" id="productForm">
             <input type="hidden" name="productId" value="@Model.ProductId" />
 
             <div class="product-quantity-control">
@@ -45,11 +45,13 @@
             </div>
 
             <div class="product-actions">
-                <button type="submit" class="btn product-action-btn btn-add-cart">
+                <button type="submit" 
+                        class="btn product-action-btn btn-add-cart"
+                        formaction="@Url.Action("AddToCart", "Cart")">
                     Add to Cart
                 </button>
                 <button type="submit"
-                        formaction="@Url.Action("BuyNow", "Order")"
+                        onclick="BuyNow()"
                         class="btn product-action-btn btn-buy-now">
                     Buy Now
                 </button>
@@ -59,6 +61,16 @@
 </div>
 
 <script>
+    function BuyNow() {
+        const form = document.getElementById('productForm');
+        const quantity = document.getElementById('Quantity').value;
+        const productId = @Model.ProductId;
+
+        // Set the form's action dynamically
+        form.action = '@Url.Action("BuyNow", "Order")?productId=' + productId + '&quantity=' + quantity;
+        form.submit();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const thumbnails = document.querySelectorAll('.product-thumbnail');
         const mainImage = document.getElementById('mainImage');

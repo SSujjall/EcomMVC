@@ -1,20 +1,23 @@
 ﻿@using EcomSiteMVC.Core.Models.Entities
 @model Cart
 @{
-    var FirstName = Model?.Customer?.UserProfile?.FirstName;
-    var LastName = Model?.Customer?.UserProfile?.LastName;
+    var FirstName = ViewBag.UserDetail.UserProfile?.FirstName;
+    var LastName = ViewBag.UserDetail.UserProfile?.LastName;
     var fullName = FirstName + " " + LastName;
 
-    var addressParts = Model.Customer?.UserProfile?.Address?.Split(',')
-        .Select(x => x?.Trim())
-        .Where(x => !string.IsNullOrEmpty(x))
-        .ToList() ?? new List<string>();
+    var addressString = ViewBag.UserDetail?.UserProfile?.Address as string ?? "";
+    var addressParts = addressString.Split(',')
+                                    .Select(x => x?.Trim())
+                                    .Where(x => !string.IsNullOrEmpty(x))
+                                    .ToList();
 
     // Get address components with safe indexing (to handle index out of bound exception)
     var address = addressParts.Count > 0 ? addressParts[0] : "";
     var city = addressParts.Count > 1 ? addressParts[1] : "";
     var zipcode = addressParts.Count > 2 ? addressParts[2] : "";
     var province = addressParts.Count > 3 ? addressParts[3] : "";
+
+    var isBuyNow = TempData["BuyNowCart"] != null;
 }
 
 <div class="container py-5">
@@ -67,6 +70,10 @@
                     </div>
 
                     <form asp-action="PlaceOrder" asp-controller="Order" method="post">
+                        @if (isBuyNow)
+                        {
+                            @Html.Hidden("IsBuyNow", "true")
+                        }
                         @for (int i = 0; i < Model.CartItems.Count; i++)
                         {
                             @Html.HiddenFor(m => m.CartItems[i].ProductId)
@@ -160,8 +167,9 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <button class="btn btn-outline-secondary btn-lg px-4" onclick="location.href='@Url.Action("CartView", "Cart")'">
-                                <i class="bi bi-arrow-left me-2"></i>Back to Cart
+                            <button class="btn btn-outline-secondary btn-lg px-4" 
+                                    onclick="location.href='@(isBuyNow ? Url.Action("CustomerProductView", "Product") : Url.Action("CartView", "Cart"))'">
+                                <i class="bi bi-arrow-left me-2"></i>@(isBuyNow ? "Back to Shop" : "Back to Cart")
                             </button>
                             <button type="submit" class="btn btn-primary btn-lg px-5">
                                 Place Order<i class="bi bi-arrow-right ms-2"></i>

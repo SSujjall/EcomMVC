@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,20 +15,57 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly IUserService _userService;
         private readonly INotyfService _notyf;
         private readonly IPaymentService _paymentService;
+        private readonly IProductService _productService;
 
-        public OrderController(ICartService cartService, IUserService userService, 
-                               INotyfService notyf, IOrderService orderService, IPaymentService paymentService)
+        public OrderController(ICartService cartService, IUserService userService, INotyfService notyf,
+                               IOrderService orderService, IPaymentService paymentService, IProductService productService)
         {
             _cartService = cartService;
             _userService = userService;
             _notyf = notyf;
             _orderService = orderService;
             _paymentService = paymentService;
+            _productService = productService;
         }
 
-        public async Task<IActionResult> BuyNow()
+        [Authorize]
+        public async Task<IActionResult> BuyNow(int productId, int quantity)
         {
-            return null;
+            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+            if (userId == 0)
+            {
+                _notyf.Error("User not logged in.");
+                return RedirectToAction("LoginView", "Auth");
+            }
+
+            // Create a temporary cart-like structure for the single product
+            var product = await _productService.GetProductById(productId);
+            if (product == null)
+            {
+                _notyf.Error("Product not found.");
+                return RedirectToAction("Index", "Home");
+            }
+
+            var singleItemCart = new Cart
+            {
+                CustomerId = userId,
+                CartItems = new List<CartItem>
+                {
+                    new CartItem
+                    {
+                        ProductId = product.ProductId,
+                        Quantity = quantity,
+                        UnitPrice = product.Price,
+                        Product = product
+                    }
+                }
+            };
+
+            // Store the temporary cart in TempData for the confirmation page
+            TempData["BuyNowCart"] = singleItemCart;
+
+            ViewBag.UserDetail = await _userService.GetExistingUserProfileAsync(userId);
+            return View("OrderConfirmation", singleItemCart);
         }
 
         public async Task<IActionResult> OrderConfirmation()
@@ -55,12 +93,20 @@ namespace EcomSiteMVC.Web.Controllers
                 return RedirectToAction("LoginView", "Auth");
             }
 
-            var cart = await _cartService.GetCartByUserIdAsync(userId);
-
-            if (cart == null || !cart.CartItems.Any())
+            Cart cart;
+            if (TempData["BuyNowCart"] is Cart buyNowCart)
             {
-                _notyf.Error("Your cart is empty.");
-                return RedirectToAction("CartView", "Cart");
+                cart = buyNowCart;
+                TempData.Remove("BuyNowCart");
+            }
+            else
+            {
+                cart = await _cartService.GetCartByUserIdAsync(userId);
+                if (cart == null || !cart.CartItems.Any())
+                {
+                    _notyf.Error("Your cart is empty.");
+                    return RedirectToAction("CartView", "Cart");
+                }
             }
 
             var order = await _orderService.CreateOrder(model, userId.ToString(), cart);
