@@ -27,10 +27,10 @@ namespace EcomSiteMVC.Infrastructure.Services
             var product = await _productRepository.GetById(model.ProductId);
             if (product == null || product.StockQuantity < model.Quantity) return false;
 
-            var cart = await _cartRepository.FindByConditionAsync(c => c.CustomerId == model.CustomerId)
+            var cart = await _cartRepository.FindSingleByConditionAsync(c => c.CustomerId == model.CustomerId)
                        ?? await _cartRepository.Add(new Cart { CustomerId = model.CustomerId });
 
-            var existingCartItem = await _cartItemRepository.FindByConditionAsync(ci => ci.CartId == cart.CartId && ci.ProductId == model.ProductId);
+            var existingCartItem = await _cartItemRepository.FindSingleByConditionAsync(ci => ci.CartId == cart.CartId && ci.ProductId == model.ProductId);
             if (existingCartItem != null)
             {
                 existingCartItem.Quantity += model.Quantity;
@@ -52,7 +52,7 @@ namespace EcomSiteMVC.Infrastructure.Services
 
         public async Task<Cart> GetCartByUserIdAsync(int userId)
         {
-            return await _cartRepository.FindByConditionAsync(c => c.CustomerId == userId);
+            return await _cartRepository.FindSingleByConditionAsync(c => c.CustomerId == userId);
         }
 
         public async Task<bool> DeleteCartItem(int id)
@@ -107,6 +107,19 @@ namespace EcomSiteMVC.Infrastructure.Services
                 }
             }
             return false;
+        }
+
+        public async Task ClearCart(int userId)
+        {
+            var userCart = await _cartRepository.FindSingleByConditionAsync(x => x.CustomerId == userId);
+
+            if (userCart != null && userCart.CartItems.Any())
+            {
+                foreach (var item in userCart.CartItems)
+                {
+                    await _cartItemRepository.Delete(item);
+                }
+            }
         }
     }
 }

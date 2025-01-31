@@ -28,6 +28,14 @@ namespace EcomSiteMVC.Infrastructure.Services
             _khaltiConfig = khaltiConfig;
         }
 
+        public async Task<IActionResult> ProcessCodPayment(Order order)
+        {
+            var updatedOrder = await _orderService.UpdateOrderStatus(order.OrderId, Status.Completed.ToString());
+            return updatedOrder != null
+                ? ShowOrderSuccess("Order placed successfully!", order.OrderId)
+                : ShowOrderError("Order failed.");
+        }
+
         public async Task<IActionResult> ProcessKhaltiPayment(Order order)
         {
             var userDetails = await _userService.GetExistingUserProfileAsync(order.CustomerId);
@@ -66,14 +74,6 @@ namespace EcomSiteMVC.Infrastructure.Services
                 : ShowOrderError("Error during payment.");
         }
 
-        public async Task<IActionResult> ProcessCodPayment(Order order)
-        {
-            var updatedOrder = await _orderService.UpdateOrderStatus(order.OrderId, Status.Completed.ToString());
-            return updatedOrder != null
-                ? ShowOrderSuccess("Order placed successfully!", order.OrderId)
-                : ShowOrderError("Order failed.");
-        }
-
         public async Task<IActionResult> VerifyKhaltiPayment(int orderId, string pidx)
         {
             var verifyResponse = await _khaltiService.VerifyPayment(pidx);
@@ -85,7 +85,7 @@ namespace EcomSiteMVC.Infrastructure.Services
             return ShowOrderError("Payment Failed.");
         }
 
-        public (string orderId, string pidx) ExtractPaymentDetails(string queryString)
+        public (string orderId, string pidx) ExtractKhaltiPaymentDetails(string queryString)
         {
             string orderId = "";
             string pidx = "";

@@ -10,5 +10,6 @@ namespace EcomSiteMVC.Core.IServices
         public Task<bool> DeleteCartItem(int id);
         public Task<bool> AddQuantity(int id);
         public Task<bool> SubstractQuantity(int id);
+        public Task ClearCart(int userId);
     }
 }

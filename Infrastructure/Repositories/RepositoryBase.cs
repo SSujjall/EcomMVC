@@ -42,7 +42,7 @@ namespace EcomSiteMVC.Infrastructure.Repositories
             return result.Entity;
         }
 
-        public async Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression)
+        public async Task<T> FindSingleByConditionAsync(Expression<Func<T, bool>> expression)
         {
             return await _dbContext.Set<T>().FirstOrDefaultAsync(expression);
         }

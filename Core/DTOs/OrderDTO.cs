@@ -12,6 +12,4 @@ namespace EcomSiteMVC.Core.DTOs
         public string ZipCode { get; set; }
         public string PaymentMethod { get; set; }
     }
-
-
 }

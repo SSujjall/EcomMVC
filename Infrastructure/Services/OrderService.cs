@@ -84,7 +84,7 @@ namespace EcomSiteMVC.Infrastructure.Services
 
         public async Task<string> GetProductNameByOrderDetail(OrderDetail model)
         {
-            var product = await _productRepository.FindByConditionAsync(p => p.ProductId == model.ProductId);
+            var product = await _productRepository.FindSingleByConditionAsync(p => p.ProductId == model.ProductId);
             if (product == null)
             {
                 return string.Empty;

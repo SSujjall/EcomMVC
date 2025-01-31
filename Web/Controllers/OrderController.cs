@@ -43,9 +43,10 @@ namespace EcomSiteMVC.Web.Controllers
             if (product == null)
             {
                 _notyf.Error("Product not found.");
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("CustomerProductView", "Product");
             }
 
+            #region temp cart model
             var singleItemCart = new Cart
             {
                 CustomerId = userId,
@@ -60,6 +61,7 @@ namespace EcomSiteMVC.Web.Controllers
                     }
                 }
             };
+            #endregion
 
             // Store the temporary cart in TempData for the confirmation page
             TempData["BuyNowCart"] = singleItemCart;
@@ -125,7 +127,7 @@ namespace EcomSiteMVC.Web.Controllers
 
         public async Task<IActionResult> VerifyKhaltiPayment()
         {
-            var (orderId, pidx) = _paymentService.ExtractPaymentDetails(Request.QueryString.Value);
+            var (orderId, pidx) = _paymentService.ExtractKhaltiPaymentDetails(Request.QueryString.Value);
             if (string.IsNullOrEmpty(orderId) || string.IsNullOrEmpty(pidx))
             {
                 _notyf.Error("Invalid payment details.");
