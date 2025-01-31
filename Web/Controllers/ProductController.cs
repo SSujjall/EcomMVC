@@ -32,8 +32,10 @@ namespace EcomSiteMVC.Web.Controllers
             {
                 products = (await _productService.GetFilteredProducts(searchFilter, filterModel)).ToList();
             }
-
-            products = (await _productService.GetAllProduct()).ToList();
+            else
+            {
+                products = (await _productService.GetAllProduct()).ToList();
+            }
 
             if (!products.Any())
                 _notyf.Warning("No products found.");

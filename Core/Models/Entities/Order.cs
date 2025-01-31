@@ -12,13 +12,15 @@ namespace EcomSiteMVC.Core.Models.Entities
         [ForeignKey("User")]
         public int CustomerId { get; set; }
 
+        public string FullName { get; set; }
+
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public int TotalOrderAmount { get; set; }
-        public Status Status { get; set; } // Pending, Shipped, Delivered, Cancelled
+        public string OrderStatus { get; set; } // Pending, Shipped, Delivered, Cancelled
         public string PaymentStatus { get; set; }
         public string PaymentMethod { get; set; }
         public string ShippingAddress { get; set; }
-        public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public virtual User Customer { get; set; }

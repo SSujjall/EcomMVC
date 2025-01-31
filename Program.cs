@@ -5,6 +5,8 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Configs;
 using EcomSiteMVC.Extensions.EmailService.Config;
 using EcomSiteMVC.Extensions.EmailService.Service;
+using EcomSiteMVC.Extensions.KhaltiPaymentService.Config;
+using EcomSiteMVC.Extensions.KhaltiPaymentService.Service;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Infrastructure.Repositories;
 using EcomSiteMVC.Infrastructure.Services;
@@ -32,6 +34,10 @@ builder.Services.AddSingleton(cloudinary);
 var emailConfig = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
 builder.Services.AddSingleton(emailConfig);
 
+// Khalti Configuration
+var khaltiConfig = builder.Configuration.GetSection("Payment:Khalti").Get<KhaltiConfig>();
+builder.Services.AddSingleton(khaltiConfig);
+
 // Configuring Authentications properties
 builder.Services.AddAuthentication(authOptions =>
 {
@@ -41,7 +47,7 @@ builder.Services.AddAuthentication(authOptions =>
   // For users who ticks the "remember me?" checkbox during login 
   .AddCookie(options =>
   {
-      options.LoginPath = "/Auth/LoginView";
+      options.LoginPath = "/Auth/LoginView"; // if not authorized, send to login page
       options.LogoutPath = "/Auth/Logout";
       options.AccessDeniedPath = "/NotFound";
   }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
@@ -77,6 +83,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 
 // Register generic/helper repositories and classes
@@ -91,7 +98,13 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
+// Register generic/helper repositories and classes
+builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IKhaltiService, KhaltiService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 
@@ -110,7 +123,9 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
     });
 
-
+// Adding HttpContextAccessor for accessing Request Context in Services Classes (OrderService.cs)
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient(); // Adding HTTP Client FOR CALLING APIs
 
 var app = builder.Build();
 
@@ -131,6 +146,12 @@ app.Use(async (context, next) =>
         context.Request.Path = "/NotFound";
         await next();
     }
+    //// UNCOMMENT THIS WHEN YOU DONT WANT TO SEE EXCEPTION PAGE if exception occurs
+    //else
+    //{
+    //    context.Request.Path = "/Home/Error";
+    //    await next();
+    //}
 });
 
 app.UseHttpsRedirection();

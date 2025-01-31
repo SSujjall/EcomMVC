@@ -1,20 +1,23 @@
 ﻿@using EcomSiteMVC.Core.Models.Entities
 @model Cart
 @{
-    var FirstName = Model.Customer.UserProfile.FirstName;
-    var LastName = Model.Customer.UserProfile.LastName;
+    var FirstName = ViewBag.UserDetail.UserProfile?.FirstName;
+    var LastName = ViewBag.UserDetail.UserProfile?.LastName;
     var fullName = FirstName + " " + LastName;
 
-    var addressParts = Model.Customer?.UserProfile?.Address?.Split(',')
-        .Select(x => x?.Trim())
-        .Where(x => !string.IsNullOrEmpty(x))
-        .ToList() ?? new List<string>();
+    var addressString = ViewBag.UserDetail?.UserProfile?.Address as string ?? "";
+    var addressParts = addressString.Split(',')
+                                    .Select(x => x?.Trim())
+                                    .Where(x => !string.IsNullOrEmpty(x))
+                                    .ToList();
 
     // Get address components with safe indexing (to handle index out of bound exception)
     var address = addressParts.Count > 0 ? addressParts[0] : "";
     var city = addressParts.Count > 1 ? addressParts[1] : "";
     var zipcode = addressParts.Count > 2 ? addressParts[2] : "";
     var province = addressParts.Count > 3 ? addressParts[3] : "";
+
+    var isBuyNow = ViewBag.IsBuyNow ?? false;
 }
 
 <div class="container py-5">
@@ -67,6 +70,16 @@
                     </div>
 
                     <form asp-action="PlaceOrder" asp-controller="Order" method="post">
+                        @if (isBuyNow)
+                        {
+                            @Html.Hidden("IsBuyNow", "true")
+                        }
+                        @for (int i = 0; i < Model.CartItems.Count; i++)
+                        {
+                            @Html.HiddenFor(m => m.CartItems[i].ProductId)
+                            @Html.HiddenFor(m => m.CartItems[i].Quantity)
+                            @Html.HiddenFor(m => m.CartItems[i].UnitPrice)
+                        }
                         <div class="row g-4">
                             <!-- Shipping Information -->
                             <div class="col-md-6">
@@ -116,7 +129,7 @@
                                         <div class="payment-methods">
                                             <!-- Khalti Payment Option -->
                                             <div class="form-check custom-radio mb-3">
-                                                <input class="form-check-input" type="radio" name="paymentMethod"
+                                                <input class="form-check-input" type="radio" name="PaymentMethod"
                                                        id="khaltiPayment" value="khalti" required>
                                                 <label class="form-check-label d-flex align-items-center" for="khaltiPayment">
                                                     <div class="payment-option p-3 flex-grow-1 bg-light rounded-3">
@@ -132,7 +145,7 @@
 
                                             <!-- Cash on Delivery Option -->
                                             <div class="form-check custom-radio">
-                                                <input class="form-check-input" type="radio" name="paymentMethod"
+                                                <input class="form-check-input" type="radio" name="PaymentMethod"
                                                        id="codPayment" value="cod" required>
                                                 <label class="form-check-label d-flex align-items-center" for="codPayment">
                                                     <div class="payment-option p-3 flex-grow-1 bg-light rounded-3">
@@ -154,9 +167,10 @@
 
                         <!-- Action Buttons -->
                         <div class="d-flex justify-content-between align-items-center mt-4">
-                            <a href="@Url.Action("CartView", "Cart")" class="btn btn-outline-secondary btn-lg px-4">
-                                <i class="bi bi-arrow-left me-2"></i>Back to Cart
-                            </a>
+                            <button class="btn btn-outline-secondary btn-lg px-4" 
+                                    onclick="location.href='@(isBuyNow ? Url.Action("CustomerProductView", "Product") : Url.Action("CartView", "Cart"))'">
+                                <i class="bi bi-arrow-left me-2"></i>@(isBuyNow ? "Back to Shop" : "Back to Cart")
+                            </button>
                             <button type="submit" class="btn btn-primary btn-lg px-5">
                                 Place Order<i class="bi bi-arrow-right ms-2"></i>
                             </button>
