@@ -17,7 +17,7 @@
     var zipcode = addressParts.Count > 2 ? addressParts[2] : "";
     var province = addressParts.Count > 3 ? addressParts[3] : "";
 
-    var isBuyNow = TempData["BuyNowCart"] != null;
+    var isBuyNow = ViewBag.IsBuyNow ?? false;
 }
 
 <div class="container py-5">

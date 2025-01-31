@@ -4,6 +4,7 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EcomSiteMVC.Web.Controllers
 {
@@ -63,10 +64,17 @@ namespace EcomSiteMVC.Web.Controllers
             };
             #endregion
 
-            // Store the temporary cart in TempData for the confirmation page
-            TempData["BuyNowCart"] = singleItemCart;
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
+            // Store the temporary cart in Session
+            var serializedCart = JsonConvert.SerializeObject(singleItemCart, settings);
+            HttpContext.Session.SetString("BuyNowCart", serializedCart);
 
             ViewBag.UserDetail = await _userService.GetExistingUserProfileAsync(userId);
+            ViewBag.IsBuyNow = true;
             return View("OrderConfirmation", singleItemCart);
         }
 
@@ -96,10 +104,11 @@ namespace EcomSiteMVC.Web.Controllers
             }
 
             Cart cart;
-            if (TempData["BuyNowCart"] is Cart buyNowCart)
+            var buyNowCartJson = HttpContext.Session.GetString("BuyNowCart");
+            if (!string.IsNullOrEmpty(buyNowCartJson))
             {
-                cart = buyNowCart;
-                TempData.Remove("BuyNowCart");
+                cart = JsonConvert.DeserializeObject<Cart>(buyNowCartJson);
+                HttpContext.Session.Remove("BuyNowCart"); // Clear after use
             }
             else
             {
