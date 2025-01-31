@@ -30,6 +30,19 @@ namespace EcomSiteMVC.Web.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> ViewUserOrders()
+        {
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            if (userId == 0)
+            {
+                _notyf.Error("User not found.");
+                return RedirectToAction("CustomerProductView", "Product");
+            }
+            return View(userId);
+        }
+
+
+        [Authorize]
         public async Task<IActionResult> BuyNow(int productId, int quantity)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
@@ -75,7 +88,7 @@ namespace EcomSiteMVC.Web.Controllers
 
             ViewBag.UserDetail = await _userService.GetExistingUserProfileAsync(userId);
             ViewBag.IsBuyNow = true;
-            return View("OrderConfirmation", singleItemCart);
+            return View("OrderConfirmation", singleItemCart); // instead of creating separate confirmation page for "BuyNow" function, we redirect to already existing OrderConfirmation View Page.
         }
 
         public async Task<IActionResult> OrderConfirmation()
