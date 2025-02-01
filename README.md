@@ -2,7 +2,7 @@
 
 EcomMVC is a feature-rich e-commerce platform built using ASP.NET Core 8 MVC with Razor Pages. This project implements modern web development practices to deliver a complete e-commerce solution with both customer and administrative functionalities.
 
-![Project Preview](https://via.placeholder.com/800x400?text=EcomMVC+Preview) <!-- Add actual screenshot later -->
+<!-- ![Project Preview](https://via.placeholder.com/800x400?text=EcomMVC+Preview) Add actual screenshot later -->
 
 ## Key Features
 
