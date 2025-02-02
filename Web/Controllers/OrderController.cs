@@ -30,7 +30,7 @@ namespace EcomSiteMVC.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> ViewUserOrders()
+        public async Task<IActionResult> UserOrdersView()
         {
             var userId = int.Parse(User.FindFirst("UserId").Value);
             if (userId == 0)

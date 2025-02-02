@@ -135,7 +135,10 @@
 									</a>
 									<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
 										<li><a class="dropdown-item" asp-controller="User" asp-action="ProfileView">Profile</a></li>
-										<li><a class="dropdown-item" asp-controller="Order" asp-action="ViewUserOrders">View my orders</a></li>
+										@if (!isSuperAdmin && !isAdmin)
+										{
+											<li><a class="dropdown-item" asp-controller="Order" asp-action="UserOrdersView">View my orders</a></li>
+										}
 										<li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
 									</ul>
 								</div>
@@ -175,9 +178,22 @@
 			&copy; 2024 - EcomSiteMVC
 		</div>
 	</footer>
+
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+
+	@* DataTable.net script and CSS for datatables *@
+	<script src="https://cdn.datatables.net/v/dt/dt-2.2.1/datatables.min.js"></script>
+	<link href="https://cdn.datatables.net/v/dt/dt-2.2.1/datatables.min.css" rel="stylesheet">
+	<script>
+		$(document).ready(function () {
+			$('#ecomDT').DataTable({
+				"lengthMenu": [5, 10, 25, 50, 100]
+			});
+		});
+	</script>
+
 	@await Component.InvokeAsync("Notyf")
 	@await RenderSectionAsync("Scripts", required: false)
 	@await Html.PartialAsync("_ValidationScriptsPartial")
