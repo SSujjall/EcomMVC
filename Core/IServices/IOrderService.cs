@@ -10,6 +10,7 @@ namespace EcomSiteMVC.Core.IServices
         Task<Order> CreateOrder(PlaceOrderDTO model, string userId, Cart cartProducts);
         Task<Order> UpdateOrderStatus(int orderId, string status);
         Task<string> GetProductNameByOrderDetail(OrderDetail model);
-        //Task<PaymentInitiateResponse> KhaltiPaymentInitiate(int orderId);
+        Task<IEnumerable<Order>> GetUserOrderHistory(int userId);
+        Task<OrderDetailsResponseDTO> GetOrderDetailsByOrderId(int orderId);
     }
 }

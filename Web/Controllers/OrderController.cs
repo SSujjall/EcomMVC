@@ -2,8 +2,11 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Infrastructure.Data.Contexts;
+using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EcomSiteMVC.Web.Controllers
@@ -17,9 +20,10 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly INotyfService _notyf;
         private readonly IPaymentService _paymentService;
         private readonly IProductService _productService;
-
+        private readonly AppDbContext _appDbContext;
         public OrderController(ICartService cartService, IUserService userService, INotyfService notyf,
-                               IOrderService orderService, IPaymentService paymentService, IProductService productService)
+                               IOrderService orderService, IPaymentService paymentService, IProductService productService,
+                               AppDbContext dbContext)
         {
             _cartService = cartService;
             _userService = userService;
@@ -27,6 +31,7 @@ namespace EcomSiteMVC.Web.Controllers
             _orderService = orderService;
             _paymentService = paymentService;
             _productService = productService;
+            _appDbContext = dbContext;
         }
 
         [Authorize]
@@ -38,7 +43,71 @@ namespace EcomSiteMVC.Web.Controllers
                 _notyf.Error("User not found.");
                 return RedirectToAction("CustomerProductView", "Product");
             }
-            return View(userId);
+
+            var orders = await _orderService.GetUserOrderHistory(userId);
+            if (!orders.Any() || orders == null)
+            {
+                return View(new List<Order>());
+            }
+            return View(orders);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(string orderId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(orderId))
+                {
+                    return BadRequest("Order ID is required");
+                }
+
+                var decryptedId = orderId.DecryptParameter();
+                if (string.IsNullOrEmpty(decryptedId))
+                {
+                    return BadRequest("Invalid Order ID");
+                }
+
+                var orderIdInt = int.Parse(decryptedId);
+
+                var order = await _appDbContext.Orders
+                    .Include(o => o.OrderDetails)
+                        .ThenInclude(od => od.Product)
+                    .FirstOrDefaultAsync(o => o.OrderId == orderIdInt);
+
+                if (order == null)
+                {
+                    return NotFound("Order not found");
+                }
+
+                var result = new
+                {
+                    orderId = orderId,
+                    orderDate = order.OrderDate,
+                    fullName = order.FullName,
+                    orderStatus = order.OrderStatus,
+                    paymentMethod = order.PaymentMethod,
+                    paymentStatus = order.PaymentStatus,
+                    shippingAddress = order.ShippingAddress,
+                    totalOrderAmount = order.TotalOrderAmount,
+                    orderDetails = order.OrderDetails.Select(od => new
+                    {
+                        product = new
+                        {
+                            productName = od.Product.ProductName
+                        },
+                        quantity = od.Quantity,
+                        unitPrice = od.UnitPrice,
+                        totalAmount = od.TotalAmount
+                    })
+                };
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing your request: " + ex);
+            }
         }
 
 
