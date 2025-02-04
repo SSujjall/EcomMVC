@@ -132,5 +132,16 @@ namespace EcomSiteMVC.Infrastructure.Services
             }
             return false;
         }
+
+        public async Task<IEnumerable<Product>> PopularProducts(int TopN)
+        {
+            var products = await _productRepository.FilterPopularProducts(TopN);
+
+            if (products == null || !products.Any())
+            {
+                return null;
+            }
+            return products;
+        }
     }
 }

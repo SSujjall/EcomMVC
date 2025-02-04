@@ -1,4 +1,7 @@
-﻿@{
+﻿@using EcomSiteMVC.Core.Models.Entities
+@model IEnumerable<Product>
+
+@{
 	ViewData["Title"] = "E-Commerce Landing Page";
 }
 <link href="Index.cshtml.css" rel="stylesheet">
@@ -40,39 +43,22 @@
 	<div class="trending-section container py-5 mb-5">
 		<h2 class="text-center mb-5">Trending Products</h2>
 		<div class="row">
-			<!-- Product 1 -->
-			<div class="col-md-4">
-				<div class="card product-card">
-					<img src="https://via.placeholder.com/300" class="card-img-top" alt="Product 1">
-					<div class="card-body text-center">
-						<h5 class="card-title">Product 1</h5>
-						<p class="card-text">$49.99</p>
-						<a href="/Product/Details/1" class="btn btn-primary">View Details</a>
+			@if (Model.Any())
+			{
+				foreach (var item in Model)
+				{
+					<div class="col-md-4">
+						<div class="card product-card">
+							<img src="@item.Images.First().ImageUrl" class="card-img-top" alt="Product 1">
+							<div class="card-body text-center">
+								<h5 class="card-title">@item.ProductName</h5>
+								<p class="card-text">NRS @item.Price</p>
+								<a href="@Url.Action("GetProductById","Product", new { id = item.ProductId })" class="btn btn-primary">View Details</a>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<!-- Product 2 -->
-			<div class="col-md-4">
-				<div class="card product-card">
-					<img src="https://via.placeholder.com/300" class="card-img-top" alt="Product 2">
-					<div class="card-body text-center">
-						<h5 class="card-title">Product 2</h5>
-						<p class="card-text">$59.99</p>
-						<a href="/Product/Details/2" class="btn btn-primary">View Details</a>
-					</div>
-				</div>
-			</div>
-			<!-- Product 3 -->
-			<div class="col-md-4">
-				<div class="card product-card">
-					<img src="https://via.placeholder.com/300" class="card-img-top" alt="Product 3">
-					<div class="card-body text-center">
-						<h5 class="card-title">Product 3</h5>
-						<p class="card-text">$69.99</p>
-						<a href="/Product/Details/3" class="btn btn-primary">View Details</a>
-					</div>
-				</div>
-			</div>
+				}
+			}
 		</div>
 	</div>
 </div>
