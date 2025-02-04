@@ -12,5 +12,6 @@ namespace EcomSiteMVC.Core.IServices
         public Task<Product> GetProductById(int id);
         public Task<IEnumerable<Product>> GetAllProduct();
         public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter, FilterModel? filterModel);
+        public Task<IEnumerable<Product>> PopularProducts(int TopN);
     }
 }
