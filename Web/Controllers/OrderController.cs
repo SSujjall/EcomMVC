@@ -2,8 +2,11 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Infrastructure.Data.Contexts;
+using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EcomSiteMVC.Web.Controllers
@@ -17,9 +20,10 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly INotyfService _notyf;
         private readonly IPaymentService _paymentService;
         private readonly IProductService _productService;
-
+        private readonly AppDbContext _appDbContext;
         public OrderController(ICartService cartService, IUserService userService, INotyfService notyf,
-                               IOrderService orderService, IPaymentService paymentService, IProductService productService)
+                               IOrderService orderService, IPaymentService paymentService, IProductService productService,
+                               AppDbContext dbContext)
         {
             _cartService = cartService;
             _userService = userService;
@@ -27,7 +31,53 @@ namespace EcomSiteMVC.Web.Controllers
             _orderService = orderService;
             _paymentService = paymentService;
             _productService = productService;
+            _appDbContext = dbContext;
         }
+
+        [Authorize]
+        public async Task<IActionResult> UserOrdersView()
+        {
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            if (userId == 0)
+            {
+                _notyf.Error("User not found.");
+                return RedirectToAction("CustomerProductView", "Product");
+            }
+
+            var orders = await _orderService.GetUserOrderHistory(userId);
+            if (!orders.Any() || orders == null)
+            {
+                return View(new List<Order>());
+            }
+            return View(orders);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(string orderId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(orderId))
+                {
+                    return BadRequest("Order ID is required");
+                }
+
+                var decryptedId = orderId.DecryptParameter();
+                if (string.IsNullOrEmpty(decryptedId))
+                {
+                    return BadRequest("Invalid Order ID");
+                }
+
+                var orderIdInt = int.Parse(decryptedId);
+                var result = await _orderService.GetOrderDetailsByOrderId(orderIdInt);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing your request: " + ex);
+            }
+        }
+
 
         [Authorize]
         public async Task<IActionResult> BuyNow(int productId, int quantity)
@@ -75,7 +125,7 @@ namespace EcomSiteMVC.Web.Controllers
 
             ViewBag.UserDetail = await _userService.GetExistingUserProfileAsync(userId);
             ViewBag.IsBuyNow = true;
-            return View("OrderConfirmation", singleItemCart);
+            return View("OrderConfirmation", singleItemCart); // instead of creating separate confirmation page for "BuyNow" function, we redirect to already existing OrderConfirmation View Page.
         }
 
         public async Task<IActionResult> OrderConfirmation()

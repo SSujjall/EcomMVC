@@ -85,6 +85,7 @@ namespace EcomSiteMVC.Infrastructure.Services
             return ShowOrderError("Payment Failed.");
         }
 
+        #region helpers
         public (string orderId, string pidx) ExtractKhaltiPaymentDetails(string queryString)
         {
             string orderId = "";
@@ -113,5 +114,6 @@ namespace EcomSiteMVC.Infrastructure.Services
             _notyf.Error(message);
             return new RedirectToActionResult("OrderConfirmation", "Order", null);
         }
+        #endregion
     }
 }

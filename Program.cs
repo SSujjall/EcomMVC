@@ -123,6 +123,13 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
     });
 
+// Redis
+builder.Services.AddStackExchangeRedisCache(opt =>
+{
+    string connection = builder.Configuration.GetConnectionString("Redis");
+    opt.Configuration = connection;
+});
+
 // Adding HttpContextAccessor for accessing Request Context in Services Classes (OrderService.cs)
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient(); // Adding HTTP Client FOR CALLING APIs

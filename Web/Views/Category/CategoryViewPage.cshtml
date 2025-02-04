@@ -56,7 +56,7 @@
 
 <!-- Table to display categories -->
 <div class="table-responsive shadow">
-	<table class="custom-table">
+	<table id="ecomDT" class="custom-table">
 		<thead>
 			<tr>
 				<th scope="col">S.N.</th>
@@ -72,7 +72,7 @@
 				foreach (var category in Model)
 				{
 					<tr>
-						<th scope="row">@index</th>
+						<th scope="row">@index .</th>
 						<td>@category.CategoryName</td>
 						<td>@category.Description</td>
 						<td>
