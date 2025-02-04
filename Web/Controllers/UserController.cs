@@ -2,6 +2,7 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -91,7 +92,12 @@ namespace EcomSiteMVC.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
         {
-            return null;
+            var otp = OtpHelper.GeneratePasswordChangeOTP();
+            return Ok();
+
+            // TODO: Send OTP in mail, store it in database, compare OTP and let user change password
+            // also remove otp after use.
+            // EXTRA: auto expiry of OTP.
         }
     }
 }
