@@ -69,39 +69,7 @@ namespace EcomSiteMVC.Web.Controllers
                 }
 
                 var orderIdInt = int.Parse(decryptedId);
-
-                var order = await _appDbContext.Orders
-                    .Include(o => o.OrderDetails)
-                        .ThenInclude(od => od.Product)
-                    .FirstOrDefaultAsync(o => o.OrderId == orderIdInt);
-
-                if (order == null)
-                {
-                    return NotFound("Order not found");
-                }
-
-                var result = new
-                {
-                    orderId = orderId,
-                    orderDate = order.OrderDate,
-                    fullName = order.FullName,
-                    orderStatus = order.OrderStatus,
-                    paymentMethod = order.PaymentMethod,
-                    paymentStatus = order.PaymentStatus,
-                    shippingAddress = order.ShippingAddress,
-                    totalOrderAmount = order.TotalOrderAmount,
-                    orderDetails = order.OrderDetails.Select(od => new
-                    {
-                        product = new
-                        {
-                            productName = od.Product.ProductName
-                        },
-                        quantity = od.Quantity,
-                        unitPrice = od.UnitPrice,
-                        totalAmount = od.TotalAmount
-                    })
-                };
-
+                var result = await _orderService.GetOrderDetailsByOrderId(orderIdInt);
                 return Json(result);
             }
             catch (Exception ex)

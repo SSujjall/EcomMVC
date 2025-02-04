@@ -127,7 +127,7 @@
                         response.orderDetails.forEach(item => {
                             orderItemsBody.append(`
                                 <tr>
-                                    <td>${item.product.productName}</td>
+                                    <td>${item.productName}</td>
                                     <td>${item.quantity}</td>
                                     <td>${item.unitPrice.toFixed(2)}</td>
                                     <td>${(item.quantity * item.unitPrice).toFixed(2)}</td>
