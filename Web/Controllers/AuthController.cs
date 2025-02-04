@@ -156,13 +156,14 @@ namespace EcomSiteMVC.Web.Controllers
         }
         #endregion
 
+        #region Forgot Password/ Reset
         public IActionResult ForgotPasswordView()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ResetPasswordDTO model)
+        public async Task<IActionResult> SendForgotPasswordLink(ResetPasswordDTO model)
         {
             var existingUser = await _userService.GetUserByEmail(model.Email);
             if (existingUser != null)
@@ -188,13 +189,13 @@ namespace EcomSiteMVC.Web.Controllers
             if (response == true)
             {
 
-                return RedirectToAction("ChangePasswordFromMailView", new ResetPasswordDTO { Email = email });
+                return RedirectToAction("CreateNewPasswordView", new ResetPasswordDTO { Email = email });
             }
             _notyf.Error("Password Reset Link not Valid", 5);
             return RedirectToAction("LoginView");
         }
 
-        public IActionResult ChangePasswordFromMailView(string email)
+        public IActionResult CreateNewPasswordView(string? email)
         {
             var model = new NewPasswordFromResetDTO
             {
@@ -216,6 +217,7 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf.Error("Password Reset Failed", 5);
             return RedirectToAction("LoginView");
         }
+        #endregion
 
         public IActionResult Logout()
         {

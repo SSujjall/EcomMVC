@@ -14,12 +14,12 @@ namespace EcomSiteMVC.Infrastructure.Services
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-        private readonly IRepositoryBase<User> _baseRepo;
+        private readonly IUserRepository _userRepository;
 
-        public AuthService(IAuthRepository authRepository, IRepositoryBase<User> baseRepo)
+        public AuthService(IAuthRepository authRepository, IUserRepository userRepository)
         {
             _authRepository = authRepository;
-            _baseRepo = baseRepo;
+            _userRepository = userRepository;
         }
 
         public async Task<User?> CheckLogin(LoginDTO model)
@@ -144,12 +144,13 @@ namespace EcomSiteMVC.Infrastructure.Services
             if (VerificationToken.VerifyEmailToken(token, existingUser?.EmailVerificationToken))
             {
                 existingUser.IsEmailVerified = true;
-                await _baseRepo.Update(existingUser);
+                await _userRepository.Update(existingUser);
                 return true;
             }
             return false;
         }
 
+        #region Forgot Password Section
         public async Task<bool> VerifyPasswordResetLink(string token, string email)
         {
             var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
@@ -172,7 +173,7 @@ namespace EcomSiteMVC.Infrastructure.Services
             {
                 existingUser.PasswordHash = PasswordHelper.HashPassword(model.ConfirmPassword);
                 existingUser.PasswordResetToken = null;
-                var result = await _baseRepo.Update(existingUser);
+                var result = await _userRepository.Update(existingUser);
                 if (result == null)
                 {
                     return false;
@@ -181,5 +182,6 @@ namespace EcomSiteMVC.Infrastructure.Services
             }
             return false;
         }
+        #endregion
     }
 }
