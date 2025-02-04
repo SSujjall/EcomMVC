@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
+using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
@@ -198,7 +199,15 @@ namespace EcomSiteMVC.Web.Controllers
 
         public async Task<IActionResult> OrderSuccess(int orderId)
         {
+            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+            // Clear cart after order is created
             var order = await _orderService.GetOrderById(orderId);
+
+            if (order.PaymentStatus.Equals(Status.Completed.ToString(), StringComparison.CurrentCultureIgnoreCase))
+            {
+                await _cartService.ClearCart(userId);
+            }
+
             return View(order);
         }
     }

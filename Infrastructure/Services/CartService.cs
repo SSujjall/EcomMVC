@@ -115,9 +115,9 @@ namespace EcomSiteMVC.Infrastructure.Services
 
             if (userCart != null && userCart.CartItems.Any())
             {
-                foreach (var item in userCart.CartItems)
+                for (int i = userCart.CartItems.Count - 1; i >= 0; i--)
                 {
-                    await _cartItemRepository.Delete(item);
+                    await _cartItemRepository.Delete(userCart.CartItems[i]);
                 }
             }
         }
