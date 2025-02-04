@@ -11,5 +11,9 @@ namespace EcomSiteMVC.Core.IServices
         Task<User?> AuthFromGoogle(string email, string googleUserId);
         Task<bool> ConfirmEmailVerification(string token, string email);
 
+        #region Forgot Password Contracts
+        Task<bool> VerifyPasswordResetLink(string token, string email);
+        Task<bool> ResetPassword(NewPasswordFromResetDTO model);
+        #endregion
     }
 }

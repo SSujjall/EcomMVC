@@ -18,6 +18,7 @@ namespace EcomSiteMVC.Core.Models.Entities
         public DateOnly CreatedDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public bool IsActive { get; set; } = false;
         public string? EmailVerificationToken { get; set; }
+        public string? PasswordResetToken { get; set; }
         public bool IsEmailVerified { get; set; } = false;
 
         //Navigation Property

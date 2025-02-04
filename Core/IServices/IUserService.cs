@@ -8,5 +8,7 @@ namespace EcomSiteMVC.Core.IServices
         Task<UserDTO> GetExistingUserProfileAsync(int userId);
         Task<bool> CreateUserProfileAsync(UserDTO model, int userId);
         Task<bool> UpdateUserProfileAsync(UserDTO model, int userId);
+        Task<User> GetUserByEmail(string email);
+        Task<User> UpdateUser(User model);
     }
 }

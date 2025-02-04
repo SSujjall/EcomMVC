@@ -9,11 +9,13 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Utilities;
 using EcomSiteMVC.Extensions.EmailService.Service;
+using EcomSiteMVC.Core.Models.Entities;
 
 
 namespace EcomSiteMVC.Web.Controllers
 {
-    public class AuthController(IAuthService _authService, INotyfService _notyf, IEmailService _emailService) : Controller
+    public class AuthController(IAuthService _authService, INotyfService _notyf, 
+        IEmailService _emailService, IUserService _userService) : Controller
     {
         public IActionResult RegisterView()
         {
@@ -23,7 +25,7 @@ namespace EcomSiteMVC.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDTO model)
         {
-            model.EmailVerificationToken = EmailVerificationToken.GenerateEmailVerificationToken();
+            model.EmailVerificationToken = VerificationToken.GenerateEmailVerificationToken();
 
             var user = await _authService.Register(model, HttpContext.User);
             if (user != null)
@@ -125,7 +127,7 @@ namespace EcomSiteMVC.Web.Controllers
                 var googleUserId = result?.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var username = email?.Split('@')[0];
 
-                // Create new user if user is not in database, and give the added user data
+                // Create new user if user is not in database, and return the added user's data
                 // If user exists, get the existing user data
                 var user = await _authService.AuthFromGoogle(email, googleUserId);
 
@@ -154,16 +156,68 @@ namespace EcomSiteMVC.Web.Controllers
         }
         #endregion
 
+        #region Forgot Password/ Reset
         public IActionResult ForgotPasswordView()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult ForgotPassword(string email)
+        public async Task<IActionResult> SendForgotPasswordLink(ResetPasswordDTO model)
         {
-            return null;
+            var existingUser = await _userService.GetUserByEmail(model.Email);
+            if (existingUser != null)
+            {
+                existingUser.PasswordResetToken = VerificationToken.GeneratePasswordResetToken();
+                await _userService.UpdateUser(existingUser);
+                var pwResetLink = Url.Action("ValidatePasswordResetToken", "Auth", new { token = existingUser.PasswordResetToken, email = existingUser.Email }, Request.Scheme);
+                var emailMessage = new EmailMessage(new[] { existingUser.Email }, "Password reset link", $"Click the link to reset password: {pwResetLink}");
+
+                _emailService.SendEmail(emailMessage);
+
+                _notyf.Success("Password Reset Link Sent to Email", 5);
+                return RedirectToAction("LoginView");
+            }
+            _notyf.Error("User does not exists", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]); // return the page where the user currently is
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ValidatePasswordResetToken(string token, string email)
+        {
+            var response = await _authService.VerifyPasswordResetLink(token, email);
+            if (response == true)
+            {
+
+                return RedirectToAction("CreateNewPasswordView", new ResetPasswordDTO { Email = email });
+            }
+            _notyf.Error("Password Reset Link not Valid", 5);
+            return RedirectToAction("LoginView");
+        }
+
+        public IActionResult CreateNewPasswordView(string? email)
+        {
+            var model = new NewPasswordFromResetDTO
+            {
+                Email = email
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(NewPasswordFromResetDTO model)
+        {
+            var response = await _authService.ResetPassword(model);
+
+            if (response == true)
+            {
+                _notyf.Success("Password Reset Successful", 5);
+                return RedirectToAction("LoginView");
+            }
+            _notyf.Error("Password Reset Failed", 5);
+            return RedirectToAction("LoginView");
+        }
+        #endregion
 
         public IActionResult Logout()
         {
