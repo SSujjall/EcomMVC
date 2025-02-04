@@ -16,6 +16,11 @@ namespace EcomSiteMVC.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
+        public async Task<User> GetByUserEmailAsync(string email)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<User> GetUserAndProfileByUserIdAsync(int userId)
         {
             return await _dbContext.Users.Include(u => u.UserProfile).FirstOrDefaultAsync(u => u.UserId == userId);

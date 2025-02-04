@@ -141,12 +141,42 @@ namespace EcomSiteMVC.Infrastructure.Services
         public async Task<bool> ConfirmEmailVerification(string token, string email)
         {
             var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
-            var decodedTokenFromURL = Encoding.UTF8.GetString(Convert.FromBase64String(token));
-            var decodedTokenFromDB = Encoding.UTF8.GetString(Convert.FromBase64String(existingUser.EmailVerificationToken));
-            if (existingUser != null && decodedTokenFromDB == decodedTokenFromURL)
+            if (VerificationToken.VerifyEmailToken(token, existingUser?.EmailVerificationToken))
             {
                 existingUser.IsEmailVerified = true;
                 await _baseRepo.Update(existingUser);
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> VerifyPasswordResetLink(string token, string email)
+        {
+            var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
+            if (VerificationToken.VerifyPasswordResetToken(token, existingUser?.PasswordResetToken))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> ResetPassword(NewPasswordFromResetDTO model)
+        {
+            var existingUser = await _authRepository.GetUserByEmail(model.Email.ToLower());
+            if (existingUser == null)
+            {
+                return false;
+            }
+
+            if (model.NewPassword == model.ConfirmPassword)
+            {
+                existingUser.PasswordHash = PasswordHelper.HashPassword(model.ConfirmPassword);
+                existingUser.PasswordResetToken = null;
+                var result = await _baseRepo.Update(existingUser);
+                if (result == null)
+                {
+                    return false;
+                }
                 return true;
             }
             return false;

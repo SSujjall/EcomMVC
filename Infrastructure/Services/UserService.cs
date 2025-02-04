@@ -94,5 +94,26 @@ namespace EcomSiteMVC.Infrastructure.Services
             }
             return false;
         }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            var user = await _userRepository.GetByUserEmailAsync(email);
+
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+        }
+
+        public async Task<User> UpdateUser(User model)
+        {
+            if(model != null)
+            {
+                var updatedModel = await _userRepository.Update(model);
+                return updatedModel;
+            }
+            return null;
+        }
     }
 }
