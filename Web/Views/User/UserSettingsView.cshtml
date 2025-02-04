@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Settings";
+}
+@using EcomSiteMVC.Core.DTOs
+@model Tuple<ChangePasswordDTO>
+
+<link rel="stylesheet" href="~/css/Auth.css" type="text/css" />
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="card">
+    <div class="card-header p-3 d-flex justify-content-between">
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a class="nav-link active show" href="#changePassword" data-bs-toggle="tab">Change Password</a></li>
+            <li class="nav-item"><a class="nav-link" href="#asdasd" data-bs-toggle="tab">asdasd</a></li>
+        </ul>
+    </div>
+
+    <div class="card-body">
+        <div class="tab-content">
+            @*Change Password Section*@
+            <div id="changePassword" class="active tab-pane">
+                <div class="form-container m-auto p-3 border rounded-3">
+                    <h1 class="text-center mb-3">Change Password</h1>
+
+                    <form asp-action="ChangeUserPassword" asp-controller="User" method="post">
+                        <div class="form-floating mb-4">
+                            <input type="password" asp-for="Item1.OldPassword" name="OldPassword" class="form-control form-group" placeholder="Old Password" />
+                            <label>Old Password</label>
+                            <span asp-validation-for="Item1.OldPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input type="password" asp-for="Item1.NewPassword" name="NewPassword" class="form-control form-group" placeholder="New Password" />
+                            <label>New Password</label>
+                            <span asp-validation-for="Item1.NewPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="password" asp-for="Item1.ConfirmPassword" name="ConfirmPassword" class="form-control form-group" placeholder="Confirm Password" />
+                            <label>Confirm New Password</label>
+                            <span asp-validation-for="Item1.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Change</button>
+                    </form>
+                </div>
+            </div>
+
+            @*Another Section*@
+            <div id="asdasd" class="tab-pane px-5">
+            </div>
+        </div>
+    </div>
+</div>

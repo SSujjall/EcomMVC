@@ -141,6 +141,11 @@ namespace EcomSiteMVC.Infrastructure.Services
         public async Task<bool> ConfirmEmailVerification(string token, string email)
         {
             var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
+            if (existingUser == null)
+            {
+                return false;
+            }
+
             if (VerificationToken.VerifyEmailToken(token, existingUser?.EmailVerificationToken))
             {
                 existingUser.IsEmailVerified = true;
@@ -154,6 +159,10 @@ namespace EcomSiteMVC.Infrastructure.Services
         public async Task<bool> VerifyPasswordResetLink(string token, string email)
         {
             var existingUser = await _authRepository.GetUserByEmail(email.ToLower());
+            if (existingUser == null)
+            {
+                return false;
+            }
             if (VerificationToken.VerifyPasswordResetToken(token, existingUser?.PasswordResetToken))
             {
                 return true;

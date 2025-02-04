@@ -82,5 +82,16 @@ namespace EcomSiteMVC.Web.Controllers
             }
             return RedirectToAction("ProfileView");
         }
+
+        public IActionResult UserSettingsView()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
+        {
+            return null;
+        }
     }
 }

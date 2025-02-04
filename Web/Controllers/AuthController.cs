@@ -188,15 +188,23 @@ namespace EcomSiteMVC.Web.Controllers
             var response = await _authService.VerifyPasswordResetLink(token, email);
             if (response == true)
             {
-
-                return RedirectToAction("CreateNewPasswordView", new ResetPasswordDTO { Email = email });
+                return RedirectToAction("CreateNewPasswordView", new { Token = token, Email = email });
             }
             _notyf.Error("Password Reset Link not Valid", 5);
             return RedirectToAction("LoginView");
         }
 
-        public IActionResult CreateNewPasswordView(string? email)
+        public async Task<IActionResult> CreateNewPasswordView(string token, string? email)
         {
+            // this is called so that CreateNewPasswordView cannot be called if the token is already used
+            var response = await _authService.VerifyPasswordResetLink(token, email);
+
+            if (!response)
+            {
+                _notyf.Error("Invalid Reset Password Token");
+                return RedirectToAction("LoginView");
+            }
+
             var model = new NewPasswordFromResetDTO
             {
                 Email = email

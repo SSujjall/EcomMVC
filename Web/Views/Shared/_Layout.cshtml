@@ -138,6 +138,7 @@
 										@if (!isSuperAdmin && !isAdmin)
 										{
 											<li><a class="dropdown-item" asp-controller="Order" asp-action="UserOrdersView">View my orders</a></li>
+											<li><a class="dropdown-item" asp-controller="User" asp-action="UserSettingsView">Settings</a></li>
 										}
 										<li><a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Logout</a></li>
 									</ul>
