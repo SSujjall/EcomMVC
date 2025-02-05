@@ -15,6 +15,6 @@ namespace EcomSiteMVC.Core.DTOs
 
     public class UserPasswordUpdateDTO
     {
-
+        public string UserId { get; set; }
     }
 }

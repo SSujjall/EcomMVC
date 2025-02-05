@@ -2,6 +2,11 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.ViewModels;
+using EcomSiteMVC.Extensions.EmailService.Model;
+using EcomSiteMVC.Extensions.EmailService.Service;
+using EcomSiteMVC.Utilities;
+using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +19,14 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly ICloudinaryService _cloudinaryService;
         private readonly string profilePictureFolderName = FolderName.ProfilePictures.ToString();
         private readonly INotyfService _notyf;
+        private readonly IEmailService _emailService;
 
-        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf)
+        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf, IEmailService emailService)
         {
             _userService = userService;
             _cloudinaryService = cloudinaryService;
             _notyf = notyf;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> ProfileView()
@@ -82,5 +89,72 @@ namespace EcomSiteMVC.Web.Controllers
             }
             return RedirectToAction("ProfileView");
         }
+
+        #region User Settings Section
+        public IActionResult UserSettingsView()
+        {
+            var viewModel = new UserSettingsViewModel
+            {
+                ChangePasswordDTO = new ChangePasswordDTO(),
+                UserPasswordUpdateDTO = new UserPasswordUpdateDTO()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
+        {
+            var userId = int.Parse(User.FindFirst("UserId")?.Value);
+
+            var otp = await _userService.GenerateOtpForPasswordChange(userId);
+            if (otp != null)
+            {
+                var user = await _userService.GetUserById(userId);
+                var emailMessage = new EmailMessage(new[] { user.Email }, "Change Password OTP", $"Your OTP: {otp}");
+                //_emailService.SendEmail(emailMessage);
+
+                _notyf.Success("Password Change OTP Sent To Email", 5);
+                TempData["VerifyOtp"] = true;
+
+                TempData["OldPassword"] = model.OldPassword;
+                TempData["NewPassword"] = model.NewPassword;
+                return RedirectToAction("UserSettingsView");
+            }
+            _notyf.Error("User not found.", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
+        }
+
+        public IActionResult VerifyOtpView()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyOtp(string otp)
+        {
+            var userId = int.Parse(User.FindFirst("UserId")?.Value);
+            var isValidOtp = await _userService.VerifyOtpForPasswordChange(userId, otp);
+            if (!isValidOtp)
+            {
+                _notyf.Error("Invalid OTP.", 5);
+                return RedirectToAction("UserSettingsView");
+            }
+
+            var oldPassword = TempData["OldPassword"]?.ToString();
+            var newPassword = TempData["NewPassword"]?.ToString();
+
+            var passwordChanged = await _userService.ChangeUserPassword(userId, oldPassword, newPassword);
+            if (!passwordChanged)
+            {
+                _notyf.Error("Incorrect Old Password or Error Changing Password.", 5);
+                return RedirectToAction("UserSettingsView");
+            }
+
+            _notyf.Success("Password Changed Successfully.", 5);
+            TempData.Remove("VerifyOtp");
+            return RedirectToAction("UserSettingsView");
+        }
+        #endregion
     }
 }

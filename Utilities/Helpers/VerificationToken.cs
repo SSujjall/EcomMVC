@@ -29,9 +29,20 @@ namespace EcomSiteMVC.Utilities
 
         public static bool VerifyPasswordResetToken(string inputToken, string storedToken)
         {
-            var decodedInputToken = Encoding.UTF8.GetString(Convert.FromBase64String(inputToken));
-            var decodedStoredToken = Encoding.UTF8.GetString(Convert.FromBase64String(storedToken));
-            return decodedInputToken == decodedStoredToken;
+            if (string.IsNullOrEmpty(inputToken) || string.IsNullOrEmpty(storedToken))
+            {
+                return false; // Invalid if any token is missing
+            }
+            try
+            {
+                var decodedInputToken = Encoding.UTF8.GetString(Convert.FromBase64String(inputToken));
+                var decodedStoredToken = Encoding.UTF8.GetString(Convert.FromBase64String(storedToken));
+                return decodedInputToken == decodedStoredToken;
+            }
+            catch (FormatException)
+            {
+                return false; // Handle invalid Base64 strings
+            }
         }
     }
 }

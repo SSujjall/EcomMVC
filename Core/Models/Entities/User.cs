@@ -20,6 +20,8 @@ namespace EcomSiteMVC.Core.Models.Entities
         public string? EmailVerificationToken { get; set; }
         public string? PasswordResetToken { get; set; }
         public bool IsEmailVerified { get; set; } = false;
+        public string? PasswordChangeOTP { get; set; }
+
 
         //Navigation Property
         public virtual UserProfile UserProfile { get; set; }
