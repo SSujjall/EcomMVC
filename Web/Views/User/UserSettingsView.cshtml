@@ -1,5 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "Settings";
+	ViewData["Title"] = "Settings";
+
+	bool verifyOtp = TempData["VerifyOtp"] as bool? ?? false;
 }
 @using EcomSiteMVC.Core.Models.ViewModels
 @model UserSettingsViewModel
@@ -9,85 +11,79 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="card">
-    <div class="card-header p-3 d-flex justify-content-between">
-        <ul class="nav nav-pills">
-            <li class="nav-item"><a class="nav-link active show" href="#changePassword" data-bs-toggle="tab">Change Password</a></li>
-            <li class="nav-item"><a class="nav-link" href="#asdasd" data-bs-toggle="tab">asdasd</a></li>
-        </ul>
-    </div>
+	<div class="card-header p-3 d-flex justify-content-between">
+		<ul class="nav nav-pills">
+			<li class="nav-item"><a class="nav-link active show" href="#changePassword" data-bs-toggle="tab">Change Password</a></li>
+			<li class="nav-item"><a class="nav-link" href="#asdasd" data-bs-toggle="tab">asdasd</a></li>
+		</ul>
+	</div>
 
-    <div class="card-body">
-        <div class="tab-content">
-            @*Change Password Section*@
-            <div id="changePassword" class="active tab-pane">
-                <div class="form-container m-auto p-3 border rounded-3">
-                    <h1 class="text-center mb-3">Change Password</h1>
+	<div class="card-body">
+		<div class="tab-content">
+			@*Change Password Section*@
+			<div id="changePassword" class="active tab-pane">
+				<div class="form-container m-auto p-3 border rounded-3">
+					<h1 class="text-center mb-3">Change Password</h1>
 
-                    <form asp-action="ChangeUserPassword" asp-controller="User" method="post">
-                        <div class="form-floating mb-4">
-                            <input type="password" asp-for="ChangePasswordDTO.OldPassword" name="OldPassword" class="form-control form-group" placeholder="Old Password" />
-                            <label>Old Password</label>
-                            <span asp-validation-for="ChangePasswordDTO.OldPassword" class="text-danger"></span>
-                        </div>
+					<form asp-action="ChangeUserPassword" asp-controller="User" method="post">
+						<div class="form-floating mb-4">
+							<input type="password" asp-for="ChangePasswordDTO.OldPassword" name="OldPassword" class="form-control form-group" placeholder="Old Password" />
+							<label>Old Password</label>
+							<span asp-validation-for="ChangePasswordDTO.OldPassword" class="text-danger"></span>
+						</div>
 
-                        <div class="form-floating mb-4">
-                            <input type="password" asp-for="ChangePasswordDTO.NewPassword" name="NewPassword" class="form-control form-group" placeholder="New Password" />
-                            <label>New Password</label>
-                            <span asp-validation-for="ChangePasswordDTO.NewPassword" class="text-danger"></span>
-                        </div>
+						<div class="form-floating mb-4">
+							<input type="password" asp-for="ChangePasswordDTO.NewPassword" name="NewPassword" class="form-control form-group" placeholder="New Password" />
+							<label>New Password</label>
+							<span asp-validation-for="ChangePasswordDTO.NewPassword" class="text-danger"></span>
+						</div>
 
-                        <div class="form-floating">
-                            <input type="password" asp-for="ChangePasswordDTO.ConfirmPassword" name="ConfirmPassword" class="form-control form-group" placeholder="Confirm Password" />
-                            <label>Confirm New Password</label>
-                            <span asp-validation-for="ChangePasswordDTO.ConfirmPassword" class="text-danger"></span>
-                        </div>
+						<div class="form-floating">
+							<input type="password" asp-for="ChangePasswordDTO.ConfirmPassword" name="ConfirmPassword" class="form-control form-group" placeholder="Confirm Password" />
+							<label>Confirm New Password</label>
+							<span asp-validation-for="ChangePasswordDTO.ConfirmPassword" class="text-danger"></span>
+						</div>
 
-                        <button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Change</button>
-                    </form>
-                </div>
-            </div>
+						<button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Change</button>
+					</form>
+				</div>
+			</div>
 
-            @*Verify OTP Section*@
-            <div id="verifyOtp" class="tab-pane">
-                <div class="form-container m-auto p-3 border rounded-3">
-                    <h1 class="text-center mb-3">Verify OTP</h1>
+			@*Verify OTP Section*@
+			<div id="verifyOtp" class="tab-pane">
+				<div class="form-container m-auto p-3 border rounded-3">
+					<h1 class="text-center mb-3">Verify OTP</h1>
 
-                    <form asp-action="VerifyOtp" asp-controller="User" method="post">
-                        @Html.Hidden("userId", Context.Request.Query["userId"])
-                        <div class="form-floating mb-4">
-                            <input type="text" name="otp" class="form-control form-group" placeholder="Enter OTP" required />
-                            <label>Enter OTP</label>
-                        </div>
+					<form asp-action="VerifyOtp" asp-controller="User" method="post">
+						@Html.Hidden("userId", User.FindFirst("userId").Value)
+						<div class="form-floating mb-4">
+							<input type="text" name="otp" class="form-control form-group" placeholder="Enter OTP" required />
+							<label>Enter OTP</label>
+						</div>
 
-                        <button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Verify</button>
-                    </form>
-                </div>
-            </div>
+						<button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Verify</button>
+					</form>
+				</div>
+			</div>
 
-            @*Another Section*@
-            <div id="asdasd" class="tab-pane px-5">
-            </div>
-        </div>
-    </div>
+			@*Another Section*@
+			<div id="asdasd" class="tab-pane px-5">
+			</div>
+		</div>
+	</div>
 </div>
 
 <script>
-    // Hideo or Show Verify OTP Panel
-    document.addEventListener("DOMContentLoaded", function () {
-        var urlParams = new URLSearchParams(window.location.search);
-        var verifyOtp = urlParams.get("verifyOtp");
+	// Hide or Show Verify OTP Panel
+	document.addEventListener("DOMContentLoaded", function () {
+		var verifyOtp = @Json.Serialize(verifyOtp);
 
-        if (verifyOtp) {
-            document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active", "show"));
-
-            var otpPane = document.getElementById("verifyOtp");
-            if (otpPane) {
-                otpPane.classList.add("active", "show");
-            }
-            else
-            {
-                otpPane.classList.remove("active", "show");
-            }
-        }
-    });
+		if (verifyOtp) {
+			document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active", "show"));
+			document.getElementById("verifyOtp").classList.add("active", "show");
+		} else {
+			document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active", "show"));
+			document.getElementById("changePassword").classList.add("active", "show");
+		}
+	});
 </script>

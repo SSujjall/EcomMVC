@@ -12,7 +12,7 @@ namespace EcomSiteMVC.Utilities.Helpers
             return otp;
         }
 
-        public static bool VerifyPasswordResetToken(string inputOtp, string storedOtp)
+        public static bool VerifyPasswordChangeOTP(string inputOtp, string storedOtp)
         {
             if (string.IsNullOrEmpty(inputOtp) || string.IsNullOrEmpty(storedOtp))
             {
@@ -20,9 +20,7 @@ namespace EcomSiteMVC.Utilities.Helpers
             }
             try
             {
-                var decodedInputOtp = Encoding.UTF8.GetString(Convert.FromBase64String(inputOtp));
-                var decodedStoredOtp = Encoding.UTF8.GetString(Convert.FromBase64String(storedOtp));
-                return decodedInputOtp == decodedStoredOtp;
+                return inputOtp == storedOtp;
             }
             catch (FormatException)
             {
