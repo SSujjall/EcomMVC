@@ -2,6 +2,7 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Core.Models.ViewModels;
 using EcomSiteMVC.Extensions.EmailService.Model;
 using EcomSiteMVC.Extensions.EmailService.Service;
 using EcomSiteMVC.Utilities.Helpers;
@@ -90,7 +91,13 @@ namespace EcomSiteMVC.Web.Controllers
 
         public IActionResult UserSettingsView()
         {
-            return View();
+            var viewModel = new UserSettingsViewModel
+            {
+                ChangePasswordDTO = new ChangePasswordDTO(),
+                UserPasswordUpdateDTO = new UserPasswordUpdateDTO()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -109,7 +116,7 @@ namespace EcomSiteMVC.Web.Controllers
                 _emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Password Change OTP Sent To Email", 5);
-                return RedirectToAction("UserSettingsView", new { verifyOtp = "true" });
+                return RedirectToAction("UserSettingsView", new { verifyOtp = "true", otp = existingUser.PasswordChangeOTP, userId = existingUser.UserId.ToString().EncryptParameter() });
             }
             _notyf.Error("User not valid.", 5);
             return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
@@ -118,6 +125,13 @@ namespace EcomSiteMVC.Web.Controllers
         public IActionResult VerifyOtpView()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult VerifyOtp(string otp, string userId)
+        {
+            var decodedUserId = userId.DecryptParameter();
+            return RedirectToAction("UserSettingsView", new { verifyOtp = "false" });
         }
     }
 }
