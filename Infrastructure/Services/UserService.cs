@@ -2,6 +2,8 @@
 using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Utilities.Helpers;
+using EcomSiteMVC.Utilities;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {
@@ -126,5 +128,46 @@ namespace EcomSiteMVC.Infrastructure.Services
             }
             return null;
         }
+
+        #region User Password Change and OTP Logics
+        public async Task<string> GenerateOtpForPasswordChange(int userId)
+        {
+            var user = await _userRepository.GetById(userId);
+            if (user == null) return null;
+
+            var otp = OtpHelper.GeneratePasswordChangeOTP();
+            user.PasswordChangeOTP = otp.EncryptParameter();
+            await _userRepository.Update(user);
+
+            return otp;
+        }
+
+        public async Task<bool> VerifyOtpForPasswordChange(int userId, string otp)
+        {
+            var user = await _userRepository.GetById(userId);
+            if (user == null) return false;
+
+            return OtpHelper.VerifyPasswordChangeOTP(otp, user.PasswordChangeOTP?.DecryptParameter());
+        }
+
+        public async Task<bool> ChangeUserPassword(int userId, string oldPassword, string newPassword)
+        {
+            var user = await _userRepository.GetById(userId);
+            if (user == null) return false;
+
+            // Validate old password
+            if (!PasswordHelper.VerifyPassword(oldPassword, user.PasswordHash))
+            {
+                return false;
+            }
+
+            // Hash new password and update
+            user.PasswordHash = PasswordHelper.HashPassword(newPassword);
+            user.PasswordChangeOTP = null; // Clear OTP after success
+            await _userRepository.Update(user);
+
+            return true;
+        }
+        #endregion
     }
 }

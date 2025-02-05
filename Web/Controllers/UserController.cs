@@ -107,27 +107,21 @@ namespace EcomSiteMVC.Web.Controllers
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
 
-            var existingUser = await _userService.GetUserById(userId);
-            if (existingUser != null)
+            var otp = await _userService.GenerateOtpForPasswordChange(userId);
+            if (otp != null)
             {
-                var otp = OtpHelper.GeneratePasswordChangeOTP();
-                existingUser.PasswordChangeOTP = otp.EncryptParameter();
-                await _userService.UpdateUser(existingUser);
-
-                var emailMessage = new EmailMessage(new[] { existingUser.Email }, "Change Password OTP", $"The OTP required for password change: {otp}");
+                var user = await _userService.GetUserById(userId);
+                var emailMessage = new EmailMessage(new[] { user.Email }, "Change Password OTP", $"Your OTP: {otp}");
                 //_emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Password Change OTP Sent To Email", 5);
                 TempData["VerifyOtp"] = true;
 
-                #region Password Temp Data
                 TempData["OldPassword"] = model.OldPassword;
                 TempData["NewPassword"] = model.NewPassword;
-                TempData["ConfirmPassword"] = model.ConfirmPassword;
-                #endregion
                 return RedirectToAction("UserSettingsView");
             }
-            _notyf.Error("User not valid.", 5);
+            _notyf.Error("User not found.", 5);
             return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
@@ -137,42 +131,28 @@ namespace EcomSiteMVC.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> VerifyOtp(string otp, string userId)
+        public async Task<IActionResult> VerifyOtp(string otp)
         {
-            var existingUser = await _userService.GetUserById(int.Parse(userId));
-
-            if (existingUser == null)
+            var userId = int.Parse(User.FindFirst("UserId")?.Value);
+            var isValidOtp = await _userService.VerifyOtpForPasswordChange(userId, otp);
+            if (!isValidOtp)
             {
-                _notyf.Error("User Not Found.", 5);
-                return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
+                _notyf.Error("Invalid OTP.", 5);
+                return RedirectToAction("UserSettingsView");
             }
-            if (otp != null)
+
+            var oldPassword = TempData["OldPassword"]?.ToString();
+            var newPassword = TempData["NewPassword"]?.ToString();
+
+            var passwordChanged = await _userService.ChangeUserPassword(userId, oldPassword, newPassword);
+            if (!passwordChanged)
             {
-                if (OtpHelper.VerifyPasswordChangeOTP(otp, existingUser?.PasswordChangeOTP.DecryptParameter()))
-                {
-                    existingUser.PasswordResetToken = null;
-
-                    #region Retrieve ChangePasswordDTO Values
-                    var newPassword = TempData["NewPassword"]?.ToString();
-                    var confirmPassword = TempData["ConfirmPassword"]?.ToString();
-                    var oldPassword = TempData["OldPassword"]?.ToString();
-                    #endregion
-
-                    existingUser.PasswordHash = PasswordHelper.HashPassword(newPassword);
-                    var updatedUser = await _userService.UpdateUser(existingUser);
-
-                    if (updatedUser == null)
-                    {
-                        _notyf.Error("Error Occured.", 5);
-                        return RedirectToAction("UserSettingsView");
-                    }
-
-                    TempData.Remove("VerifyOtp");
-                    _notyf.Success("Password Changed Successfully.", 5);
-                    return RedirectToAction("UserSettingsView");
-                }
+                _notyf.Error("Incorrect Old Password or Error Changing Password.", 5);
+                return RedirectToAction("UserSettingsView");
             }
-            _notyf.Error("Otp Error.", 5);
+
+            _notyf.Success("Password Changed Successfully.", 5);
+            TempData.Remove("VerifyOtp");
             return RedirectToAction("UserSettingsView");
         }
         #endregion

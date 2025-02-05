@@ -11,5 +11,8 @@ namespace EcomSiteMVC.Core.IServices
         Task<User> GetUserByEmail(string email);
         Task<User> GetUserById(int id);
         Task<User> UpdateUser(User model);
+        Task<string> GenerateOtpForPasswordChange(int userId);
+        Task<bool> VerifyOtpForPasswordChange(int userId, string otp);
+        Task<bool> ChangeUserPassword(int userId, string oldPassword, string newPassword);
     }
 }
