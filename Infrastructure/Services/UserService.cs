@@ -115,5 +115,16 @@ namespace EcomSiteMVC.Infrastructure.Services
             }
             return null;
         }
+
+        public async Task<User> GetUserById(int id)
+        {
+            var user = await _userRepository.GetById(id);
+
+            if (user != null)
+            {
+                return user;
+            }
+            return null;
+        }
     }
 }

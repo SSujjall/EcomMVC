@@ -9,7 +9,6 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Utilities;
 using EcomSiteMVC.Extensions.EmailService.Service;
-using EcomSiteMVC.Core.Models.Entities;
 
 
 namespace EcomSiteMVC.Web.Controllers

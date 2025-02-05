@@ -2,6 +2,8 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
+using EcomSiteMVC.Extensions.EmailService.Model;
+using EcomSiteMVC.Extensions.EmailService.Service;
 using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +17,14 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly ICloudinaryService _cloudinaryService;
         private readonly string profilePictureFolderName = FolderName.ProfilePictures.ToString();
         private readonly INotyfService _notyf;
+        private readonly IEmailService _emailService;
 
-        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf)
+        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf, IEmailService emailService)
         {
             _userService = userService;
             _cloudinaryService = cloudinaryService;
             _notyf = notyf;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> ProfileView()
@@ -92,12 +96,28 @@ namespace EcomSiteMVC.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
         {
-            var otp = OtpHelper.GeneratePasswordChangeOTP();
-            return Ok();
+            var userId = int.Parse(User.FindFirst("UserId")?.Value);
 
-            // TODO: Send OTP in mail, store it in database, compare OTP and let user change password
-            // also remove otp after use.
-            // EXTRA: auto expiry of OTP.
+            var existingUser = await _userService.GetUserById(userId);
+            if (existingUser != null)
+            {
+                var otp = OtpHelper.GeneratePasswordChangeOTP();
+                existingUser.PasswordChangeOTP = otp.EncryptParameter();
+                await _userService.UpdateUser(existingUser);
+
+                var emailMessage = new EmailMessage(new[] { existingUser.Email }, "Change Password OTP", $"The OTP required for password change: {otp}");
+                _emailService.SendEmail(emailMessage);
+
+                _notyf.Success("Password Change OTP Sent To Email", 5);
+                return RedirectToAction("UserSettingsView", new { verifyOtp = "true" });
+            }
+            _notyf.Error("User not valid.", 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
+        }
+
+        public IActionResult VerifyOtpView()
+        {
+            return View();
         }
     }
 }
