@@ -4,214 +4,215 @@
 
 <h1>My Orders</h1>
 <div class="table-responsive shadow">
-    <table id="ecomDT" class="custom-table">
-        <thead>
-            <tr>
-                <th scope="row">Order Id</th>
-                <th>Order Date</th>
-                <th>Total Amount</th>
-                <th>Order Status</th>
-                <th>Payment Method</th>
-                <th>Payment Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                var encryptedId = item.OrderId.ToString().EncryptParameter();
-                <tr>
-                    <td>@encryptedId</td>
-                    <td>@item.OrderDate</td>
-                    <td>@item.TotalOrderAmount</td>
-                    <td>@item.OrderStatus</td>
-                    <td>@item.PaymentMethod.ToUpper()</td>
-                    <td>@item.PaymentStatus</td>
-                    <td>
-                        <button class="btn btn-primary btn-details" data-order-id="@encryptedId">Details</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<table id="ecomDT" class="custom-table">
+		<thead>
+			<tr>
+				<th scope="row">Order Id</th>
+				<th>Order Date</th>
+				<th>Total Amount</th>
+				<th>Order Status</th>
+				<th>Payment Method</th>
+				<th>Payment Status</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				var encryptedId = item.OrderId.ToString().EncryptParameter();
+				<tr>
+					<td>@encryptedId</td>
+					<td>@item.OrderDate</td>
+					<td>@item.TotalOrderAmount</td>
+					<td>@item.OrderStatus</td>
+					<td>@item.PaymentMethod.ToUpper()</td>
+					<td>@item.PaymentStatus</td>
+					<td>
+						<button class="btn btn-primary btn-details" data-order-id="@encryptedId">Details</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="order-info mb-4">
-                    <h3><u>Order Information</u></h3>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
-                            <p><strong>Order Date:</strong> <span id="modalOrderDate"></span></p>
-                            <p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Status:</strong> <span id="modalOrderStatus"></span></p>
-                            <p><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
-                            <p><strong>Payment Status:</strong> <span id="modalPaymentStatus"></span></p>
-                        </div>
-                    </div>
-                    <div class="shipping-address">
-                        <p><strong>Shipping Address:</strong></p>
-                        <p id="modalShippingAddress"></p>
-                    </div>
-                </div>
-                <div class="order-items">
-                    <h3><u>Order Items</u></h3>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Price (NPR)</th>
-                                    <th>Total (NPR)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalOrderItems">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="order-summary text-end">
-                    <h6>Total Amount: <span id="modalTotalAmount"></span></h6>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" onclick="generateOrderPdf()">Print PDF</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="order-info mb-4">
+					<h3><u>Order Information</u></h3>
+					<div class="row">
+						<div class="col-md-6">
+							<p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+							<p><strong>Order Date:</strong> <span id="modalOrderDate"></span></p>
+							<p><strong>Customer Name:</strong> <span id="modalCustomerName"></span></p>
+							<p><strong>Shipping Address:</strong><span id="modalShippingAddress"></span></p>
+						</div>
+						<div class="col-md-6">
+							<p><strong>Status:</strong> <span id="modalOrderStatus"></span></p>
+							<p><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+							<p><strong>Payment Status:</strong> <span id="modalPaymentStatus"></span></p>
+						</div>
+					</div>
+					<div class="shipping-address">
+					</div>
+				</div>
+				<div class="order-items">
+					<h3><u>Order Items</u></h3>
+					<div class="table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th>Quantity</th>
+									<th>Unit Price (NPR)</th>
+									<th>Total (NPR)</th>
+								</tr>
+							</thead>
+							<tbody id="modalOrderItems">
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="order-summary text-end">
+					<h6>Total Amount: <span id="modalTotalAmount"></span></h6>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-primary" onclick="generateOrderPdf()">Print PDF</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            // Use event delegation to handle the "Details" button click on any page
-            $(document).on('click', '.btn-details', function () {
-                const orderId = $(this).data('order-id');
-                console.log('Fetching details for order:', orderId); // Debug log
+	<script>
+		// Details button click function
+		$(document).ready(function () {
+			// Use event delegation to handle the "Details" button click on any page
+			$(document).on('click', '.btn-details', function () {
+				const orderId = $(this).data('order-id');
+				console.log('Fetching details for order:', orderId); // Debug log
 
-                // Show loading state
-                $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+				// Show loading state
+				$(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
 
-                $.ajax({
-                    url: '@Url.Action("GetOrderDetails", "Order")',
-                    type: 'GET',
-                    data: { orderId: orderId },
-                    dataType: 'json',
-                    success: function (response) {
-                        console.log('Received response:', response); // Debug log
+				$.ajax({
+					url: '@Url.Action("GetOrderDetails", "Order")',
+					type: 'GET',
+					data: { orderId: orderId },
+					dataType: 'json',
+					success: function (response) {
+						console.log('Received response:', response); // Debug log
 
-                        // Populate modal with order details
-                        $('#modalOrderId').text(response.orderId);
-                        $('#modalOrderDate').text(new Date(response.orderDate).toLocaleDateString());
-                        $('#modalCustomerName').text(response.fullName);
-                        $('#modalOrderStatus').text(response.orderStatus);
-                        $('#modalPaymentMethod').text(response.paymentMethod.toUpperCase());
-                        $('#modalPaymentStatus').text(response.paymentStatus);
-                        $('#modalShippingAddress').text(response.shippingAddress);
-                        $('#modalTotalAmount').text('NPR. ' + response.totalOrderAmount.toFixed(2));
+						// Populate modal with order details
+						$('#modalOrderId').text(response.orderId);
+						$('#modalOrderDate').text(new Date(response.orderDate).toLocaleDateString());
+						$('#modalCustomerName').text(response.fullName);
+						$('#modalOrderStatus').text(response.orderStatus);
+						$('#modalPaymentMethod').text(response.paymentMethod.toUpperCase());
+						$('#modalPaymentStatus').text(response.paymentStatus);
+						$('#modalShippingAddress').text(response.shippingAddress);
+						$('#modalTotalAmount').text('NPR. ' + response.totalOrderAmount.toFixed(2));
 
-                        // Clear and populate order items
-                        const orderItemsBody = $('#modalOrderItems');
-                        orderItemsBody.empty();
+						// Clear and populate order items
+						const orderItemsBody = $('#modalOrderItems');
+						orderItemsBody.empty();
 
-                        response.orderDetails.forEach(item => {
-                            orderItemsBody.append(`
-                                <tr>
-                                    <td>${item.productName}</td>
-                                    <td>${item.quantity}</td>
-                                    <td>${item.unitPrice.toFixed(2)}</td>
-                                    <td>${(item.quantity * item.unitPrice).toFixed(2)}</td>
-                                </tr>
-                            `);
-                        });
+						response.orderDetails.forEach(item => {
+							orderItemsBody.append(`
+								<tr>
+									<td>${item.productName}</td>
+									<td>${item.quantity}</td>
+									<td>${item.unitPrice.toFixed(2)}</td>
+									<td>${(item.quantity * item.unitPrice).toFixed(2)}</td>
+								</tr>
+							`);
+						});
 
-                        // Show modal
-                        $('#orderDetailsModal').modal('show');
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error details:', {
-                            status: xhr.status,
-                            statusText: xhr.statusText,
-                            responseText: xhr.responseText
-                        });
+						// Show modal
+						$('#orderDetailsModal').modal('show');
+					},
+					error: function (xhr, status, error) {
+						console.error('Error details:', {
+							status: xhr.status,
+							statusText: xhr.statusText,
+							responseText: xhr.responseText
+						});
 
-                        alert('Error fetching order details. Please try again.');
-                    },
-                    complete: function () {
-                        // Reset button state
-                        $('.btn-details').prop('disabled', false).html('Details');
-                    }
-                });
-            });
-        });
+						alert('Error fetching order details. Please try again.');
+					},
+					complete: function () {
+						// Reset button state
+						$('.btn-details').prop('disabled', false).html('Details');
+					}
+				});
+			});
+		});
 
-        // PDF
+
+		// Sending html to PDF Service
 		function generateOrderPdf() {
-            // Get the modal content, excluding the footer
-            const modalContent = $('#orderDetailsModal .modal-content').clone();
-            modalContent.find('.modal-footer').remove();
+			// Get the modal content, excluding the footer
+			const modalContent = $('#orderDetailsModal .modal-content').clone();
+			modalContent.find('.modal-footer').remove();
 
-            // Get current date and time formatted as YYYYMMDD_HHMMSS
-            const now = new Date();
-            const dateTime = now.getFullYear() +
-                String(now.getMonth() + 1).padStart(2, '0') +
-                String(now.getDate()).padStart(2, '0') + '_' +
-                String(now.getHours()).padStart(2, '0') +
-                String(now.getMinutes()).padStart(2, '0') +
-                String(now.getSeconds()).padStart(2, '0');
+			// Get current date and time formatted as YYYYMMDD_HHMMSS
+			const now = new Date();
+			const dateTime = now.getFullYear() +
+				String(now.getMonth() + 1).padStart(2, '0') +
+				String(now.getDate()).padStart(2, '0') + '_' +
+				String(now.getHours()).padStart(2, '0') +
+				String(now.getMinutes()).padStart(2, '0') +
+				String(now.getSeconds()).padStart(2, '0');
 
-            // Create title in format: Receipt_YYYYMMDD_HHMMSS
-            const title = `Receipt_${dateTime}`;
+			// Create title in format: Receipt_YYYYMMDD_HHMMSS
+			const title = `Receipt_${dateTime}`;
 
-            // Show loading state
-            const printButton = $('#orderDetailsModal .btn-outline-primary');
-            printButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Generating PDF...');
+			// Show loading state
+			const printButton = $('#orderDetailsModal .btn-outline-primary');
+			printButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Generating PDF...');
 
-            const request = {
-                htmlContent: modalContent.html(),
-                title: title
-            };
+			const request = {
+				htmlContent: modalContent.html(),
+				title: title
+			};
 
-            // Generate and download PDF
-            $.ajax({
-                url: '@Url.Action("GenerateOrderPdf", "Pdf")',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(request),
-                xhrFields: {
-                    responseType: 'blob'
-                },
-                success: function(response) {
-                    // Create blob link to download
-                    const url = window.URL.createObjectURL(new Blob([response]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', `${title}.pdf`);
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    window.URL.revokeObjectURL(url);
-                },
-                error: function() {
-                    alert('Error generating PDF. Please try again.');
-                },
-                complete: function() {
-                    // Reset button state
-                    printButton.prop('disabled', false).html('Print PDF');
-                }
-            });
-        }
-    </script>
+			// Generate and download PDF
+			$.ajax({
+				url: '@Url.Action("GenerateOrderPdf", "Pdf")',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(request),
+				xhrFields: {
+					responseType: 'blob'
+				},
+				success: function(response) {
+					// Create blob link to download
+					const url = window.URL.createObjectURL(new Blob([response]));
+					const link = document.createElement('a');
+					link.href = url;
+					link.setAttribute('download', `${title}.pdf`);
+					document.body.appendChild(link);
+					link.click();
+					link.remove();
+					window.URL.revokeObjectURL(url);
+				},
+				error: function() {
+					alert('Error generating PDF. Please try again.');
+				},
+				complete: function() {
+					// Reset button state
+					printButton.prop('disabled', false).html('Print PDF');
+				}
+			});
+		}
+	</script>
 }

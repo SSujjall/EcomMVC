@@ -7,7 +7,7 @@ namespace EcomSiteMVC.Web.Controllers
     public class PdfController(IPdfService _pdfService) : Controller
     {
         [HttpPost]
-        public IActionResult GenerateOrderPdf([FromBody] PdfRequestModel request)
+        public IActionResult GenerateSingleOrderPdf([FromBody] PdfRequestModel request)
         {
             try
             {
