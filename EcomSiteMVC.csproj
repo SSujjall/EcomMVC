@@ -77,6 +77,9 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="CloudinaryDotNet" Version="1.27.2" />
     <PackageReference Include="dotenv.net" Version="3.2.1" />
+    <PackageReference Include="itext7" Version="9.0.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.0.0" />
+    <PackageReference Include="itext7.pdfhtml" Version="6.0.0" />
     <PackageReference Include="MailKit" Version="4.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />

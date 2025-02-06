@@ -25,23 +25,21 @@
 				<div class="form-container m-auto p-3 border rounded-3">
 					<h1 class="text-center mb-3">Change Password</h1>
 
-					<form asp-action="ChangeUserPassword" asp-controller="User" method="post">
+					<form id="changePasswordForm" asp-action="ChangeUserPassword" asp-controller="User" method="post">
 						<div class="form-floating mb-4">
-							<input type="password" asp-for="ChangePasswordDTO.OldPassword" name="OldPassword" class="form-control form-group" placeholder="Old Password" />
+							<input type="password" asp-for="ChangePasswordDTO.OldPassword" name="OldPassword" class="form-control form-group" placeholder="Old Password" required />
 							<label>Old Password</label>
-							<span asp-validation-for="ChangePasswordDTO.OldPassword" class="text-danger"></span>
 						</div>
 
 						<div class="form-floating mb-4">
-							<input type="password" asp-for="ChangePasswordDTO.NewPassword" name="NewPassword" class="form-control form-group" placeholder="New Password" />
+							<input type="password" id="newPassword" asp-for="ChangePasswordDTO.NewPassword" name="NewPassword" class="form-control form-group" placeholder="New Password" required />
 							<label>New Password</label>
-							<span asp-validation-for="ChangePasswordDTO.NewPassword" class="text-danger"></span>
 						</div>
 
 						<div class="form-floating">
-							<input type="password" asp-for="ChangePasswordDTO.ConfirmPassword" name="ConfirmPassword" class="form-control form-group" placeholder="Confirm Password" />
+							<input type="password" id="confirmPassword" asp-for="ChangePasswordDTO.ConfirmPassword" name="ConfirmPassword" class="form-control form-group" placeholder="Confirm Password" required />
 							<label>Confirm New Password</label>
-							<span asp-validation-for="ChangePasswordDTO.ConfirmPassword" class="text-danger"></span>
+							<span id="passwordError" class="text-danger d-none">Passwords do not match.</span>
 						</div>
 
 						<button type="submit" class="sendlink-button btn btn-primary w-100 mt-3 mb-3">Change</button>
@@ -84,6 +82,19 @@
 		} else {
 			document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active", "show"));
 			document.getElementById("changePassword").classList.add("active", "show");
+		}
+	});
+
+	 document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
+		var newPassword = document.getElementById("newPassword").value;
+		var confirmPassword = document.getElementById("confirmPassword").value;
+		var passwordError = document.getElementById("passwordError");
+
+		if (newPassword !== confirmPassword) {
+			passwordError.classList.remove("d-none");
+			event.preventDefault(); // Prevent form submission
+		} else {
+			passwordError.classList.add("d-none");
 		}
 	});
 </script>

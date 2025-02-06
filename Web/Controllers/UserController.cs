@@ -117,8 +117,11 @@ namespace EcomSiteMVC.Web.Controllers
                 _notyf.Success("Password Change OTP Sent To Email", 5);
                 TempData["VerifyOtp"] = true;
 
+                #region
                 TempData["OldPassword"] = model.OldPassword;
                 TempData["NewPassword"] = model.NewPassword;
+                #endregion
+
                 return RedirectToAction("UserSettingsView");
             }
             _notyf.Error("User not found.", 5);
