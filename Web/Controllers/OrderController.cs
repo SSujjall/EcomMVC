@@ -46,7 +46,7 @@ namespace EcomSiteMVC.Web.Controllers
             }
 
             var orders = await _orderService.GetUserOrderHistory(userId);
-            if (!orders.Any() || orders == null)
+            if (orders == null)
             {
                 return View(new List<Order>());
             }
@@ -71,6 +71,7 @@ namespace EcomSiteMVC.Web.Controllers
 
                 var orderIdInt = int.Parse(decryptedId);
                 var result = await _orderService.GetOrderDetailsByOrderId(orderIdInt);
+                result.OrderId = result.OrderId.EncryptParameter();
                 return Json(result);
             }
             catch (Exception ex)

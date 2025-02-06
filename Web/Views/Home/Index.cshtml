@@ -43,7 +43,7 @@
 	<div class="trending-section container py-5 mb-5">
 		<h2 class="text-center mb-5">Trending Products</h2>
 		<div class="row">
-			@if (Model.Any())
+			@if (Model != null)
 			{
 				foreach (var item in Model)
 				{

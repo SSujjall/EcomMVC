@@ -11,6 +11,7 @@ using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Infrastructure.Repositories;
 using EcomSiteMVC.Infrastructure.Services;
 using EcomSiteMVC.Utilities;
+using EcomSiteMVC.Utilities.ExternalServices.PdfService.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
@@ -106,6 +107,7 @@ builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IKhaltiService, KhaltiService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 
 // Cors 
