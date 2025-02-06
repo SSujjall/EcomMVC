@@ -96,7 +96,8 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('.btn-details').on('click', function () {
+            // Use event delegation to handle the "Details" button click on any page
+            $(document).on('click', '.btn-details', function () {
                 const orderId = $(this).data('order-id');
                 console.log('Fetching details for order:', orderId); // Debug log
 
@@ -148,7 +149,7 @@
 
                         alert('Error fetching order details. Please try again.');
                     },
-                    complete: function() {
+                    complete: function () {
                         // Reset button state
                         $('.btn-details').prop('disabled', false).html('Details');
                     }

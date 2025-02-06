@@ -120,7 +120,7 @@ namespace EcomSiteMVC.Infrastructure.Services
 
             return new OrderDetailsResponseDTO
             {
-                OrderId = order.OrderId,
+                OrderId = order.OrderId.ToString(),
                 OrderDate = order.OrderDate,
                 FullName = order.FullName,
                 OrderStatus = order.OrderStatus,
