@@ -46,7 +46,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			@if (Model != null && Model.CartItems.Any())
+			@if (Model != null && Model.CartItems != null)
 			{
 				@foreach (var item in Model?.CartItems)
 				{
