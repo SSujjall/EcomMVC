@@ -23,12 +23,6 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf = notyf;
         }
 
-        [HttpGet("{controller}/dashboard")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [AllowAnonymous]
         [HttpGet("{controller}/login:port")]
         public IActionResult AdminLoginView()
@@ -66,7 +60,7 @@ namespace EcomSiteMVC.Web.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                     _notyf.Success("Login Successful", 5);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Dashboard");
                 }
             }
             _notyf.Error("Invalid username or password for admin.");
