@@ -1,4 +1,4 @@
-﻿namespace EcomSiteMVC.Core.Models.Configs
+﻿namespace EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Configs
 {
     public class CloudinaryConfig
     {

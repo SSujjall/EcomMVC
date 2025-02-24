@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.Models.Helper;
+using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {

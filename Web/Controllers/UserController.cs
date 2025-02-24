@@ -6,6 +6,7 @@ using EcomSiteMVC.Core.Models.ViewModels;
 using EcomSiteMVC.Extensions.EmailService.Model;
 using EcomSiteMVC.Extensions.EmailService.Service;
 using EcomSiteMVC.Utilities;
+using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
 using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

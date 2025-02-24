@@ -1,9 +1,8 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using EcomSiteMVC.Core.Enums;
-using EcomSiteMVC.Core.IServices;
 
-namespace EcomSiteMVC.Infrastructure.Services
+namespace EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service
 {
     public class CloudinaryService : ICloudinaryService
     {
