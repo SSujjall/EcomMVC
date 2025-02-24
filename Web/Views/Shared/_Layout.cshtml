@@ -88,7 +88,7 @@
 											Products
 										</a>
 										<ul class="dropdown-menu" aria-labelledby="productsDropdown">
-											<li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
+											<li><a class="dropdown-item" asp-controller="Product" asp-action="ManageProductView">Add Product</a></li>
 											<li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
 										</ul>
 									</li>
@@ -190,7 +190,7 @@
 	<script>
 		$(document).ready(function () {
 			$('#ecomDT').DataTable({
-				"lengthMenu": [5, 10, 25, 50, 100]
+				"lengthMenu": [10, 25, 50, 100]
 			});
 		});
 	</script>

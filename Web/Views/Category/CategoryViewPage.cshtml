@@ -94,9 +94,7 @@
 			}
 			else
 			{
-				<tr>
-					<td colspan="4" class="text-center">No categories available</td>
-				</tr>
+				// Datatable automatically handles empty table.
 			}
 		</tbody>
 	</table>
@@ -115,6 +113,8 @@
 		document.getElementById('categoryName').value = name;
 		document.getElementById('categoryDescription').value = description;
 
+		document.querySelector('.submit-button').textContent = 'Update';
+
 		// Update form action
 		document.getElementById('categoryForm').action = 'UpdateCategory';
 	}
@@ -128,6 +128,8 @@
 		document.getElementById('categoryName').value = '';
 		document.getElementById('categoryDescription').value = '';
 
+		document.querySelector('.submit-button').textContent = 'Submit';
+
 		// Reset form action
 		document.getElementById('categoryForm').action = 'AddCategory';
 	}
@@ -139,8 +141,13 @@
 			const itemName = this.getAttribute('data-item-name');
 
 			document.getElementById('itemToDelete').textContent = itemName;
-			const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-			confirmDeleteBtn.href = `/Category/DeleteCategory?id=${itemId}`;
+
+			// Set the form action
+			const deleteForm = document.getElementById('deleteForm');
+			deleteForm.action = `/Category/DeleteCategory`;
+
+			// set category id
+			document.getElementById('deleteItemId').value = itemId;
 		});
 	});
 </script>

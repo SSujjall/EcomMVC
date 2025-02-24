@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EcomSiteMVC.Web.Controllers
 {
-    [Authorize(Roles = "Superadmin,admin")]
+    [Authorize(Roles = "Superadmin,Admin")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -60,6 +60,8 @@ namespace EcomSiteMVC.Web.Controllers
             return RedirectToAction("CategoryViewPage");
         }
 
+        [Authorize(Roles = "Superadmin,Admin")]
+        [HttpPost]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var result = await _categoryService.DeleteCategory(id);

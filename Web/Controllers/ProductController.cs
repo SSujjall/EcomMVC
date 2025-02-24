@@ -64,7 +64,7 @@ namespace EcomSiteMVC.Web.Controllers
         }
 
         [Authorize(Roles = "Superadmin,Admin")]
-        public async Task<IActionResult> AddProductView()
+        public async Task<IActionResult> ManageProductView()
         {
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
@@ -81,12 +81,12 @@ namespace EcomSiteMVC.Web.Controllers
                 if (result)
                 {
                     _notyf.Success("Product added successfully!", 5);
-                    return RedirectToAction("AddProductView");
+                    return RedirectToAction("ManageProductView");
                 }
             }
 
             _notyf.Error("Failed to add product! Fill all the fields", 5);
-            return RedirectToAction("AddProductView", model);
+            return RedirectToAction("ManageProductView", model);
         }
 
         [Authorize(Roles = "Superadmin,Admin")]
@@ -112,7 +112,7 @@ namespace EcomSiteMVC.Web.Controllers
             var categories = await _categoryService.GetAllCategories();
             ViewBag.CategoryList = new SelectList(categories, "CategoryId", "CategoryName");
 
-            return View("AddProductView", product);
+            return View("ManageProductView", product);
         }
 
         [HttpPost]
