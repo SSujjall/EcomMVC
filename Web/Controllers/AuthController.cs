@@ -130,6 +130,12 @@ namespace EcomSiteMVC.Web.Controllers
                 // If user exists, get the existing user data
                 var user = await _authService.AuthFromGoogle(email, googleUserId);
 
+                if (user == null) // user already exists, but must login from default login section, not google
+                {
+                    _notyf.Information("You are registered without google login, use normal login page to login.", 5);
+                    return RedirectToAction("LoginView");
+                }
+
                 var claimsList = new List<Claim>
                 {
                     new Claim("UserId", user.UserId.ToString()),
