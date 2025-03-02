@@ -191,10 +191,26 @@
 	<script>
 		$(document).ready(function () {
 			$('#ecomDT').DataTable({
-				"lengthMenu": [
-					[10, 25, 50, -1],
-					[10, 25, 50, 'All']
-				],
+				layout: {
+					topStart: {
+						pageLength: {
+							menu: [
+								[10, 25, 50, -1],
+								[10, 25, 50, 'All']
+							]
+						}
+					},
+					// topEnd: {
+					// 	search: {
+					// 		placeholder: 'Type search here'
+					// 	}
+					// },
+					bottomEnd: {
+						paging: {
+							buttons: 3
+						}
+					}
+				}
 			});
 		});
 	</script>
