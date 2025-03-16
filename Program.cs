@@ -22,10 +22,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// AppDbContext init
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("EcomDB")).UseLazyLoadingProxies();
+//});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("EcomDB")).UseLazyLoadingProxies();
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("EcomDB"),
+                         sqlOptions => sqlOptions.EnableRetryOnFailure()).UseLazyLoadingProxies();
+}, ServiceLifetime.Transient);
 
 // Configure Cloudinary
 var cloudinaryConfig = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinaryConfig>();
