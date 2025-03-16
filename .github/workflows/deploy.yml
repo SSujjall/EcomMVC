@@ -3,7 +3,7 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-     - master # Trigger the pipeline when code is pushed to the master branch
+     - CiCd-TestRun
 
 jobs:
   build:
