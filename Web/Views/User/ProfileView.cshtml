@@ -57,14 +57,16 @@
 
 		<div class="row">
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="Username" asp-for="Username" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="Username" asp-for="Username" class="form-control form-group" />
+					<label>Username</label>
 					<span asp-validation-for="Username" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="Email" asp-for="Email" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="Email" asp-for="Email" class="form-control form-group" />
+					<label>Email</label>
 					<span asp-validation-for="Email" class="text-danger"></span>
 				</div>
 			</div>
@@ -72,14 +74,16 @@
 
 		<div class="row">
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="First Name" asp-for="UserProfile.FirstName" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="First Name" asp-for="UserProfile.FirstName" class="form-control form-group" />
+					<label>First Name</label>
 					<span asp-validation-for="UserProfile.FirstName" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="Last Name" asp-for="UserProfile.LastName" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="Last Name" asp-for="UserProfile.LastName" class="form-control form-group" />
+					<label>Last Name</label>
 					<span asp-validation-for="UserProfile.LastName" class="text-danger"></span>
 				</div>
 			</div>
@@ -87,14 +91,16 @@
 
 		<div class="row">
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="Phone Number" asp-for="UserProfile.PhoneNumber" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="Phone Number" asp-for="UserProfile.PhoneNumber" class="form-control form-group" />
+					<label>Phone Number</label>
 					<span asp-validation-for="UserProfile.PhoneNumber" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
-				<div class="form-group">
-					<input placeholder="Address, City, Zipcode, Province" asp-for="UserProfile.Address" class="form-control" />
+				<div class="form-floating">
+					<input placeholder="Address, City, Zipcode, Province" asp-for="UserProfile.Address" class="form-control form-group" />
+					<label>Address</label>
 					<span asp-validation-for="UserProfile.Address" class="text-danger"></span>
 				</div>
 			</div>
@@ -102,18 +108,20 @@
 
 		<div class="row">
 			<div class="col-md-6">
-				<div class="form-group">
-					<input type="text" placeholder="Date Of Birth" class="form-control date-placeholder" asp-for="UserProfile.DateOfBirth" onfocus="(this.type='date')" onblur="(this.type='text')" />
+				<div class="form-floating">
+					<input type="text" placeholder="Date Of Birth" class="form-control form-group date-placeholder" asp-for="UserProfile.DateOfBirth" onfocus="(this.type='date')" onblur="(this.type='text')" />
+					<label>Date of Birth</label>
 					<span asp-validation-for="UserProfile.DateOfBirth" class="text-danger"></span>
 				</div>
 			</div>
 			<div class="col-md-6">
-				<div class="form-group">
-					<select asp-for="UserProfile.Gender" class="form-select" id="Gender">
+				<div class="form-floating">
+					<select asp-for="UserProfile.Gender" class="form-select form-group" id="Gender">
 						<option value="">-- Select Gender --</option>
 						<option value="Male">Male</option>
 						<option value="Female">Female</option>
 					</select>
+					<label>Gender</label>
 					<span asp-validation-for="UserProfile.Gender" class="text-danger"></span>
 				</div>
 			</div>

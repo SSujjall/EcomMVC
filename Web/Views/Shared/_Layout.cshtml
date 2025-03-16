@@ -76,7 +76,7 @@
 								@if (isAdmin || isSuperAdmin)
 								{
 									<li class="nav-item">
-										<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
+										<a class="nav-link" asp-area="" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" asp-area="" asp-controller="Category" asp-action="CategoryViewPage">Category</a>
@@ -88,7 +88,7 @@
 											Products
 										</a>
 										<ul class="dropdown-menu" aria-labelledby="productsDropdown">
-											<li><a class="dropdown-item" asp-controller="Product" asp-action="AddProductView">Add Product</a></li>
+											<li><a class="dropdown-item" asp-controller="Product" asp-action="ManageProductView">Add Product</a></li>
 											<li><a class="dropdown-item" asp-controller="Product" asp-action="AllProductView">View Products</a></li>
 										</ul>
 									</li>
@@ -184,13 +184,33 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 
-	@* DataTable.net script and CSS for datatables *@
-	<script src="https://cdn.datatables.net/v/dt/dt-2.2.1/datatables.min.js"></script>
-	<link href="https://cdn.datatables.net/v/dt/dt-2.2.1/datatables.min.css" rel="stylesheet">
+	@* DataTable.net script, CSS, Js and Initialization for datatables *@
+	<link href="https://cdn.datatables.net/2.2.2/css/dataTables.bootstrap5.css" rel="stylesheet">
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+	<script src="https://cdn.datatables.net/2.2.2/js/dataTables.bootstrap5.js"></script>
 	<script>
 		$(document).ready(function () {
 			$('#ecomDT').DataTable({
-				"lengthMenu": [5, 10, 25, 50, 100]
+				layout: {
+					topStart: {
+						pageLength: {
+							menu: [
+								[10, 25, 50, -1],
+								[10, 25, 50, 'All']
+							]
+						}
+					},
+					// topEnd: {
+					// 	search: {
+					// 		placeholder: 'Type search here'
+					// 	}
+					// },
+					bottomEnd: {
+						paging: {
+							buttons: 3
+						}
+					}
+				}
 			});
 		});
 	</script>

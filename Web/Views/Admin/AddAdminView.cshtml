@@ -2,132 +2,156 @@
 @model IEnumerable<User>
 
 @{
-    ViewData["Title"] = "Add Admin";
+	ViewData["Title"] = "Admin Management";
 }
 
 <style>
-    .admin-form-container {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
+	.admin-form-container {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
 
-    .form-group {
-        margin-bottom: 1rem;
-    }
+	.form-group {
+		margin-bottom: 1rem;
+	}
 
-        .form-group input {
-            text-align: center;
-            padding-top: 0.8rem;
-            padding-bottom: 0.8rem;
-        }
+		.form-group input {
+			text-align: center;
+			padding-top: 0.8rem;
+			padding-bottom: 0.8rem;
+		}
 
-    .register-button {
-        height: 3rem;
-    }
+	.form-button {
+		height: 3rem;
+	}
 
 </style>
 
-<h2>Add Admin</h2>
+<h2>Admin Management</h2>
 
 <!-- Add Admin Button (To trigger the modal) -->
-<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-    Add Admin
+<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#adminModal" onclick="resetModal()">
+	Add Admin
 </button>
 
 <!-- Add Admin Modal-->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add New Admin</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form asp-action="AddAdmin" method="post" class="admin-form-container">
-                    <div class="form-group">
-                        <input placeholder="Username" name="Username" class="form-control" required />
-                    </div>
+<div class="modal fade" id="adminModal" tabindex="-1" aria-labelledby="adminModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="adminModalLabel">Add New Admin</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="adminForm" action="AddAdmin" method="post" class="admin-form-container">
+					<input type="hidden" id="adminId" name="AdminId" value="" />
+					<div class="form-group">
+						<input placeholder="Username" name="Username" id="username" class="form-control" required />
+					</div>
 
-                    <div class="form-group">
-                        <input type="email" placeholder="Email" name="Email" class="form-control" required />
-                    </div>
+					<div class="form-group">
+						<input type="email" placeholder="Email" name="Email" id="email" class="form-control" required />
+					</div>
 
-                    <div class="form-group">
-                        <input placeholder="Password" name="PasswordHash" type="password" class="form-control" required />
-                    </div>
+					<div class="form-group">
+						<input placeholder="Password" name="PasswordHash" id="password" type="password" class="form-control" required />
+					</div>
 
-                    <button type="submit" class="register-button btn btn-primary w-100 mt-3">Add</button>
-                </form>
-            </div>
-        </div>
-    </div>
+					<button type="submit" class="form-button btn btn-primary w-100 mt-3">Add</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Table to display admins -->
 <div class="table-responsive shadow">
-    <table class="custom-table">
-        <thead>
-            <tr>
-                <th scope="col">S.N.</th>
-                <th scope="col">Admin Name</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                int index = 1; // For displaying row number
-                foreach (var admin in Model)
-                {
-                    <tr>
-                        <th scope="row">@index</th>
-                        <td>@admin.Username</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@admin.UserId">
-                                    <span class="material-symbols-outlined">
-                                        edit_note
-                                    </span>
-                                </button>
+	<table id="ecomDT" class="custom-table">
+		<thead>
+			<tr>
+				<th scope="col">S.N.</th>
+				<th scope="col">Admin Name</th>
+				<th scope="col">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model != null && Model.Any())
+			{
+				int index = 1; // For displaying row number
+				foreach (var admin in Model)
+				{
+					<tr>
+						<th scope="row">@index</th>
+						<td>@admin.Username</td>
+						<td>
+							<div class="d-flex gap-2">
+								<button type="button" class="btn btn-success btn-sm" onclick="editAdmin(@admin.UserId, '@admin.Username', '@admin.Email', '@admin.PasswordHash')" data-bs-toggle="modal" data-bs-target="#adminModal">
+									<span class="material-symbols-outlined">
+										edit_note
+									</span>
+								</button>
 
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                        data-item-id="@admin.UserId" data-item-name="@admin.Username">
-                                    <span class="material-symbols-outlined">
-                                        delete
-                                    </span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    index++;
-                }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="4" class="text-center">No admin available except superadmin</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+								<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+										data-item-id="@admin.UserId" data-item-name="@admin.Username">
+									<span class="material-symbols-outlined">
+										delete
+									</span>
+								</button>
+							</div>
+						</td>
+					</tr>
+					index++;
+				}
+			}
+			else
+			{
+				// Datatable automatically handles empty table.
+			}
+		</tbody>
+	</table>
 </div>
 
 @*Importing Delete confirmation modal*@
 @await Html.PartialAsync("_DeleteModal")
 
 <script>
-    // Attach event listener for delete buttons
-    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
-        button.addEventListener('click', function () {
-            const itemId = this.getAttribute('data-item-id');
-            const itemName = this.getAttribute('data-item-name');
+	// Attach event listener for delete buttons
+	document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+		button.addEventListener('click', function () {
+			const itemId = this.getAttribute('data-item-id');
+			const itemName = this.getAttribute('data-item-name');
 
-            // Set the product name in the modal
-            document.getElementById('itemToDelete').textContent = itemName;
+			// Set the product name in the modal
+			document.getElementById('itemToDelete').textContent = itemName;
 
-            // Update the confirmation button link
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            confirmDeleteBtn.href = `/Admin/DeleteAdmin?id=${itemId}`;
-        });
-    });
+			// Set the form action
+			const deleteForm = document.getElementById('deleteForm');
+			deleteForm.action = `/Admin/DeleteAdmin`;
+
+			// set admin id
+			document.getElementById('deleteItemId').value = itemId;
+		});
+	});
+
+	function resetModal() {
+		document.getElementById('adminModalLabel').textContent = 'Update Admin';
+		document.getElementById('adminId').value = '';
+		document.getElementById('username').value = '';
+		document.getElementById('email').value = '';
+		document.getElementById('password').value = '';
+
+		document.querySelector('.form-button').textContent = 'Add';
+		document.getElementById('adminForm').action = 'AddAdmin';
+	}
+
+	function editAdmin(id, username, email, password) {
+		document.getElementById('adminModalLabel').textContent = 'Update Admin';
+		document.getElementById('adminId').value = id;
+		document.getElementById('username').value = username;
+		document.getElementById('email').value = email;
+		document.getElementById('password').value = '';
+
+		document.querySelector('.form-button').textContent = 'Update';
+		document.getElementById('adminForm').action = 'UpdateAdmin';
+	}
 </script>

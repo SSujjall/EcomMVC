@@ -7,14 +7,14 @@
 <style>
     /* Make the image smaller */
     img {
-        width: 100%;
-        height: auto;
-        min-height: 60px;
-        min-width: 60px;
-        max-width: 100px;
-        max-height: 100px;
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
+    width: 100%;
+    height: auto;
+    min-height: 60px;
+    min-width: 60px;
+    max-width: 100px;
+    max-height: 100px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     }
 </style>
 
@@ -83,7 +83,7 @@
                                     </span>
                                 </a>
                                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                        data-item-id="@product.ProductId" data-item-name="@product.ProductName">
+                                data-item-id="@product.ProductId" data-item-name="@product.ProductName">
                                     <span class="material-symbols-outlined">
                                         delete
                                     </span>
@@ -95,9 +95,7 @@
             }
             else
             {
-                <tr>
-                    <td colspan="7" class="text-center">No products available</td>
-                </tr>
+                // Datatable automatically handles empty table.
             }
         </tbody>
     </table>
@@ -116,9 +114,12 @@
             // Set the product name in the modal
             document.getElementById('itemToDelete').textContent = productName;
 
-            // Update the confirmation button link
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            confirmDeleteBtn.href = `/Product/DeleteProduct?id=${productId}`;
+            // Set the form action
+            const deleteForm = document.getElementById('deleteForm');
+            deleteForm.action = `/Product/DeleteProduct`;
+
+            // set category id
+            document.getElementById('deleteItemId').value = productId;
         });
     });
 </script>

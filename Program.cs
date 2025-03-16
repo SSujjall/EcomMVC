@@ -2,7 +2,6 @@ using AspNetCoreHero.ToastNotification;
 using CloudinaryDotNet;
 using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
-using EcomSiteMVC.Core.Models.Configs;
 using EcomSiteMVC.Extensions.EmailService.Config;
 using EcomSiteMVC.Extensions.EmailService.Service;
 using EcomSiteMVC.Extensions.KhaltiPaymentService.Config;
@@ -11,6 +10,9 @@ using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Infrastructure.Repositories;
 using EcomSiteMVC.Infrastructure.Services;
 using EcomSiteMVC.Utilities;
+using EcomSiteMVC.Utilities.CustomMiddlewares;
+using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Configs;
+using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
 using EcomSiteMVC.Utilities.ExternalServices.PdfService.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -78,6 +80,7 @@ builder.Services.AddNotyf(config =>
 
 builder.Services.AddAuthorization();
 
+#region register repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -86,13 +89,12 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
-
 // Register generic/helper repositories and classes
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
 builder.Services.AddScoped<IEmailService, EmailService>();
+#endregion
 
-//builder.Services.AddTransient<TokenHelper>(); // Implement this later for jwt authentication instead of identity
-
+#region register services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -108,6 +110,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IKhaltiService, KhaltiService>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
+
+//builder.Services.AddTransient<TokenHelper>(); // Implement this later for jwt authentication instead of identity
+#endregion
 
 
 // Cors 
@@ -172,6 +177,7 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAdminRedirect(); // custom user routing middleware
 
 app.MapControllerRoute(
     name: "default",

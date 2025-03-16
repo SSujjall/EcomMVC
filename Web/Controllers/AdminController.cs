@@ -23,12 +23,6 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf = notyf;
         }
 
-        [HttpGet("{controller}/dashboard")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [AllowAnonymous]
         [HttpGet("{controller}/login:port")]
         public IActionResult AdminLoginView()
@@ -66,7 +60,7 @@ namespace EcomSiteMVC.Web.Controllers
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                     _notyf.Success("Login Successful", 5);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "Dashboard");
                 }
             }
             _notyf.Error("Invalid username or password for admin.");
@@ -98,14 +92,14 @@ namespace EcomSiteMVC.Web.Controllers
             return RedirectToAction("AddAdminView");
         }
 
-        [Authorize(Roles = "Superadmin")] // Only superadmin can add new admins
+        [Authorize(Roles = "Superadmin")] // Only superadmin can delete admins
         [HttpPost]
         public async Task<IActionResult> DeleteAdmin(int id)
         {
             if (ModelState.IsValid)
             {
-                var user = await _adminService.DeleteAdminUser(id);
-                if (user != null)
+                var result = await _adminService.DeleteAdminUser(id);
+                if (result)
                 {
                     _notyf.Success("Deleted Admin!", 5);
                     return RedirectToAction("AddAdminView");
@@ -115,6 +109,7 @@ namespace EcomSiteMVC.Web.Controllers
             _notyf.Error("Failed to Delete Admin!", 5);
             return RedirectToAction("AddAdminView");
         }
+
 
     }
 }

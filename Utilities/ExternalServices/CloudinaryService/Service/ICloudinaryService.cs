@@ -1,6 +1,6 @@
 ﻿using EcomSiteMVC.Core.Enums;
 
-namespace EcomSiteMVC.Core.IServices
+namespace EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service
 {
     public interface ICloudinaryService
     {
