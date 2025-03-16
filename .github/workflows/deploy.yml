@@ -55,4 +55,4 @@ jobs:
         run: dotnet ef database update --configuration Release --no-build --project ./EcomSiteMVC.csproj
         env:
           ASPNETCORE_ENVIRONMENT: Production
-          ConnectionStrings__BlogDB: ${{ secrets.MONSTERASP_ECOMDB_CONNECTION_STRING }}
+          ConnectionStrings__EcomDB: ${{ secrets.MONSTERASP_ECOMDB_CONNECTION_STRING }}
