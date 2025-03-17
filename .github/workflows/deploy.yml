@@ -40,9 +40,9 @@ jobs:
       - name: Publish
         run: dotnet publish --configuration Release --output ./publish --runtime win-x86
 
-      # Optional: Run tests
-      - name: Test with .NET
-        run: dotnet test
+      # Debug: List contents of the publish folder to verify the files are there
+      - name: List published files
+        run: dir ./publish
 
       # Deploy to MonsterASP.NET via WebDeploy
       - name: Deploy to MonsterASP.NET via WebDeploy
