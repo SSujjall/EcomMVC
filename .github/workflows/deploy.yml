@@ -50,8 +50,10 @@ jobs:
       # Upload web.config first to trigger IIS restart
       - name: Upload web.config to MonsterASP
         run: |
-          curl -T ./publish/web.config ftp://${{ secrets.MONSTERASP_FTP_LOGIN_USER }}:${{ secrets.MONSTERASP_FTP_PW }}@${{ secrets.MONSTERASP_FTP_SERVERNAME }}/wwwroot/web.config
-
+          echo "Uploading web.config file..."
+          curl -v -T ./publish/web.config "ftp://${{ secrets.MONSTERASP_FTP_LOGIN_USER }}:${{ secrets.MONSTERASP_FTP_PW }}@${{ secrets.MONSTERASP_FTP_SERVERNAME }}/wwwroot/web.config"
+        shell: bash
+        
       # Deploy the rest of the app files
       - name: Deploy to MonsterASP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
