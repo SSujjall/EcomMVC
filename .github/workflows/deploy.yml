@@ -54,6 +54,7 @@ jobs:
           local-dir: ./
           server-dir: /wwwroot/
           include: App_Offline.htm
+          exclude: "**/*"
 
       # Deploy the published application files (excluding App_Offline.htm)
       - name: Deploy Published Files via FTP
@@ -65,6 +66,9 @@ jobs:
           local-dir: ./publish/
           server-dir: /wwwroot/
           exclude: |
+            **/.git*
+            **/.git*/**
+            node_modules/**
             App_Offline.htm
 
       # Remove local App_Offline.htm file
