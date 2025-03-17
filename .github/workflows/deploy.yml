@@ -1,24 +1,24 @@
-name: EcomMVC CI/CD Pipeline
+name: Build, publish and deploy to MonsterASP.NET
 
 on:
   push:
     branches:
-     - CiCd-TestRun
+      - CiCd-TestRun  # Trigger on push to this branch
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build_and_deploy:
+    runs-on: windows-latest  # WebDeploy requires Windows environment
 
     steps:
       # Checkout the code from the repository
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Set up .NET SDK
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v2
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: 8.0.x
 
       # Install EF Core Tools 8.0.10
       - name: Install EF Core Tools 8.0.10
@@ -29,30 +29,28 @@ jobs:
         run: dotnet ef --version
 
       # Restore dependencies
-      - name: Restore dependencies
+      - name: Install dependencies
         run: dotnet restore
 
       # Build the project
-      - name: Build the project
-        run: dotnet build --configuration Release
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
       # Publish the project
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output ./publish
+      - name: Publish
+        run: dotnet publish --configuration Release --output ./publish --runtime win-x86
 
-      # Deploy to MonsterASP via FTP
-      - name: Deploy to MonsterASP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # Optional: Run tests
+      - name: Test with .NET
+        run: dotnet test
+
+      # Deploy to MonsterASP.NET via WebDeploy
+      - name: Deploy to MonsterASP.NET via WebDeploy
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
-          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
-          password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./publish/
-          server-dir: /wwwroot/
-
-      # Apply database migrations
-      - name: Apply database migrations
-        run: dotnet ef database update --configuration Release --no-build --project ./EcomSiteMVC.csproj
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-          ConnectionStrings__EcomDB: ${{ secrets.MONSTERASP_ECOMDB_CONNECTION_STRING }}
+          website-name: ${{ secrets.WEBSITE_NAME }}  # Use FTP username as website name
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}  # Use FTP server name as WebDeploy server
+          server-username: ${{ secrets.SERVER_USERNAME }}  # Use FTP username as WebDeploy username
+          server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
+          source-path: ./publish  # Folder containing the published files
+          target-path: /  # Deploy to the root of the website
