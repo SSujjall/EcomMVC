@@ -3,22 +3,22 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-      - CiCd-TestRun
+      - CiCd-TestRun  # Trigger on push to this branch
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build_and_deploy:
+    runs-on: windows-latest  # WebDeploy requires Windows environment
 
     steps:
       # Checkout the code from the repository
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Set up .NET SDK
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v2
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: 8.0.x
 
       # Install EF Core Tools 8.0.10
       - name: Install EF Core Tools 8.0.10
@@ -29,69 +29,27 @@ jobs:
         run: dotnet ef --version
 
       # Restore dependencies
-      - name: Restore dependencies
+      - name: Install dependencies
         run: dotnet restore
 
       # Build the project
-      - name: Build the project
-        run: dotnet build --configuration Release
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
       # Publish the project
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output ./publish
+      - name: Publish
+        run: dotnet publish --configuration Release --output ./publish --runtime win-x86
 
-      # Create App_Offline.htm to take the site offline
-      - name: Create App_Offline.htm
-        run: echo "<h1>Site is under maintenance</h1>" > App_Offline.htm
+      # Optional: Run tests
+      - name: Test with .NET
+        run: dotnet test
 
-      # Upload App_Offline.htm to the server to disable the running app (releases file locks)
-      - name: Upload App_Offline.htm via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # Deploy to MonsterASP.NET via WebDeploy
+      - name: Deploy to MonsterASP.NET via WebDeploy
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
-          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
-          password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./
-          server-dir: /wwwroot/
-          include: App_Offline.htm
-          exclude: "**/*"  # Exclude everything else
-
-      # Deploy Published Files via FTP (only the published files)
-      - name: Deploy Published Files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
-          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
-          password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./publish/  # Only the published files
-          server-dir: /wwwroot/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            node_modules/**
-            **/Core/**  # Explicitly exclude non-published folders
-            **/Infrastructure/**
-            **/App_Offline.htm  # Exclude App_Offline.htm in this step
-
-      # Remove local App_Offline.htm file
-      - name: Remove local App_Offline.htm
-        run: rm App_Offline.htm
-
-      # Remove App_Offline.htm from FTP server to bring the site back online
-      - name: Remove App_Offline.htm from FTP server
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
-          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
-          password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./
-          server-dir: /wwwroot/
-          include: App_Offline.htm
-          exclude: "**/*"  # Exclude all other files
-
-      # Apply database migrations
-      - name: Apply database migrations
-        run: dotnet ef database update --configuration Release --no-build --project ./EcomSiteMVC.csproj
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
-          ConnectionStrings__EcomDB: ${{ secrets.MONSTERASP_ECOMDB_CONNECTION_STRING }}
+          website-name: ${{ secrets.MONSTERASP_MONSTERASP_FTP_WEBSITENAME }}  # Site name from MonsterASP
+          server-computer-name: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}  # WebDeploy server URL
+          server-username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}  # WebDeploy username
+          server-password: ${{ secrets.MONSTERASP_FTP_PW }}  # WebDeploy password
+          folder: ./publish  # Folder containing the published files
