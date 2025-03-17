@@ -53,7 +53,8 @@ jobs:
           password: ${{ secrets.MONSTERASP_FTP_PW }}
           local-dir: ./
           server-dir: /wwwroot/
-          include: App_Offline.htm  # Only upload App_Offline.htm first
+          include: App_Offline.htm
+          exclude: "**/*"  # Exclude everything else
 
       # Deploy Published Files via FTP (only the published files)
       - name: Deploy Published Files via FTP
@@ -62,7 +63,7 @@ jobs:
           server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
           username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
           password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./publish/  # This ensures that only the files in the publish directory are uploaded
+          local-dir: ./publish/  # Only the published files
           server-dir: /wwwroot/
           exclude: |
             **/.git*
