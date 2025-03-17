@@ -48,8 +48,8 @@ jobs:
       - name: Deploy to MonsterASP.NET via WebDeploy
         uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          website-name: ${{ secrets.MONSTERASP_MONSTERASP_FTP_WEBSITENAME }}  # Site name from MonsterASP
-          server-computer-name: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}  # WebDeploy server URL
-          server-username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}  # WebDeploy username
-          server-password: ${{ secrets.MONSTERASP_FTP_PW }}  # WebDeploy password
+          website-name: ${{ secrets.WEBSITE_NAME }}  # Site name from MonsterASP
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}  # WebDeploy server URL
+          server-username: ${{ secrets.SERVER_USERNAME }}  # WebDeploy username
+          server-password: ${{ secrets.SERVER_PASSWORD }}  # WebDeploy password
           folder: ./publish  # Folder containing the published files
