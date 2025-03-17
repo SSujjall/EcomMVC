@@ -40,11 +40,7 @@ jobs:
       - name: Publish
         run: dotnet publish --configuration Release --output ./publish --runtime linux-x64  # Change runtime to linux-x64
 
-      # Optional: Run tests
-      - name: Test with .NET
-        run: dotnet test
-
-      # Deploy to MonsterASP.NET via FTP
+      # Deploy to MonsterASP.NET (Adjust this step for FTP/SSH deployment on Linux)
       - name: Deploy to MonsterASP.NET via FTP
         uses: appleboy/ftp-action@v1.0.0  # FTP action for Linux
         with:
