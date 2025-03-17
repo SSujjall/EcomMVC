@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-latest  # Use Ubuntu (Linux) environment
+    runs-on: windows-latest  # WebDeploy requires Windows environment
 
     steps:
       # Checkout the code from the repository
@@ -38,14 +38,19 @@ jobs:
 
       # Publish the project
       - name: Publish
-        run: dotnet publish --configuration Release --output ./publish --runtime linux-x64  # Change runtime to linux-x64
+        run: dotnet publish --configuration Release --output ./publish --runtime win-x86
 
-      # Deploy to MonsterASP.NET (Adjust this step for FTP/SSH deployment on Linux)
-      - name: Deploy to MonsterASP.NET via FTP
-        uses: appleboy/ftp-action@v1.0.0  # FTP action for Linux
+      # Optional: Run tests
+      - name: Test with .NET
+        run: dotnet test
+
+      # Deploy to MonsterASP.NET via WebDeploy
+      - name: Deploy to MonsterASP.NET via WebDeploy
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          host: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}  # FTP server name
-          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}  # FTP username
-          password: ${{ secrets.MONSTERASP_FTP_PW }}  # FTP password
-          source: ./publish  # Folder containing the published files
-          target: /wwwroot  # Deploy to the root of the website
+          website-name: ${{ secrets.WEBSITE_NAME }}  # Use FTP username as website name
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}  # Use FTP server name as WebDeploy server
+          server-username: ${{ secrets.SERVER_USERNAME }}  # Use FTP username as WebDeploy username
+          server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
+          source-path: ./publish  # Folder containing the published files
+          target-path: /  # Deploy to the root of the website
