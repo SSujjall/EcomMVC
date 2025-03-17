@@ -42,7 +42,10 @@ jobs:
 
       # Modify web.config to trigger IIS restart
       - name: Modify web.config to trigger app pool restart
-        run: echo "<!-- Deployment: $(date) -->" >> ./publish/web.config
+        run: |
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "<!-- Deployment: $TIMESTAMP -->" >> ./publish/web.config
+        shell: bash
 
       # Upload web.config first to trigger IIS restart
       - name: Upload web.config to MonsterASP
