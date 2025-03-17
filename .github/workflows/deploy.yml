@@ -3,7 +3,7 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-     - CiCd-TestRun
+      - CiCd-TestRun
 
 jobs:
   build:
@@ -40,22 +40,23 @@ jobs:
       - name: Publish the project
         run: dotnet publish --configuration Release --output ./publish
 
-      # Modify web.config to trigger IIS restart
-      - name: Modify web.config to trigger app pool restart
-        run: |
-          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-          echo "<!-- Deployment: $TIMESTAMP -->" >> ./publish/web.config
-        shell: bash
+      # Create App_Offline.htm to take the site offline
+      - name: Create App_Offline.htm
+        run: echo "<h1>Site is under maintenance</h1>" > App_Offline.htm
 
-      # Upload web.config first to trigger IIS restart
-      - name: Upload web.config to MonsterASP
-        run: |
-          echo "Uploading web.config file..."
-          curl -v -T ./publish/web.config "ftp://${{ secrets.MONSTERASP_FTP_LOGIN_USER }}:${{ secrets.MONSTERASP_FTP_PW }}@${{ secrets.MONSTERASP_FTP_SERVERNAME }}/wwwroot/web.config"
-        shell: bash
-        
-      # Deploy the rest of the app files
-      - name: Deploy to MonsterASP
+      # Upload App_Offline.htm to the server to disable the running app (releases file locks)
+      - name: Deploy App_Offline.htm via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
+          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
+          password: ${{ secrets.MONSTERASP_FTP_PW }}
+          local-dir: ./
+          server-dir: /wwwroot/
+          include: App_Offline.htm
+
+      # Deploy the published application files (excluding App_Offline.htm)
+      - name: Deploy Published Files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
@@ -63,6 +64,24 @@ jobs:
           password: ${{ secrets.MONSTERASP_FTP_PW }}
           local-dir: ./publish/
           server-dir: /wwwroot/
+          exclude: |
+            App_Offline.htm
+
+      # Remove local App_Offline.htm file
+      - name: Remove local App_Offline.htm
+        run: rm App_Offline.htm
+
+      # Remove App_Offline.htm from the server to bring the site back online
+      - name: Remove App_Offline.htm from FTP server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
+          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
+          password: ${{ secrets.MONSTERASP_FTP_PW }}
+          local-dir: ./
+          server-dir: /wwwroot/
+          include: App_Offline.htm
+          exclude: "**/*"
 
       # Apply database migrations
       - name: Apply database migrations
