@@ -40,6 +40,21 @@ jobs:
       - name: Publish the project
         run: dotnet publish --configuration Release --output ./publish
 
+      # Modify web.config to trigger IIS restart
+      - name: Modify web.config to restart the app
+        run: echo "<!-- Deployment: $(date) -->" >> ./publish/web.config
+
+      # Upload web.config first (forces restart)
+      - name: Upload web.config separately
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
+          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
+          password: ${{ secrets.MONSTERASP_FTP_PW }}
+          local-dir: ./publish/
+          server-dir: /wwwroot/
+          include: "web.config"
+
       # Deploy to MonsterASP via FTP
       - name: Deploy to MonsterASP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
