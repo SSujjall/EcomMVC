@@ -53,4 +53,4 @@ jobs:
           server-username: ${{ secrets.SERVER_USERNAME }}  # Use FTP username as WebDeploy username
           server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
           source-path: ./publish  # Folder containing the published files
-          target-path: /wwwroot  # Deploy to the root of the website
+          target-path: /wwwroot/  # Deploy to the root of the website
