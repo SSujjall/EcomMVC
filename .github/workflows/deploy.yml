@@ -3,7 +3,7 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-     - CiCd-TestRun
+      - CiCd-TestRun
 
 jobs:
   build:
@@ -40,15 +40,53 @@ jobs:
       - name: Publish the project
         run: dotnet publish --configuration Release --output ./publish
 
-      # Deploy to MonsterASP via FTP
-      - name: Deploy to MonsterASP
+      # Create App_Offline.htm to take the site offline
+      - name: Create App_Offline.htm
+        run: echo "<h1>Site is under maintenance</h1>" > App_Offline.htm
+
+      # Upload App_Offline.htm to the server to disable the running app (releases file locks)
+      - name: Upload App_Offline.htm via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
           username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
           password: ${{ secrets.MONSTERASP_FTP_PW }}
-          local-dir: ./publish/
+          local-dir: ./
           server-dir: /wwwroot/
+          include: App_Offline.htm  # Only upload App_Offline.htm first
+
+      # Deploy Published Files via FTP (only the published files)
+      - name: Deploy Published Files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
+          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
+          password: ${{ secrets.MONSTERASP_FTP_PW }}
+          local-dir: ./publish/  # This ensures that only the files in the publish directory are uploaded
+          server-dir: /wwwroot/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            node_modules/**
+            **/Core/**  # Explicitly exclude non-published folders
+            **/Infrastructure/**
+            **/App_Offline.htm  # Exclude App_Offline.htm in this step
+
+      # Remove local App_Offline.htm file
+      - name: Remove local App_Offline.htm
+        run: rm App_Offline.htm
+
+      # Remove App_Offline.htm from FTP server to bring the site back online
+      - name: Remove App_Offline.htm from FTP server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
+          username: ${{ secrets.MONSTERASP_FTP_LOGIN_USER }}
+          password: ${{ secrets.MONSTERASP_FTP_PW }}
+          local-dir: ./
+          server-dir: /wwwroot/
+          include: App_Offline.htm
+          exclude: "**/*"  # Exclude all other files
 
       # Apply database migrations
       - name: Apply database migrations
