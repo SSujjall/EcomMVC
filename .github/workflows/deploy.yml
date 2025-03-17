@@ -45,7 +45,7 @@ jobs:
         run: echo "<h1>Site is under maintenance</h1>" > App_Offline.htm
 
       # Upload App_Offline.htm to the server to disable the running app (releases file locks)
-      - name: Deploy App_Offline.htm via FTP
+      - name: Upload App_Offline.htm via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.MONSTERASP_FTP_SERVERNAME }}
@@ -53,8 +53,7 @@ jobs:
           password: ${{ secrets.MONSTERASP_FTP_PW }}
           local-dir: ./
           server-dir: /wwwroot/
-          include: App_Offline.htm
-          exclude: "**/*"
+          include: App_Offline.htm  # This line is fixed, we are now using `include` correctly
 
       # Deploy the published application files (excluding App_Offline.htm)
       - name: Deploy Published Files via FTP
@@ -69,7 +68,7 @@ jobs:
             **/.git*
             **/.git*/**
             node_modules/**
-            App_Offline.htm
+            App_Offline.htm  # Ensure App_Offline.htm is not uploaded with the publish files
 
       # Remove local App_Offline.htm file
       - name: Remove local App_Offline.htm
@@ -84,7 +83,7 @@ jobs:
           password: ${{ secrets.MONSTERASP_FTP_PW }}
           local-dir: ./
           server-dir: /wwwroot/
-          include: App_Offline.htm
+          include: App_Offline.htm  # Correct use of `include`
           exclude: "**/*"
 
       # Apply database migrations
