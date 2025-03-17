@@ -3,7 +3,7 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-     - CiCd-TestRun
+      - CiCd-TestRun
 
 jobs:
   build:
@@ -53,9 +53,9 @@ jobs:
           password: ${{ secrets.MONSTERASP_FTP_PW }}
           local-dir: ./publish/
           server-dir: /wwwroot/
-          include: "web.config"
+          file: "web.config"  # Use this to specifically upload only web.config first
 
-      # Deploy to MonsterASP via FTP
+      # Deploy the rest of the app
       - name: Deploy to MonsterASP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
