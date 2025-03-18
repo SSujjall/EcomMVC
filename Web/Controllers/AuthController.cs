@@ -70,12 +70,12 @@ namespace EcomSiteMVC.Web.Controllers
                 {
                     // Create the user claims
                     var claims = new List<Claim>
-                        {
-                            new Claim("UserId", user.UserId.ToString()),
-                            new Claim(ClaimTypes.Name, user.Username),
-                            new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Role, user.Role.ToString())
-                        };
+                    {
+                        new Claim("UserId", user.UserId.ToString()),
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
+                    };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties

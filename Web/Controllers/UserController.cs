@@ -5,9 +5,7 @@ using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.ViewModels;
 using EcomSiteMVC.Extensions.EmailService.Model;
 using EcomSiteMVC.Extensions.EmailService.Service;
-using EcomSiteMVC.Utilities;
 using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
-using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -107,13 +105,14 @@ namespace EcomSiteMVC.Web.Controllers
         public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
-
+            // TODO: Check the old password here by creating a new service method
+            // instead of checking in 'ChangeUserPassword' method in UserService.
             var otp = await _userService.GenerateOtpForPasswordChange(userId);
             if (otp != null)
             {
                 var user = await _userService.GetUserById(userId);
                 var emailMessage = new EmailMessage(new[] { user.Email }, "Change Password OTP", $"Your OTP: {otp}");
-                //_emailService.SendEmail(emailMessage);
+                _emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Password Change OTP Sent To Email", 5);
                 TempData["VerifyOtp"] = true;

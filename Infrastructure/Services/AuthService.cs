@@ -4,10 +4,7 @@ using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
 using EcomSiteMVC.Utilities;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Text;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {
