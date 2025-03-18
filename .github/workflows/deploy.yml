@@ -1,0 +1,56 @@
+name: EcomMVC CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master  # Trigger on push to this branch
+
+jobs:
+  build_and_deploy:
+    runs-on: windows-latest  # WebDeploy requires Windows environment
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up .NET SDK
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      # Install EF Core Tools 8.0.10
+      - name: Install EF Core Tools 8.0.10
+        run: dotnet tool install --global dotnet-ef --version 8.0.10
+
+      # Verify dotnet-ef version
+      - name: Verify dotnet-ef version
+        run: dotnet ef --version
+
+      # Restore dependencies
+      - name: Install dependencies
+        run: dotnet restore
+
+      # Build the project
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      # Publish the project
+      - name: Publish
+        run: dotnet publish --configuration Release --output ./publish --runtime win-x86
+
+      # Debug: List contents of the publish folder to verify the files are there
+      - name: List published files
+        run: dir ./publish
+
+      # Deploy to MonsterASP.NET via WebDeploy
+      - name: Deploy to MonsterASP.NET via WebDeploy
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0 # check github repo for latest version
+        with:
+          website-name: ${{ secrets.WEBSITE_NAME }}  # Use FTP username as website name
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}  # Use FTP server name as WebDeploy server
+          server-username: ${{ secrets.SERVER_USERNAME }}  # Use FTP username as WebDeploy username
+          server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
+          source-path: publish/  # Folder containing the published files
+          target-path: /  # Deploy to the root of the website
