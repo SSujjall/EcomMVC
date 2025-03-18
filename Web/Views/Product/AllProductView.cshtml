@@ -7,8 +7,8 @@
 <style>
     /* Ensure the images column is square and has a max size of 200px */
     .image-cell {
-        width: 200px; /* Fixed width for the column */
-        height: 200px; /* Fixed height for the column */
+        max-width: 200px; /* Fixed width for the column */
+        max-height: 200px; /* Fixed height for the column */
         padding: 0 !important; /* Remove padding to ensure the image fits perfectly */
     }
 
@@ -127,7 +127,22 @@
                 columnDefs: [
                     { width: "200px", targets: 0 } // Set the width of the first column (Image column) to 200px
                 ],
-                autoWidth: false // Disable automatic column width calculation
+                autoWidth: false, // Disable automatic column width calculation
+                layout: {
+                    topStart: {
+                        pageLength: {
+                            menu: [
+                                [10, 25, 50, -1],
+                                [10, 25, 50, 'All']
+                            ]
+                        }
+                    },
+                    bottomEnd: {
+                        paging: {
+                            buttons: 3
+                        }
+                    }
+                }
             });
         });
     </script>
