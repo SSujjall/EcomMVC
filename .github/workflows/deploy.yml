@@ -3,11 +3,11 @@ name: EcomMVC CI/CD Pipeline
 on:
   push:
     branches:
-      - master  # Trigger on push to this branch
+      - master # Trigger on push to this branch
 
 jobs:
   build_and_deploy:
-    runs-on: windows-latest  # WebDeploy requires Windows environment
+    runs-on: windows-latest # WebDeploy requires Windows environment
 
     steps:
       # Checkout the code from the repository
@@ -44,16 +44,29 @@ jobs:
       - name: List published files
         run: dir ./publish
 
+      # Handle appsettings.json based on environment variable
+      - name: Handle appsettings.json
+        run: |
+          # If SKIP_APPSETTINGS is true, remove appsettings.json from deployment
+          if ("${{ vars.SKIP_APPSETTINGS }}" -eq "true") {
+              Write-Host "SKIP_APPSETTINGS is true. Removing appsettings.json..."
+              Remove-Item -Path ./publish/appsettings.json -Force -ErrorAction SilentlyContinue
+              Write-Host "appsettings.json removed from deployment package."
+          } else {
+              Write-Host "Including appsettings.json in deployment."
+          }
+        shell: pwsh
+
       # Deploy to MonsterASP.NET via WebDeploy
       - name: Deploy to MonsterASP.NET via WebDeploy
-        uses: rasmusbuchholdt/simply-web-deploy@2.1.0 # check github repo for latest version
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          website-name: ${{ secrets.WEBSITE_NAME }}  # Use FTP username as website name
-          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}  # Use FTP server name as WebDeploy server
-          server-username: ${{ secrets.SERVER_USERNAME }}  # Use FTP username as WebDeploy username
-          server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
-          source-path: publish/  # Folder containing the published files
-          target-path: /  # Deploy to the root of the website
+          website-name: ${{ secrets.WEBSITE_NAME }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USERNAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: publish/
+          target-path: /
 
       # Apply database migrations
       - name: Apply database migrations
