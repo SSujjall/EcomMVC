@@ -92,6 +92,20 @@ it makes it secure.
         </div>
 
         <!-- Display selected image previews -->
+        <div class="image-preview-container" id="imagePreviewContainer">
+            @if (Model != null && Model.Images != null)
+            {
+                @foreach (var image in Model.Images)
+                {
+                    <div class="image-preview">
+                        <img src="@image.ImageUrl" alt="Image Preview" style="width: 150px; height: 100px; border-radius: 8px; object-fit: cover;" />
+                        <span class="remove-image material-symbols-outlined" onclick="removeImage('@image.ImageId')">close</span>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Display selected image previews -->
         <div class="image-preview-container" id="imagePreviewContainer"></div>
 
         <div class="form-group mb-3">
@@ -155,6 +169,12 @@ it makes it secure.
         const input = document.getElementById('fileInput');
         const files = Array.from(input.files);
         files.splice(index, 1);
-        input.files = new FileList(...files);
+        // Rebuild the file list (this step is necessary since FileList is not directly mutable)
+        const newFileList = new DataTransfer();  // Create a new DataTransfer object to hold the updated list of files
+        files.forEach(file => {
+            newFileList.items.add(file);
+        });
+
+        input.files = newFileList.files;
     }
 </script>

@@ -1,10 +1,8 @@
 ﻿using EcomSiteMVC.Core.DTOs;
+using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.Models.Helper;
 using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
 
@@ -109,7 +107,20 @@ namespace EcomSiteMVC.Infrastructure.Services
                 product.Description = model.Description;
                 product.Price = model.Price;
                 product.StockQuantity = model.StockQuantity;
-                //product.ImageUrl = model.ImageUrl;
+
+                if (model.Images != null)
+                {
+                    foreach (var item in model.Images)
+                    {
+                        var imageUrl = await _cloudinaryService.UploadImageAsync(item, FolderName.Ecom);
+                        var productImage = new ProductImage
+                        {
+                            ProductId = product.ProductId,
+                            ImageUrl = imageUrl
+                        };
+                        await _productRepository.AddImage(productImage);
+                    }
+                }
                 product.LastUpdatedDate = DateOnly.FromDateTime(DateTime.Now);
 
                 await _productRepository.Update(product);
@@ -143,6 +154,13 @@ namespace EcomSiteMVC.Infrastructure.Services
                 return null;
             }
             return products;
+        }
+
+        public async Task<bool> DeleteProductImage(string imageUrl)
+        {
+            var imagePublicId = imageUrl.Split('/').Last().Split('.').First();
+            await _cloudinaryService.DeleteImageAsync($"{productPhotosFolder}/{imagePublicId}");
+            return true;
         }
     }
 }

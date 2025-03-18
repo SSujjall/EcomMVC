@@ -1,4 +1,5 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+﻿using AspNetCoreGeneratedDocument;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
@@ -134,6 +135,20 @@ namespace EcomSiteMVC.Web.Controllers
             }
             _notyf.Error("Model not valid! Please try again.", 5);
             return RedirectToAction("AllProductView");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Superadmin,Admin")]
+        public async Task<IActionResult> DeleteProductImage(string imageUrl)
+        {
+            var result = await _productService.DeleteProductImage(imageUrl);
+            if (result)
+            {
+                _notyf.Success("Product Image Deleted!", 5);
+                return Json(new { success = true });
+            }
+            _notyf.Error("Error occured while deleting image.", 5);
+            return Json(new { success = false });
         }
         #endregion
     }
