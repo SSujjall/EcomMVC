@@ -54,3 +54,10 @@ jobs:
           server-password: ${{ secrets.SERVER_PASSWORD }}  # Use FTP password as WebDeploy password
           source-path: publish/  # Folder containing the published files
           target-path: /  # Deploy to the root of the website
+
+      # Apply database migrations
+      - name: Apply database migrations
+        run: dotnet ef database update --configuration Release --no-build --project ./EcomSiteMVC.csproj
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          ConnectionStrings__EcomDB: ${{ secrets.MONSTERASP_ECOMDB_CONNECTION_STRING }}
