@@ -9,6 +9,7 @@ namespace EcomSiteMVC.Core.IServices
         public Task<bool> AddProduct(AddProductDTO model);
         public Task<bool> UpdateProduct(UpdateProductDTO model);
         public Task<bool> DeleteProduct(int id);
+        public Task<bool> DeleteProductImage(string imageUrl);
         public Task<Product> GetProductById(int id);
         public Task<IEnumerable<Product>> GetAllProduct();
         public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter, FilterModel? filterModel);
