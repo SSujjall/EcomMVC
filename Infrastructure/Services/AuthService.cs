@@ -38,6 +38,12 @@ namespace EcomSiteMVC.Infrastructure.Services
             // they have to use admin portal.
             if (user != null)
             {
+                // TODO: Need to revise the logic
+                // The issue right now is that if a google account logged in user changes their password
+                // they are able to change it but are not able to login with the password
+                // because 'user.GoogleUserId != null' condition is checked before the password verification
+                // and since google user has their googleuserId, they are not able to reach the pw verify condition.
+
                 if (restrictedRoles.Contains(user.Role))
                 {
                     return null;
