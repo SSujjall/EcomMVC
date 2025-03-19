@@ -102,6 +102,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Register generic/helper repositories and classes
