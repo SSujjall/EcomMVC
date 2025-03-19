@@ -19,13 +19,16 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly string profilePictureFolderName = FolderName.ProfilePictures.ToString();
         private readonly INotyfService _notyf;
         private readonly IEmailService _emailService;
+        private readonly IOtpService _otpService;
 
-        public UserController(IUserService userService, ICloudinaryService cloudinaryService, INotyfService notyf, IEmailService emailService)
+        public UserController(IUserService userService, ICloudinaryService cloudinaryService,
+            INotyfService notyf, IEmailService emailService, IOtpService otpService)
         {
             _userService = userService;
             _cloudinaryService = cloudinaryService;
             _notyf = notyf;
             _emailService = emailService;
+            _otpService = otpService;
         }
 
         public async Task<IActionResult> ProfileView()
@@ -105,9 +108,21 @@ namespace EcomSiteMVC.Web.Controllers
         public async Task<IActionResult> ChangeUserPassword(ChangePasswordDTO model)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
-            // TODO: Check the old password here by creating a new service method
-            // instead of checking in 'ChangeUserPassword' method in UserService.
-            var otp = await _userService.GenerateOtpForPasswordChange(userId);
+
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                _notyf.Error("Passwords do not match.", 5);
+                return RedirectToAction("UserSettingsView");
+            }
+
+            bool checkOldPwValidity = await _userService.CheckOldPwValidity(userId, model.OldPassword);
+            if (!checkOldPwValidity)
+            {
+                _notyf.Error("Incorrect Old Password.", 5);
+                return RedirectToAction("UserSettingsView");
+            }
+
+            var otp = await _otpService.GeneratePasswordChangeOtp(userId);
             if (otp != null)
             {
                 var user = await _userService.GetUserById(userId);
@@ -117,8 +132,8 @@ namespace EcomSiteMVC.Web.Controllers
                 _notyf.Success("Password Change OTP Sent To Email", 5);
                 TempData["VerifyOtp"] = true;
 
-                #region
-                TempData["OldPassword"] = model.OldPassword;
+                #region TempData
+                //TempData["OldPassword"] = model.OldPassword;
                 TempData["NewPassword"] = model.NewPassword;
                 #endregion
 
@@ -137,20 +152,21 @@ namespace EcomSiteMVC.Web.Controllers
         public async Task<IActionResult> VerifyOtp(string otp)
         {
             var userId = int.Parse(User.FindFirst("UserId")?.Value);
-            var isValidOtp = await _userService.VerifyOtpForPasswordChange(userId, otp);
+            var isValidOtp = await _otpService.VerifyPasswordChangeOtp(userId, otp);
             if (!isValidOtp)
             {
                 _notyf.Error("Invalid OTP.", 5);
-                return RedirectToAction("UserSettingsView");
+                var refererUrl = Request.Headers["Referer"].ToString();
+                return Redirect(string.IsNullOrEmpty(refererUrl) ? "/" : refererUrl);
             }
 
-            var oldPassword = TempData["OldPassword"]?.ToString();
+            //var oldPassword = TempData["OldPassword"]?.ToString();
             var newPassword = TempData["NewPassword"]?.ToString();
 
-            var passwordChanged = await _userService.ChangeUserPassword(userId, oldPassword, newPassword);
+            var passwordChanged = await _userService.ChangeUserPassword(userId, newPassword ?? "");
             if (!passwordChanged)
             {
-                _notyf.Error("Incorrect Old Password or Error Changing Password.", 5);
+                _notyf.Error("Error Changing Password.", 5);
                 return RedirectToAction("UserSettingsView");
             }
 

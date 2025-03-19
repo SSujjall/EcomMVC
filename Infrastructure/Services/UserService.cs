@@ -110,7 +110,7 @@ namespace EcomSiteMVC.Infrastructure.Services
 
         public async Task<User> UpdateUser(User model)
         {
-            if(model != null)
+            if (model != null)
             {
                 var updatedModel = await _userRepository.Update(model);
                 return updatedModel;
@@ -129,37 +129,22 @@ namespace EcomSiteMVC.Infrastructure.Services
             return null;
         }
 
-        #region User Password Change and OTP Logics
-        public async Task<string> GenerateOtpForPasswordChange(int userId)
-        {
-            var user = await _userRepository.GetById(userId);
-            if (user == null) return null;
-
-            var otp = OtpHelper.GeneratePasswordChangeOTP();
-            user.PasswordChangeOTP = otp.EncryptParameter();
-            await _userRepository.Update(user);
-
-            return otp;
-        }
-
-        public async Task<bool> VerifyOtpForPasswordChange(int userId, string otp)
+        public async Task<bool> CheckOldPwValidity(int userId, string oldPassword)
         {
             var user = await _userRepository.GetById(userId);
             if (user == null) return false;
 
-            return OtpHelper.VerifyPasswordChangeOTP(otp, user.PasswordChangeOTP?.DecryptParameter());
-        }
-
-        public async Task<bool> ChangeUserPassword(int userId, string oldPassword, string newPassword)
-        {
-            var user = await _userRepository.GetById(userId);
-            if (user == null) return false;
-
-            // Validate old password
-            if (!PasswordHelper.VerifyPassword(oldPassword, user.PasswordHash))
+            if (PasswordHelper.VerifyPassword(oldPassword, user.PasswordHash))
             {
-                return false;
+                return true;
             }
+            return false;
+        }
+
+        public async Task<bool> ChangeUserPassword(int userId, string newPassword)
+        {
+            var user = await _userRepository.GetById(userId);
+            if (user == null) return false;
 
             // Hash new password and update
             user.PasswordHash = PasswordHelper.HashPassword(newPassword);
@@ -168,6 +153,5 @@ namespace EcomSiteMVC.Infrastructure.Services
 
             return true;
         }
-        #endregion
     }
 }

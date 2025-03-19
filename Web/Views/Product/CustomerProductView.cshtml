@@ -26,8 +26,13 @@
 		object-fit: cover;
 	}
 
-	.container {
-		max-width: 1800px;
+	.products-container {
+		display: grid;
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax(min(100%, 20rem), 1fr)
+		);
+		gap: 1.5rem;
 	}
 
 	.btm-sec {
@@ -79,60 +84,58 @@
 
 
 
-<div class="container">
-	<div class="row">
-		@foreach (var product in Model)
-		{
-			<div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-4">
-				<div class="card h-100 shadow-sm">
-					<div id="carousel-@product.ProductId" class="carousel slide" data-bs-ride="carousel">
-						<!-- Carausel indicator -->
-						<div class="carousel-indicators">
-							@for (int i = 0; i < product.Images.Count(); i++)
-							{
-								<button type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide-to="@i"
-										class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
-										aria-label="Slide @(i + 1)">
-								</button>
-							}
-						</div>
-
-						<a href="@Url.Action("GetProductById", "Product", new { id = product.ProductId })" style="text-decoration: none; color: inherit;">
-							<!-- Carousel Images -->
-							<div class="carousel-inner">
-								@for (int i = 0; i < product.Images.Count(); i++)
-								{
-									var imageUrl = product.Images.ElementAt(i).ImageUrl;
-									<div class="carousel-item @(i == 0 ? "active" : "")">
-										<img src="@imageUrl" alt="@product.ProductName" class="d-block w-100" />
-									</div>
-								}
-							</div>
-						</a>
-
-						<!-- Navigation Arrows -->
-						<button class="carousel-control-prev carousel-button" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Previous</span>
-						</button>
-						<button class="carousel-control-next carousel-button" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-							<span class="visually-hidden">Next</span>
-						</button>
+<div class="products-container">
+	@foreach (var product in Model)
+	{
+		<div class="">
+			<div class="card h-100 shadow-sm">
+				<div id="carousel-@product.ProductId" class="carousel slide" data-bs-ride="carousel">
+					<!-- Carausel indicator -->
+					<div class="carousel-indicators">
+						@for (int i = 0; i < product.Images.Count(); i++)
+						{
+							<button type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide-to="@i"
+									class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")"
+									aria-label="Slide @(i + 1)">
+							</button>
+						}
 					</div>
 
-					<div class="btm-sec card-body d-flex flex-column">
-						<h5 class="card-title">@product.ProductName</h5>
-						<div class="mt-auto">
-							<p class="card-text fw-bold">$@product.Price</p>
-							<form asp-action="AddToCart" asp-controller="Cart" method="post">
-								<input type="hidden" name="ProductId" value="@product.ProductId" />
-								<button type="submit" class="btn btn-primary w-100">Add to Cart</button>
-							</form>
+					<a href="@Url.Action("GetProductById", "Product", new { id = product.ProductId })" style="text-decoration: none; color: inherit;">
+						<!-- Carousel Images -->
+						<div class="carousel-inner">
+							@for (int i = 0; i < product.Images.Count(); i++)
+							{
+								var imageUrl = product.Images.ElementAt(i).ImageUrl;
+								<div class="carousel-item @(i == 0 ? "active" : "")">
+									<img src="@imageUrl" alt="@product.ProductName" class="d-block w-100" />
+								</div>
+							}
 						</div>
+					</a>
+
+					<!-- Navigation Arrows -->
+					<button class="carousel-control-prev carousel-button" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Previous</span>
+					</button>
+					<button class="carousel-control-next carousel-button" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="visually-hidden">Next</span>
+					</button>
+				</div>
+
+				<div class="btm-sec card-body d-flex flex-column">
+					<h5 class="card-title">@product.ProductName</h5>
+					<div class="mt-auto">
+						<p class="card-text fw-bold">$@product.Price</p>
+						<form asp-action="AddToCart" asp-controller="Cart" method="post">
+							<input type="hidden" name="ProductId" value="@product.ProductId" />
+							<button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+						</form>
 					</div>
 				</div>
 			</div>
-		}
-	</div>
+		</div>
+	}
 </div>
