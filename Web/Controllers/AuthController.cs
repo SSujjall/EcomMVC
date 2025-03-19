@@ -38,7 +38,7 @@ namespace EcomSiteMVC.Web.Controllers
                 return RedirectToAction("LoginView");
             }
 
-            _notyf.Error("Error creating user, try another Username.", 5);
+            _notyf.Error("Error creating user, Username or Email already exists.", 5);
             return RedirectToAction("RegisterView");
         }
 

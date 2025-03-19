@@ -91,9 +91,9 @@ namespace EcomSiteMVC.Infrastructure.Services
                     }
                 }
 
-                var existingUser = await _authRepository.GetUserByUsername(model.Username);
-
-                if (existingUser == null)
+                var existingUsername = await _authRepository.GetUserByUsername(model.Username);
+                var existingEmail = await _authRepository.GetUserByEmail(model.Email);
+                if (existingUsername == null && existingEmail == null)
                 {
                     var user = new User
                     {
