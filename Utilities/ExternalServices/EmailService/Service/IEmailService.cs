@@ -4,6 +4,6 @@ namespace EcomSiteMVC.Extensions.EmailService.Service
 {
     public interface IEmailService
     {
-        void SendEmail(EmailMessage message);
+        Task SendEmail(EmailMessage message);
     }
 }

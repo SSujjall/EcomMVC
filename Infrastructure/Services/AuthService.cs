@@ -48,20 +48,20 @@ namespace EcomSiteMVC.Infrastructure.Services
                 {
                     return null;
                 }
-                if (user.GoogleUserId != null)// If user has signed up via Google
+                else if (PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
+                {
+                    if (user.IsEmailVerified == false) // If user's email is not verified, don't let them sign in
+                    {
+                        return null;
+                    }
+                    return user;
+                }
+                else if (user.GoogleUserId != null)// If user has signed up via Google
                 {
                     //if google user tries to signin using a login portal then return null
                     //they should not be able to login through normal login portal
                     //they can only login using google singin
                     return null;
-                }
-                if (user.IsEmailVerified == false) // If user's email is not verified, don't let them sign in
-                {
-                    return null;
-                }
-                if (PasswordHelper.VerifyPassword(req.PasswordHash, user.PasswordHash))
-                {
-                    return user;
                 }
             }
             return null;
