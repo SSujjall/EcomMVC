@@ -179,6 +179,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAdminRedirect(); // custom user routing middleware
+app.UseErrorHandling();
 
 app.MapControllerRoute(
     name: "default",
