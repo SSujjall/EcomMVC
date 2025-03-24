@@ -127,7 +127,7 @@ namespace EcomSiteMVC.Web.Controllers
             {
                 var user = await _userService.GetUserById(userId);
                 var emailMessage = new EmailMessage(new[] { user.Email }, "Change Password OTP", $"Your OTP: {otp}");
-                _emailService.SendEmail(emailMessage);
+                await _emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Password Change OTP Sent To Email", 5);
                 TempData["VerifyOtp"] = true;

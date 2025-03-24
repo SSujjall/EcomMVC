@@ -20,6 +20,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// This is required for reading environment variables from production environment
+builder.Configuration.AddEnvironmentVariables();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -179,6 +182,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAdminRedirect(); // custom user routing middleware
+app.UseErrorHandling();
 
 app.MapControllerRoute(
     name: "default",

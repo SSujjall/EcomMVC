@@ -32,7 +32,7 @@ namespace EcomSiteMVC.Web.Controllers
                 var verificationLink = Url.Action("ConfirmEmail", "Auth", new { token = model.EmailVerificationToken, email = user.Email }, Request.Scheme);
                 var emailMessage = new EmailMessage(new[] { user.Email }, "Please confirm your email", $"Please confirm your email by clicking the link: {verificationLink}");
 
-                _emailService.SendEmail(emailMessage);
+                await _emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Register Successful", 5);
                 return RedirectToAction("LoginView");
@@ -178,7 +178,7 @@ namespace EcomSiteMVC.Web.Controllers
                 var pwResetLink = Url.Action("ValidatePasswordResetToken", "Auth", new { token = existingUser.PasswordResetToken, email = existingUser.Email }, Request.Scheme);
                 var emailMessage = new EmailMessage(new[] { existingUser.Email }, "Password reset link", $"Click the link to reset password: {pwResetLink}");
 
-                _emailService.SendEmail(emailMessage);
+                await _emailService.SendEmail(emailMessage);
 
                 _notyf.Success("Password Reset Link Sent to Email", 5);
                 return RedirectToAction("LoginView");

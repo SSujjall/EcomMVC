@@ -9,10 +9,10 @@ namespace EcomSiteMVC.Extensions.EmailService.Service
         private readonly EmailConfig _emailConfig;
         public EmailService(EmailConfig emailConfig) => _emailConfig = emailConfig;
 
-        public void SendEmail(EmailMessage message)
+        public async Task SendEmail(EmailMessage message)
         {
             var emailMessage = CreateEmailMessage(message);
-            Send(emailMessage);
+            await Send(emailMessage);
         }
 
         private MimeMessage CreateEmailMessage(EmailMessage message)
@@ -26,16 +26,16 @@ namespace EcomSiteMVC.Extensions.EmailService.Service
             return emailMessage;
         }
 
-        private void Send(MimeMessage mailMessage)
+        private async Task Send(MimeMessage mailMessage)
         {
             var client = new MailKit.Net.Smtp.SmtpClient();
 
             try
             {
-                client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
+                await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate(_emailConfig.Username, _emailConfig.Password);
-                client.Send(mailMessage);
+                await client.AuthenticateAsync(_emailConfig.Username, _emailConfig.Password);
+                await client.SendAsync(mailMessage);
             }
             catch
             {
@@ -43,7 +43,7 @@ namespace EcomSiteMVC.Extensions.EmailService.Service
             }
             finally
             {
-                client.Disconnect(true);
+                await client.DisconnectAsync(true);
                 client.Dispose();
             }
         }
