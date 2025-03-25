@@ -1,169 +1,141 @@
 ﻿@using EcomSiteMVC.Core.Models.Entities
 @model IEnumerable<Product>
 @{
-    ViewData["Title"] = "Products";
+	ViewData["Title"] = "Products";
 }
 
-<style>
-    /* Ensure the images column is square and has a max size of 200px */
-    .image-cell {
-        max-width: 200px; /* Fixed width for the column */
-        max-height: 200px; /* Fixed height for the column */
-        padding: 0 !important; /* Remove padding to ensure the image fits perfectly */
-    }
-
-        .image-cell img {
-            width: 100%; /* Ensure the image fills the cell */
-            height: 100%; /* Ensure the image fills the cell */
-            object-fit: cover; /* Maintain aspect ratio and cover the cell */
-            aspect-ratio: 1 / 1; /* Ensure the image is square */
-            max-width: 200px; /* Max width */
-            max-height: 200px; /* Max height */
-        }
-
-        /* Adjust the carousel to fit within the square */
-        .image-cell .carousel {
-            width: 100%;
-            height: 100%;
-        }
-
-        .image-cell .carousel-inner,
-        .image-cell .carousel-item {
-            width: 100%;
-            height: 100%;
-        }
-</style>
+<!-- Styles from AllProductView.cshtml.css file -->
 
 <h2>All Products</h2>
 
 <!-- Listing Products -->
 <div class="table-responsive shadow">
-    <table id="productDT" class="custom-table">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Stock(qty)</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+	<table id="productDT" class="custom-table">
+		<thead>
+			<tr>
+				<th>Image</th>
+				<th>Product Name</th>
+				<th>Category</th>
+				<th>Description</th>
+				<th>Price</th>
+				<th>Stock(qty)</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
 
-        <tbody>
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var product in Model)
-                {
-                    <tr>
-                        <td class="text-center image-cell">
-                            @if (product.Images != null && product.Images.Any())
-                            {
-                                <div id="carousel-@product.ProductId" class="carousel slide" data-bs-ride="carousel">
-                                    <div class="carousel-inner">
-                                        @foreach (var image in product.Images)
-                                        {
-                                            var imageUrl = image.ImageUrl;
+		<tbody>
+			@if (Model != null && Model.Any())
+			{
+				@foreach (var product in Model)
+				{
+					<tr>
+						<td class="text-center image-cell">
+							@if (product.Images != null && product.Images.Any())
+							{
+								<div id="carousel-@product.ProductId" class="carousel slide" data-bs-ride="carousel">
+									<div class="carousel-inner">
+										@foreach (var image in product.Images)
+										{
+											var imageUrl = image.ImageUrl;
 
-                                            <div class="carousel-item @((product.Images.First() == image) ? "active" : "")">
-                                                <img src="@imageUrl" alt="@product.ProductName" class="d-block w-100" />
-                                            </div>
-                                        }
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
-                                        <span class="carousel-control-prev-icon bg-black" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
-                                        <span class="carousel-control-next-icon bg-black" aria-hidden="true"></span>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            }
-                            else
-                            {
-                                <img src="~/images/default-profile.png" alt="Default Image" class="d-block w-100" />
-                            }
-                        </td>
-                        <td>@product.ProductName</td>
-                        <td>@product.Category?.CategoryName</td>
-                        <td>@product.Description</td>
-                        <td>@product.Price</td>
-                        <td>@product.StockQuantity</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success btn-sm">
-                                    <span class="material-symbols-outlined">
-                                        edit_note
-                                    </span>
-                                </a>
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                        data-item-id="@product.ProductId" data-item-name="@product.ProductName">
-                                    <span class="material-symbols-outlined">
-                                        delete
-                                    </span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            }
-            else
-            {
-                // Datatable automatically handles empty table.
-            }
-        </tbody>
-    </table>
+											<div class="carousel-item @((product.Images.First() == image) ? "active" : "")">
+												<img src="@imageUrl" alt="@product.ProductName" class="d-block w-100" />
+											</div>
+										}
+									</div>
+									<button class="carousel-control-prev" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="prev">
+										<span class="carousel-control-prev-icon bg-black" aria-hidden="true"></span>
+										<span class="visually-hidden">Previous</span>
+									</button>
+									<button class="carousel-control-next" type="button" data-bs-target="#carousel-@product.ProductId" data-bs-slide="next">
+										<span class="carousel-control-next-icon bg-black" aria-hidden="true"></span>
+										<span class="visually-hidden">Next</span>
+									</button>
+								</div>
+							}
+							else
+							{
+								<img src="~/images/default-profile.png" alt="Default Image" class="d-block w-100" />
+							}
+						</td>
+						<td>@product.ProductName</td>
+						<td>@product.Category?.CategoryName</td>
+						<td>@product.Description</td>
+						<td>@product.Price</td>
+						<td>@product.StockQuantity</td>
+						<td>
+							<div class="d-flex gap-2">
+								<a asp-action="EditProductPage" asp-route-id="@product.ProductId" class="btn btn-success btn-sm">
+									<span class="material-symbols-outlined">
+										edit_note
+									</span>
+								</a>
+								<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+										data-item-id="@product.ProductId" data-item-name="@product.ProductName">
+									<span class="material-symbols-outlined">
+										delete
+									</span>
+								</button>
+							</div>
+						</td>
+					</tr>
+				}
+			}
+			else
+			{
+				// Datatable automatically handles empty table.
+			}
+		</tbody>
+	</table>
 </div>
 
 @*Importing Delete confirmation modal*@
 @await Html.PartialAsync("_DeleteModal")
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#productDT').DataTable({
-                columnDefs: [
-                    { width: "200px", targets: 0 } // Set the width of the first column (Image column) to 200px
-                ],
-                autoWidth: false, // Disable automatic column width calculation
-                layout: {
-                    topStart: {
-                        pageLength: {
-                            menu: [
-                                [10, 25, 50, -1],
-                                [10, 25, 50, 'All']
-                            ]
-                        }
-                    },
-                    bottomEnd: {
-                        paging: {
-                            buttons: 3
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+	<script>
+		$(document).ready(function () {
+			$('#productDT').DataTable({
+				columnDefs: [
+					{ width: "200px", targets: 0 } // Set the width of the first column (Image column) to 200px
+				],
+				autoWidth: false, // Disable automatic column width calculation
+				layout: {
+					topStart: {
+						pageLength: {
+							menu: [
+								[10, 25, 50, -1],
+								[10, 25, 50, 'All']
+							]
+						}
+					},
+					bottomEnd: {
+						paging: {
+							buttons: 3
+						}
+					}
+				}
+			});
+		});
+	</script>
 }
 
 <script>
-    // Attach event listener for delete buttons
-    document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
-        button.addEventListener('click', function () {
-            const productId = this.getAttribute('data-item-id');
-            const productName = this.getAttribute('data-item-name');
+	// Attach event listener for delete buttons
+	document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
+		button.addEventListener('click', function () {
+			const productId = this.getAttribute('data-item-id');
+			const productName = this.getAttribute('data-item-name');
 
-            // Set the product name in the modal
-            document.getElementById('itemToDelete').textContent = productName;
+			// Set the product name in the modal
+			document.getElementById('itemToDelete').textContent = productName;
 
-            // Set the form action
-            const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = `/Product/DeleteProduct`;
+			// Set the form action
+			const deleteForm = document.getElementById('deleteForm');
+			deleteForm.action = `/Product/DeleteProduct`;
 
-            // set category id
-            document.getElementById('deleteItemId').value = productId;
-        });
-    });
+			// set category id
+			document.getElementById('deleteItemId').value = productId;
+		});
+	});
 </script>

@@ -29,14 +29,14 @@ namespace EcomSiteMVC.Web.Controllers
         {
             var result = await _categoryService.AddCategory(model);
 
-            if (result == true)
+            if (result.Item2 == true)
             {
-                _notyf.Success("Category Added", 5);
+                _notyf.Success(result.Item1, 5);
                 return RedirectToAction("CategoryViewPage", result);
             }
 
-            _notyf.Error("Category not added", 5);
-            return RedirectToAction("CategoryViewPage");
+            _notyf.Error(result.Item1, 5);
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
 
         public async Task<IActionResult> UpdateCategory(UpdateCategoryDTO model)
@@ -69,11 +69,11 @@ namespace EcomSiteMVC.Web.Controllers
             if (result)
             {
                 _notyf.Success("Category deleted successfully!", 5);
-                return RedirectToAction("CategoryViewPage");
+                return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
             }
 
             _notyf.Error("Failed to delete category!", 5);
-            return RedirectToAction("CategoryViewPage");
+            return Redirect(Request.Headers["Referer".ToString() ?? "/"]);
         }
     }
 }
