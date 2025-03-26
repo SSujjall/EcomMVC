@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Core.DTOs;
+﻿using System.Globalization;
+using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace EcomSiteMVC.Infrastructure.Repositories
                                     .GroupBy(od => new { od.Order.OrderDate.Month, od.Order.OrderDate.Year })
                                     .Select(g => new MonthlySalesDTO
                                     {
-                                        Month = $"{g.Key.Month}/{g.Key.Year}",
+                                        Month = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(g.Key.Month),
                                         TotalQuantity = g.Sum(x => x.Quantity),
                                         TotalRevenue = g.Sum(x => x.Quantity * x.UnitPrice)
                                     })
@@ -48,7 +49,7 @@ namespace EcomSiteMVC.Infrastructure.Repositories
 
         public async Task<IEnumerable<TopCategorySalesDTO>> GetTopCategorySales()
         {
-            var categorySales =  await _dbContext.OrderDetails
+            var categorySales = await _dbContext.OrderDetails
                                     .GroupBy(od => od.Product.Category)
                                     .Select(g => new TopCategorySalesDTO
                                     {
