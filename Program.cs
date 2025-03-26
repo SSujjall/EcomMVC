@@ -91,6 +91,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 
 // Register generic/helper repositories and classes
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
@@ -107,6 +108,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // Register generic/helper repositories and classes
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));

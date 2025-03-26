@@ -31,6 +31,6 @@ namespace EcomSiteMVC.Core.DTOs
         public string ProductName { get; set; }
         public string Quantity { get; set; }
         public int UnitPrice { get; set; }
-        public string TotalAmount { get; set; }
+        public int TotalAmount { get; set; }
     }
 }

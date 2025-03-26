@@ -1,4 +1,8 @@
-﻿@using EcomSiteMVC.Core.Models.Entities
+﻿@{
+	ViewData["Title"] = "Cart";
+}
+
+@using EcomSiteMVC.Core.Models.Entities
 @model Cart
 
 <style>
@@ -101,15 +105,18 @@
 	// Attach event listener for delete buttons
 	document.querySelectorAll('button[data-bs-target="#deleteModal"]').forEach(button => {
 		button.addEventListener('click', function () {
-			const productId = this.getAttribute('data-item-id');
+			const cartItemId = this.getAttribute('data-item-id');
 			const productName = this.getAttribute('data-item-name');
 
 			// Set the product name in the modal
 			document.getElementById('itemToDelete').textContent = productName;
 
-			// Update the confirmation button link
-			const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-			confirmDeleteBtn.href = `/Cart/DeleteItem?id=${productId}`;
+			// Set the form action
+			const deleteForm = document.getElementById('deleteForm');
+			deleteForm.action = `/Cart/DeleteItem`;
+
+			// set category id
+			document.getElementById('deleteItemId').value = cartItemId;
 		});
 	});
 </script>
