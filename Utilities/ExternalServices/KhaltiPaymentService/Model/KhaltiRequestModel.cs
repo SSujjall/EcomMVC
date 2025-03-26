@@ -11,7 +11,7 @@ namespace EcomSiteMVC.Extensions.KhaltiPaymentService.Model
         public string WebsiteUrl { get; set; }
 
         [JsonProperty("amount")]
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [JsonProperty("purchase_order_id")]
         public string PurchaseOrderId { get; set; }

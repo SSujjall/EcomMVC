@@ -1,4 +1,5 @@
-﻿using EcomSiteMVC.Core.Models.Entities;
+﻿using EcomSiteMVC.Core.DTOs;
+using EcomSiteMVC.Core.Models.Entities;
 
 namespace EcomSiteMVC.Core.IRepositories
 {

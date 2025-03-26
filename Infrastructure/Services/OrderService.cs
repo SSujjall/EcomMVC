@@ -55,7 +55,7 @@ namespace EcomSiteMVC.Infrastructure.Services
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     UnitPrice = item.UnitPrice,
-                    TotalAmount = (item.UnitPrice * item.Quantity).ToString(),
+                    TotalAmount = item.UnitPrice * item.Quantity,
                 };
                 await _orderDetailRepository.Add(orderDetailModel);
             }

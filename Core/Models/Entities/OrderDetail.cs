@@ -16,7 +16,7 @@ namespace EcomSiteMVC.Core.Models.Entities
 
         public int Quantity { get; set; }
         public int UnitPrice { get; set; }
-        public string TotalAmount { get; set; }
+        public int TotalAmount { get; set; }
 
         // Navigation properties
         public virtual Order Order { get; set; }
