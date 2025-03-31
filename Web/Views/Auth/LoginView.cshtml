@@ -4,6 +4,13 @@
 	ViewData["Title"] = "Login";
 }
 
+<style>
+	.password {
+		-webkit-text-security: disc; /* For Webkit browsers */
+		text-security: disc; /* For Firefox */
+	}
+</style>
+
 <link rel="stylesheet" href="~/css/Auth.css" type="text/css" />
 
 <div class="form-container p-3 mt-5 border rounded-3 m-auto text-center shadow">
@@ -16,7 +23,7 @@
 		</div>
 		<div class="form-floating position-relative">
 			<!-- The padding is being added by js in _TogglePasswordScript -->
-			<input id="passwordInput" placeholder="Password" asp-for="PasswordHash" type="password" class="form-control form-group password" />
+			<input id="passwordInput" placeholder="Password" asp-for="PasswordHash" type="text" class="form-control form-group password" />
 			<label>Password</label>
 			<span asp-validation-for="PasswordHash" class="text-danger"></span>
 			<span id="togglePassword"
