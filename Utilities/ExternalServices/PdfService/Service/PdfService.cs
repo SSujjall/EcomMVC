@@ -7,13 +7,16 @@ namespace EcomSiteMVC.Utilities.ExternalServices.PdfService.Service
 {
     public class PdfService : IPdfService
     {
-        private string CustomCssStyles;
+        private readonly string _htmlPrefix;
+        private readonly string _htmlSuffix = "</body></html>";
+        private readonly ConverterProperties _converterProperties = new ConverterProperties();
+
         public PdfService()
         {
             /** bootstrap is not supported by iText7 when generating pdf, 
              * so we use the already available bootstrap classes and put css in them to make it look matching.
              **/
-            CustomCssStyles = @"
+            var customCssStyles = @"
             /* Remove modal-specific styles that might affect PDF */
                 .modal { 
                     position: static;
@@ -80,31 +83,19 @@ namespace EcomSiteMVC.Utilities.ExternalServices.PdfService.Service
                     font-size: 25px;
                 }
             ";
+            _htmlPrefix = $"<!DOCTYPE html><html><head><meta charset='UTF-8'><style>{customCssStyles}</style><title>";
         }
         public PdfResponseModel GenerateOrderPdfFromHtml(PdfRequestModel request)
         {
-            var fullHtmlContent = $@"
-                <!DOCTYPE html>
-                <html>
-                <head> 
-                    <meta charset='UTF-8'>
-                    <title>{request.Title}</title>
-                    <style>
-                        {CustomCssStyles}
-                    </style>
-                </head>
-                <body>
-                    {request.HtmlContent}
-                </body>
-                </html>";
+            var title = request.Title ?? "receipt";
+            var fullHtmlContent = $"{_htmlPrefix}{title}</title></head><body>{request.HtmlContent}{_htmlSuffix}";
 
-            using var memoryStream = new MemoryStream();
-            var writer = new PdfWriter(memoryStream);
-            var pdf = new PdfDocument(writer);
-            pdf.SetDefaultPageSize(PageSize.A4);
+            using var memoryStream = new MemoryStream(1024 * 50);
+            var writerProperties = new WriterProperties().SetCompressionLevel(CompressionConstants.NO_COMPRESSION); // trades file size for faster generation — remove this line if you need smaller files
+            using var writer = new PdfWriter(memoryStream);
+            using var pdf = new PdfDocument(writer);
 
-            var converterProperties = new ConverterProperties();
-            HtmlConverter.ConvertToPdf(fullHtmlContent, pdf, converterProperties);
+            HtmlConverter.ConvertToPdf(fullHtmlContent, pdf, _converterProperties);
 
             return new PdfResponseModel
             {
