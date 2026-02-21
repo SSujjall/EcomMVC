@@ -4,6 +4,7 @@ using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
 using EcomSiteMVC.Core.Models.Helper;
+using EcomSiteMVC.Core.Models.ViewModels;
 using EcomSiteMVC.Utilities.ExternalServices.CloudinaryService.Service;
 
 namespace EcomSiteMVC.Infrastructure.Services
@@ -161,6 +162,12 @@ namespace EcomSiteMVC.Infrastructure.Services
             var imagePublicId = imageUrl.Split('/').Last().Split('.').First();
             await _cloudinaryService.DeleteImageAsync($"{productPhotosFolder}/{imagePublicId}");
             return true;
+        }
+
+        public async Task<CartProductViewModel> GetProductForCart(int id)
+        {
+            var model = await _productRepository.GetProductWithImage(id);
+            return model;
         }
     }
 }

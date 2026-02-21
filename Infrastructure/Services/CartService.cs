@@ -2,6 +2,7 @@
 using EcomSiteMVC.Core.IRepositories;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.ViewModels;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {
@@ -50,9 +51,36 @@ namespace EcomSiteMVC.Infrastructure.Services
             return true;
         }
 
-        public async Task<Cart> GetCartByUserIdAsync(int userId)
+        public async Task<CartViewModel> GetCartByUserIdAsync(int userId)
         {
-            return await _cartRepository.FindSingleByConditionAsync(c => c.CustomerId == userId);
+            var cart = await _cartRepository.FindSingleByConditionAsync(c => c.CustomerId == userId);
+            if (cart == null) return null;
+
+            var cartVm = new CartViewModel
+            {
+                CustomerId = cart.CustomerId,
+                CartItems = cart.CartItems.Select(ci => new CartItemViewModel
+                {
+                    CartItemId = ci.CartItemId,
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    UnitPrice = ci.UnitPrice,
+                    Product = new CartProductViewModel
+                    {
+                        ProductId = ci.Product.ProductId,
+                        ProductName = ci.Product.ProductName,
+                        Price = ci.Product.Price,
+                        Images = ci.Product.Images
+                            .Select(img => new CartProductImageViewModel
+                            {
+                                ImageId = img.ImageId,
+                                ImageUrl = img.ImageUrl
+                            })
+                            .ToList()
+                    }
+                }).ToList()
+            };
+            return cartVm;
         }
 
         public async Task<bool> DeleteCartItem(int id)

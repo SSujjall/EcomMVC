@@ -3,6 +3,7 @@ using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Enums;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.ViewModels;
 using EcomSiteMVC.Infrastructure.Data.Contexts;
 using EcomSiteMVC.Utilities.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -22,9 +23,14 @@ namespace EcomSiteMVC.Web.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IProductService _productService;
         private readonly AppDbContext _appDbContext;
-        public OrderController(ICartService cartService, IUserService userService, INotyfService notyf,
-                               IOrderService orderService, IPaymentService paymentService, IProductService productService,
-                               AppDbContext dbContext)
+        public OrderController(
+            ICartService cartService, 
+            IUserService userService, 
+            INotyfService notyf,
+            IOrderService orderService, 
+            IPaymentService paymentService, 
+            IProductService productService,
+            AppDbContext dbContext)
         {
             _cartService = cartService;
             _userService = userService;
@@ -92,7 +98,7 @@ namespace EcomSiteMVC.Web.Controllers
             }
 
             // Create a temporary cart-like structure for the single product
-            var product = await _productService.GetProductById(productId);
+            var product = await _productService.GetProductForCart(productId);
             if (product == null)
             {
                 _notyf.Error("Product not found.");
@@ -100,12 +106,12 @@ namespace EcomSiteMVC.Web.Controllers
             }
 
             #region temp cart model
-            var singleItemCart = new Cart
+            var singleItemCart = new CartViewModel
             {
                 CustomerId = userId,
-                CartItems = new List<CartItem>
+                CartItems = new List<CartItemViewModel>
                 {
-                    new CartItem
+                    new CartItemViewModel
                     {
                         ProductId = product.ProductId,
                         Quantity = quantity,
@@ -155,24 +161,37 @@ namespace EcomSiteMVC.Web.Controllers
                 return RedirectToAction("LoginView", "Auth");
             }
 
-            Cart cart;
+            CartViewModel cartVm;
             var buyNowCartJson = HttpContext.Session.GetString("BuyNowCart");
             if (!string.IsNullOrEmpty(buyNowCartJson))
             {
-                cart = JsonConvert.DeserializeObject<Cart>(buyNowCartJson);
+                cartVm = JsonConvert.DeserializeObject<CartViewModel>(buyNowCartJson);
                 HttpContext.Session.Remove("BuyNowCart"); // Clear after use
             }
             else
             {
-                cart = await _cartService.GetCartByUserIdAsync(userId);
-                if (cart == null || !cart.CartItems.Any())
+                cartVm = await _cartService.GetCartByUserIdAsync(userId);
+                if (cartVm == null || !cartVm.CartItems.Any())
                 {
                     _notyf.Error("Your cart is empty.");
                     return RedirectToAction("CartView", "Cart");
                 }
             }
 
-            var order = await _orderService.CreateOrder(model, userId.ToString(), cart);
+            #region request model mapping 
+            var cartEntity = new Cart
+            {
+                CustomerId = cartVm.CustomerId,
+                CartItems = cartVm.CartItems.Select(ci => new CartItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    UnitPrice = ci.UnitPrice,
+                    Product = null
+                }).ToList()
+            };
+            #endregion
+            var order = await _orderService.CreateOrder(model, userId.ToString(), cartEntity);
 
             switch (model.PaymentMethod)
             {

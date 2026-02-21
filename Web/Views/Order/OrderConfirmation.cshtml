@@ -1,5 +1,9 @@
-﻿@using EcomSiteMVC.Core.Models.Entities
-@model Cart
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+}
+
+@using EcomSiteMVC.Core.Models.ViewModels
+@model CartViewModel
 @{
     var FirstName = ViewBag.UserDetail.UserProfile?.FirstName;
     var LastName = ViewBag.UserDetail.UserProfile?.LastName;

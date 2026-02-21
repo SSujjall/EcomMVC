@@ -2,6 +2,7 @@
 using EcomSiteMVC.Core.Models.Entities;
 using EcomSiteMVC.Infrastructure.Data.Seeders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EcomSiteMVC.Infrastructure.Data.Contexts
 {
@@ -25,7 +26,10 @@ namespace EcomSiteMVC.Infrastructure.Data.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies();
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .ConfigureWarnings(warnings =>
+                    warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
             base.OnConfiguring(optionsBuilder);
         }
 

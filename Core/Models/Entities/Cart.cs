@@ -13,6 +13,6 @@ namespace EcomSiteMVC.Core.Models.Entities
 
         // Navigation properties
         public virtual User Customer { get; set; }
-        public virtual List<CartItem> CartItems { get; set; }
+        public virtual List<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }

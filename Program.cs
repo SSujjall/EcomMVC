@@ -136,12 +136,15 @@ builder.Services.AddControllersWithViews()
         options.ViewLocationExpanders.Add(new CustomViewLocationExpander());
     });
 
+// This is not used for now, and needs to be commented out for using HttpSession (in OrderController BuyNowCart)
 // Redis
-builder.Services.AddStackExchangeRedisCache(opt =>
-{
-    string connection = builder.Configuration.GetConnectionString("Redis");
-    opt.Configuration = connection;
-});
+//builder.Services.AddStackExchangeRedisCache(opt =>
+//{
+//    string connection = builder.Configuration.GetConnectionString("Redis");
+//    opt.Configuration = connection;
+//});
+
+builder.Services.AddDistributedMemoryCache();
 
 // Adding HttpContextAccessor for accessing Request Context in Services Classes (OrderService.cs)
 builder.Services.AddHttpContextAccessor();

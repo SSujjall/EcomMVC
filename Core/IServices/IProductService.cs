@@ -1,6 +1,7 @@
 ﻿using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.Models.Entities;
 using EcomSiteMVC.Core.Models.Helper;
+using EcomSiteMVC.Core.Models.ViewModels;
 
 namespace EcomSiteMVC.Core.IServices
 {
@@ -14,5 +15,6 @@ namespace EcomSiteMVC.Core.IServices
         public Task<IEnumerable<Product>> GetAllProduct();
         public Task<IEnumerable<Product>> GetFilteredProducts(string? searchFilter, FilterModel? filterModel);
         public Task<IEnumerable<Product>> PopularProducts(int TopN);
+        public Task<CartProductViewModel> GetProductForCart(int id);
     }
 }
