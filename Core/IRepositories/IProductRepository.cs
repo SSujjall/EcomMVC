@@ -1,4 +1,5 @@
 ﻿using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.ViewModels;
 
 namespace EcomSiteMVC.Core.IRepositories
 {
@@ -6,5 +7,6 @@ namespace EcomSiteMVC.Core.IRepositories
     {
         Task AddImage(ProductImage image);
         Task<IEnumerable<Product>> FilterPopularProducts(int topN);
+        Task<CartProductViewModel> GetProductWithImage(int id);
     }
 }

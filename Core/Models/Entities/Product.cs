@@ -20,8 +20,8 @@ namespace EcomSiteMVC.Core.Models.Entities
 
         // Navigation properties
         public virtual Category Category { get; set; }
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        public virtual ICollection<CartItem> CartItems { get; set; }
-        public virtual ICollection<ProductImage> Images { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
     }
 }
