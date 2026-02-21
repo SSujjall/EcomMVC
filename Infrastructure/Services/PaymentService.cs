@@ -6,6 +6,7 @@ using EcomSiteMVC.Extensions.KhaltiPaymentService.Config;
 using EcomSiteMVC.Extensions.KhaltiPaymentService.Model;
 using EcomSiteMVC.Extensions.KhaltiPaymentService.Service;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace EcomSiteMVC.Infrastructure.Services
 {
@@ -88,17 +89,9 @@ namespace EcomSiteMVC.Infrastructure.Services
         #region helpers
         public (string orderId, string pidx) ExtractKhaltiPaymentDetails(string queryString)
         {
-            string orderId = "";
-            string pidx = "";
-
-            var orderIdPart = queryString.Split("orderId=")[1];
-            orderIdPart = orderIdPart.Split('&')[0];
-            if (orderIdPart.Contains("?"))
-            {
-                var parts = orderIdPart.Split('?');
-                orderId = parts[0];  // Will be whatever orderid is
-                pidx = parts[1].Split('=')[1];  // Will be whatever pidx is in the url
-            }
+            var query = HttpUtility.ParseQueryString(queryString.TrimStart('?'));
+            var orderId = query["orderId"] ?? "";
+            var pidx = query["pidx"] ?? "";
             return (orderId, pidx);
         }
 
