@@ -2,6 +2,7 @@
 using EcomSiteMVC.Core.DTOs;
 using EcomSiteMVC.Core.IServices;
 using EcomSiteMVC.Core.Models.Entities;
+using EcomSiteMVC.Core.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace EcomSiteMVC.Web.Controllers
 
             if (cart?.CartItems == null)
             {
-                return View(new Cart());
+                return View(new CartViewModel());
             }
             return View(cart);
         }
